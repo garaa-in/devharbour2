@@ -587,6 +587,102 @@ html[data-theme="mercury"] .xp{background:#2c2c2f!important;color:#fff!important
 @keyframes heartPop{0%{transform:scale(1)}40%{transform:scale(1.45) rotate(-8deg)}70%{transform:scale(.9) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
 .px-like-btn .like-count{font-variant-numeric:tabular-nums;line-height:1}
 
+/* ===== MERCURY LIQUID THEME (EXP BUTTON) ===== */
+.dh-mercury-btn {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 10px 22px !important;
+  border-radius: 99px !important;
+  font-family: var(--font, 'Inter', sans-serif) !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0.03em !important;
+  color: #17171a !important;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e5eb 24%, #b4b9c5 48%, #ffffff 68%, #9ea3af 84%, #d8dbe2 100%) !important;
+  background-size: 260% 260% !important;
+  animation: mercuryFlow 8s ease-in-out infinite alternate !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 
+    0 4px 16px -2px rgba(20, 20, 30, 0.28),
+    0 0 0 1px rgba(180, 185, 195, 0.4),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 3px rgba(110, 115, 130, 0.4) !important;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease !important;
+}
+
+.dh-mercury-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.75) 48%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0.75) 52%, transparent 80%);
+  background-size: 200% 100%;
+  animation: mercuryShine 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.dh-mercury-btn:hover {
+  transform: translateY(-1.5px) scale(1.02) !important;
+  box-shadow: 
+    0 8px 24px -3px rgba(20, 20, 30, 0.38),
+    0 0 18px rgba(240, 243, 250, 0.75),
+    inset 0 1.5px 2px #fff,
+    inset 0 -2px 3px rgba(110, 115, 130, 0.45) !important;
+}
+
+.dh-mercury-btn:active {
+  transform: scale(0.97) !important;
+}
+
+.dh-mercury-star {
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1;
+  color: #3b3c43;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.9));
+  display: inline-block;
+  user-select: none;
+  animation: astStarPulse 3s ease-in-out infinite;
+}
+
+.dh-mercury-xp {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #17171a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+@keyframes mercuryFlow {
+  0% { background-position: 0% 30%; }
+  50% { background-position: 100% 70%; }
+  100% { background-position: 0% 30%; }
+}
+
+@keyframes mercuryShine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.dh-ast-star{font-style:normal;display:inline-block;line-height:1;vertical-align:-0.5px;font-family:system-ui,-apple-system,sans-serif;user-select:none}
+.dh-star-purple{color:#a78bfa;font-size:14px;filter:drop-shadow(0 0 5px rgba(167,139,250,.4))}
+.dh-star-blue{color:#93c5fd;font-size:14px}
+.dh-star-amber{color:#fbbf24;font-size:14px;filter:drop-shadow(0 0 5px rgba(251,191,36,.45))}
+
+@keyframes astStarPulse{
+  0%,100%{transform:scale(1);opacity:0.9}
+  50%{transform:scale(1.18);opacity:1}
+}
+
+.dh-badge-loc{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--soft);color:var(--ink);font-size:11.5px;font-weight:700;border:1px solid var(--line)}
+.dh-badge-loc .dh-ast-star{color:#8b5cf6;font-size:11px}
+
 /* ===== DEVHARBOUR AUTH & PROFILE MODALS ===== */
 .dh-modal-wrap{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
 .dh-modal-wrap.open{display:flex;animation:dhFadeIn .25s ease-out}
@@ -938,7 +1034,8 @@ function updateAuthUI() {
   if (!btn || !av) return;
 
   if (currentUser) {
-    btn.innerHTML = `<span class="dh-user-pill"><span class="dh-ast-star dh-star-glow">✦</span><span class="dh-user-handle">@${currentUser.username}</span><span class="dh-user-xp-badge"><span class="dh-ast-star dh-star-sub">✧</span> ${currentUser.totalXp || 0} XP</span></span>`;
+    btn.className = 'cr dh-mercury-btn';
+    btn.innerHTML = `<i class="dh-mercury-star">✦</i><span class="dh-mercury-xp">${currentUser.totalXp || 0} XP</span>`;
     btn.title = "View Profile (" + (currentUser.location || 'Dev Harbour') + ")";
     btn.onclick = () => openProfileModal();
     const initial = (currentUser.username || 'U')[0].toUpperCase();
@@ -948,6 +1045,7 @@ function updateAuthUI() {
     av.onclick = () => openProfileModal();
     if (greet) greet.textContent = currentUser.fullName || currentUser.username;
   } else {
+    btn.className = 'cr';
     btn.textContent = '+ Sign up / Log in';
     btn.title = "Create an account or sign in";
     btn.onclick = () => openAuthModal();
