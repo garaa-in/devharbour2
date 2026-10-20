@@ -853,6 +853,77 @@ try {
 let serverVotes = {};
 let currentUser = null;
 
+// Built-in Local Database Engine (Fallback when backend is not running or on static GitHub Pages)
+const LocalDB = {
+  getUsers() {
+    try { return JSON.parse(localStorage.getItem('dh_users_db') || '[]'); } catch(e) { return []; }
+  },
+  saveUsers(users) {
+    try { localStorage.setItem('dh_users_db', JSON.stringify(users)); } catch(e) {}
+  },
+  signup({ fullName, username, email, password, location, bio }) {
+    const users = this.getUsers();
+    const cleanUser = username.trim().toLowerCase();
+    const cleanEmail = email.trim().toLowerCase();
+    if (users.find(u => u.username && u.username.toLowerCase() === cleanUser)) {
+      throw new Error('This username is already taken. Please choose another.');
+    }
+    if (users.find(u => u.email && u.email.toLowerCase() === cleanEmail)) {
+      throw new Error('An account with this email address already exists.');
+    }
+    const newUser = {
+      id: 'usr-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      fullName: fullName.trim(),
+      username: username.trim(),
+      email: cleanEmail,
+      password: password,
+      location: (location || 'Nashik, India').trim(),
+      bio: (bio || '').trim(),
+      role: 'student',
+      totalXp: 50,
+      level: 1,
+      streakDays: 1,
+      createdAt: new Date().toISOString()
+    };
+    users.push(newUser);
+    this.saveUsers(users);
+    return newUser;
+  },
+  login(loginVal, password) {
+    const users = this.getUsers();
+    const target = loginVal.trim().toLowerCase();
+    const user = users.find(u => (u.username.toLowerCase() === target || u.email.toLowerCase() === target) && u.password === password);
+    if (!user) throw new Error('Invalid username/email or password.');
+    return user;
+  },
+  updateProfile(userId, updates) {
+    const users = this.getUsers();
+    const idx = users.findIndex(u => u.id === userId);
+    if (idx !== -1) {
+      users[idx] = { ...users[idx], ...updates };
+      this.saveUsers(users);
+      return users[idx];
+    }
+    return null;
+  }
+};
+
+// Cross-tab real-time broadcast channel
+let syncChannel = null;
+try {
+  syncChannel = new BroadcastChannel('devharbour-realtime');
+  syncChannel.onmessage = (e) => {
+    const data = e.data;
+    if (data && data.type === 'project_voted') {
+      serverVotes[data.projectTitle] = data.votesCount;
+      rp();
+      if (data.message) toast(data.message);
+    } else if (data && data.type === 'user_joined') {
+      toast(`✨ ${data.message}`);
+    }
+  };
+} catch(e) {}
+
 function getAuthHeaders() {
   const token = localStorage.getItem('dh_token');
   const h = { 'Content-Type': 'application/json' };
@@ -892,9 +963,10 @@ function checkAuthSession() {
     updateAuthUI();
     return;
   }
+  // Try backend first
   fetch('/api/auth/me', { headers: getAuthHeaders() })
     .then(r => {
-      if (!r.ok) throw new Error('Session invalid');
+      if (!r.ok) throw new Error('Backend not available or invalid session');
       return r.json();
     })
     .then(data => {
@@ -904,8 +976,18 @@ function checkAuthSession() {
       }
     })
     .catch(() => {
-      localStorage.removeItem('dh_token');
-      currentUser = null;
+      // Fallback to local database session
+      try {
+        const localUser = JSON.parse(localStorage.getItem('dh_current_user') || 'null');
+        if (localUser) {
+          currentUser = localUser;
+        } else {
+          localStorage.removeItem('dh_token');
+          currentUser = null;
+        }
+      } catch(e) {
+        currentUser = null;
+      }
       updateAuthUI();
     });
 }
@@ -948,7 +1030,7 @@ window.handleSignup = function(e) {
   const user = document.getElementById('su-user').value.trim();
   const email = document.getElementById('su-email').value.trim();
   const pass = document.getElementById('su-pass').value;
-  const loc = document.getElementById('su-loc').value.trim();
+  const loc = document.getElementById('su-loc').value.trim() || 'Nashik, India';
   const bio = document.getElementById('su-bio').value.trim();
   const msg = document.getElementById('su-msg');
   msg.className = 'dh-status-msg';
@@ -959,7 +1041,10 @@ window.handleSignup = function(e) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ fullName: name, username: user, email, password: pass, location: loc, bio })
   })
-    .then(r => r.json().then(data => ({ ok: r.ok, data })))
+    .then(r => {
+      if (r.status === 404) throw new Error('STATIC_HOST_FALLBACK');
+      return r.json().then(data => ({ ok: r.ok, data }));
+    })
     .then(({ ok, data }) => {
       if (!ok) {
         msg.className = 'dh-status-msg error';
@@ -968,13 +1053,28 @@ window.handleSignup = function(e) {
       }
       localStorage.setItem('dh_token', data.token);
       currentUser = data.user;
+      localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
       updateAuthUI();
       closeAuthModal();
       toast(`🎉 Welcome to Dev Harbour, @${currentUser.username}!`);
     })
     .catch(err => {
-      msg.className = 'dh-status-msg error';
-      msg.textContent = 'Network error. Please try again.';
+      // Local Database Fallback (when on GitHub Pages or static host)
+      try {
+        const newUser = LocalDB.signup({ fullName: name, username: user, email, password: pass, location: loc, bio });
+        currentUser = newUser;
+        localStorage.setItem('dh_token', 'local-token-' + newUser.id);
+        localStorage.setItem('dh_current_user', JSON.stringify(newUser));
+        updateAuthUI();
+        closeAuthModal();
+        if (syncChannel) {
+          syncChannel.postMessage({ type: 'user_joined', message: `${newUser.username} from ${newUser.location} joined Dev Harbour!` });
+        }
+        toast(`🎉 Welcome to Dev Harbour, @${currentUser.username}!`);
+      } catch(localErr) {
+        msg.className = 'dh-status-msg error';
+        msg.textContent = localErr.message || 'Error creating account.';
+      }
     });
 };
 
@@ -991,7 +1091,10 @@ window.handleLogin = function(e) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ login: loginVal, password: pass })
   })
-    .then(r => r.json().then(data => ({ ok: r.ok, data })))
+    .then(r => {
+      if (r.status === 404) throw new Error('STATIC_HOST_FALLBACK');
+      return r.json().then(data => ({ ok: r.ok, data }));
+    })
     .then(({ ok, data }) => {
       if (!ok) {
         msg.className = 'dh-status-msg error';
@@ -1000,13 +1103,25 @@ window.handleLogin = function(e) {
       }
       localStorage.setItem('dh_token', data.token);
       currentUser = data.user;
+      localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
       updateAuthUI();
       closeAuthModal();
       toast(`🚀 Welcome back, @${currentUser.username}!`);
     })
     .catch(err => {
-      msg.className = 'dh-status-msg error';
-      msg.textContent = 'Network error. Please try again.';
+      // Local Database Fallback
+      try {
+        const user = LocalDB.login(loginVal, pass);
+        currentUser = user;
+        localStorage.setItem('dh_token', 'local-token-' + user.id);
+        localStorage.setItem('dh_current_user', JSON.stringify(user));
+        updateAuthUI();
+        closeAuthModal();
+        toast(`🚀 Welcome back, @${currentUser.username}!`);
+      } catch(localErr) {
+        msg.className = 'dh-status-msg error';
+        msg.textContent = localErr.message || 'Invalid username or password.';
+      }
     });
 };
 
@@ -1021,7 +1136,7 @@ window.openProfileModal = function() {
   document.getElementById('pm-user').textContent = '@' + currentUser.username;
   document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Nashik, India');
   document.getElementById('pm-avatar-letter').textContent = (currentUser.username || 'U')[0].toUpperCase();
-  document.getElementById('pm-xp').textContent = currentUser.totalXp || 0;
+  document.getElementById('pm-xp').textContent = currentUser.totalXp || 50;
   document.getElementById('pm-level').textContent = 'Lvl ' + (currentUser.level || 1);
   document.getElementById('pm-streak').textContent = '🔥 ' + (currentUser.streakDays || 1);
 
@@ -1056,7 +1171,10 @@ window.handleSaveProfile = function(e) {
     headers: getAuthHeaders(),
     body: JSON.stringify({ fullName: name, location: loc, bio, githubUrl: github, portfolioUrl: port })
   })
-    .then(r => r.json().then(data => ({ ok: r.ok, data })))
+    .then(r => {
+      if (r.status === 404) throw new Error('STATIC_HOST_FALLBACK');
+      return r.json().then(data => ({ ok: r.ok, data }));
+    })
     .then(({ ok, data }) => {
       if (!ok) {
         msg.className = 'dh-status-msg error';
@@ -1064,6 +1182,7 @@ window.handleSaveProfile = function(e) {
         return;
       }
       currentUser = { ...currentUser, ...data.user };
+      localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
       updateAuthUI();
       document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
       document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Nashik, India');
@@ -1073,14 +1192,30 @@ window.handleSaveProfile = function(e) {
       toast('Profile updated!');
     })
     .catch(() => {
-      msg.className = 'dh-status-msg error';
-      msg.textContent = 'Error saving profile.';
+      // Local DB save
+      if (currentUser && currentUser.id) {
+        const updated = LocalDB.updateProfile(currentUser.id, { fullName: name, location: loc, bio, githubUrl: github, portfolioUrl: port });
+        if (updated) currentUser = updated;
+        else currentUser = { ...currentUser, fullName: name, location: loc, bio, githubUrl: github, portfolioUrl: port };
+        localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+        updateAuthUI();
+        document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
+        document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Nashik, India');
+        msg.className = 'dh-status-msg success';
+        msg.textContent = '✓ Profile saved locally!';
+        setTimeout(closeProfileModal, 1200);
+        toast('Profile updated!');
+      } else {
+        msg.className = 'dh-status-msg error';
+        msg.textContent = 'Error saving profile.';
+      }
     });
 };
 
 window.handleLogout = function() {
   fetch('/api/auth/logout', { method: 'POST', headers: getAuthHeaders() }).catch(() => {});
   localStorage.removeItem('dh_token');
+  localStorage.removeItem('dh_current_user');
   currentUser = null;
   updateAuthUI();
   closeProfileModal();
@@ -1103,24 +1238,40 @@ window.toggleProjectLike = function(title, event) {
     event.preventDefault();
   }
   const liked = isProjectLiked(title);
+  let newLikesCount = 0;
   if (liked) {
     delete likesStore[title];
     if (serverVotes[title] && serverVotes[title] > 0) serverVotes[title]--;
+    newLikesCount = Math.max(0, (serverVotes[title] || 0));
     toast(`Removed like from ${title}`);
   } else {
     likesStore[title] = true;
     serverVotes[title] = (serverVotes[title] || 0) + 1;
+    newLikesCount = serverVotes[title];
     toast(`❤️ Liked ${title}!`);
   }
   try {
     localStorage.setItem('dh-project-likes', JSON.stringify(likesStore));
   } catch(e) {}
 
+  const userLoc = (currentUser && currentUser.location) ? currentUser.location : 'Nashik';
+  const userName = (currentUser && currentUser.username) ? currentUser.username : 'A developer';
+
+  // Broadcast to other open tabs / windows immediately via BroadcastChannel
+  if (syncChannel) {
+    syncChannel.postMessage({
+      type: 'project_voted',
+      projectTitle: title,
+      votesCount: newLikesCount,
+      username: userName,
+      location: userLoc,
+      message: `${userName} from ${userLoc} liked "${title}"! (${newLikesCount} ${newLikesCount === 1 ? 'like' : 'likes'})`
+    });
+  }
+
+  // Also sync with backend server when available
   try {
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const userLoc = (currentUser && currentUser.location) ? currentUser.location : 'Nashik';
-    const userName = (currentUser && currentUser.username) ? currentUser.username : 'A developer';
-
     fetch(`/api/projects/prj-${slug}/vote`, {
       method: 'POST',
       headers: getAuthHeaders(),
