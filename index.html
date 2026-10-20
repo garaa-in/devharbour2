@@ -919,7 +919,7 @@ try {
       rp();
       if (data.message) toast(data.message);
     } else if (data && data.type === 'user_joined') {
-      toast(`✨ ${data.message}`);
+      toast(`✦ ${data.message}`);
     }
   };
 } catch(e) {}
@@ -938,7 +938,7 @@ function updateAuthUI() {
   if (!btn || !av) return;
 
   if (currentUser) {
-    btn.innerHTML = `👑 @${currentUser.username} <span style="opacity:0.75;margin-left:4px;font-size:11.5px">⚡ ${currentUser.totalXp || 0} XP</span>`;
+    btn.innerHTML = `<span class="dh-user-pill"><span class="dh-ast-star dh-star-glow">✦</span><span class="dh-user-handle">@${currentUser.username}</span><span class="dh-user-xp-badge"><span class="dh-ast-star dh-star-sub">✧</span> ${currentUser.totalXp || 0} XP</span></span>`;
     btn.title = "View Profile (" + (currentUser.location || 'Dev Harbour') + ")";
     btn.onclick = () => openProfileModal();
     const initial = (currentUser.username || 'U')[0].toUpperCase();
@@ -1024,7 +1024,7 @@ function handleSignup(e) {
       localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
       updateAuthUI();
       closeAuthModal();
-      toast(`🎉 Welcome to Dev Harbour, @${currentUser.username}!`);
+      toast(`✦ Welcome to Dev Harbour, @${currentUser.username}!`);
     })
     .catch(err => {
       // Local Database Fallback (when on GitHub Pages or static host)
@@ -1038,7 +1038,7 @@ function handleSignup(e) {
         if (syncChannel) {
           syncChannel.postMessage({ type: 'user_joined', message: `${newUser.username} from ${newUser.location} joined Dev Harbour!` });
         }
-        toast(`🎉 Welcome to Dev Harbour, @${currentUser.username}!`);
+        toast(`✦ Welcome to Dev Harbour, @${currentUser.username}!`);
       } catch(localErr) {
         msg.className = 'dh-status-msg error';
         msg.textContent = localErr.message || 'Error creating account.';
@@ -1076,7 +1076,7 @@ function handleLogin(e) {
       localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
       updateAuthUI();
       closeAuthModal();
-      toast(`🚀 Welcome back, @${currentUser.username}!`);
+      toast(`✦ Welcome back, @${currentUser.username}!`);
     })
     .catch(err => {
       // Local Database Fallback
@@ -1087,7 +1087,7 @@ function handleLogin(e) {
         localStorage.setItem('dh_current_user', JSON.stringify(user));
         updateAuthUI();
         closeAuthModal();
-        toast(`🚀 Welcome back, @${currentUser.username}!`);
+        toast(`✦ Welcome back, @${currentUser.username}!`);
       } catch(localErr) {
         msg.className = 'dh-status-msg error';
         msg.textContent = localErr.message || 'Invalid username or password.';
@@ -1106,11 +1106,11 @@ function openProfileModal() {
   if (!m) return;
   document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
   document.getElementById('pm-user').textContent = '@' + currentUser.username;
-  document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Navi Mumbai, India');
+  document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || 'Navi Mumbai, India');
   document.getElementById('pm-avatar-letter').textContent = (currentUser.username || 'U')[0].toUpperCase();
-  document.getElementById('pm-xp').textContent = currentUser.totalXp || 50;
-  document.getElementById('pm-level').textContent = 'Lvl ' + (currentUser.level || 1);
-  document.getElementById('pm-streak').textContent = '🔥 ' + (currentUser.streakDays || 1);
+  document.getElementById('pm-xp').innerHTML = '<span class="dh-ast-star dh-star-purple">✦</span> ' + (currentUser.totalXp || 50);
+  document.getElementById('pm-level').innerHTML = '<span class="dh-ast-star dh-star-blue">✧</span> Lvl ' + (currentUser.level || 1);
+  document.getElementById('pm-streak').innerHTML = '<span class="dh-ast-star dh-star-amber">✦</span> ' + (currentUser.streakDays || 1);
 
   document.getElementById('pe-name').value = currentUser.fullName || '';
   document.getElementById('pe-loc').value = currentUser.location || '';
@@ -1161,7 +1161,7 @@ function handleSaveProfile(e) {
       localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
       updateAuthUI();
       document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
-      document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Navi Mumbai, India');
+      document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || 'Navi Mumbai, India');
       msg.className = 'dh-status-msg success';
       msg.textContent = '✓ Profile saved successfully!';
       setTimeout(closeProfileModal, 1200);
@@ -1176,7 +1176,7 @@ function handleSaveProfile(e) {
         localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
         updateAuthUI();
         document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
-        document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Navi Mumbai, India');
+        document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || 'Navi Mumbai, India');
         msg.className = 'dh-status-msg success';
         msg.textContent = '✓ Profile saved locally!';
         setTimeout(closeProfileModal, 1200);
@@ -1264,7 +1264,7 @@ function toggleProjectLike(title, event) {
     likesStore[title] = true;
     serverVotes[title] = (serverVotes[title] || 0) + 1;
     newLikesCount = serverVotes[title];
-    toast(`❤️ Liked ${title}!`);
+    toast(`✦ Liked ${title}!`);
   }
   try {
     localStorage.setItem('dh-project-likes', JSON.stringify(likesStore));
@@ -1338,7 +1338,7 @@ try {
       } else if (data.type === 'challenge_solved' && data.data) {
         toast(`Live: ${data.data.username || 'A developer'} solved ${data.data.title}!`);
       } else if (data.type === 'user_joined' && data.message) {
-        toast(`✨ ${data.message}`);
+        toast(`✦ ${data.message}`);
       }
     } catch(err) {}
   };
@@ -1373,10 +1373,10 @@ function rp(){
         </div>
         ${meta ? `
         <div class="px-links">
-          ${meta.playStore ? `<a href="${meta.playStore}" target="_blank" rel="noopener noreferrer" class="px-link-btn" title="Google Play">📱 Google Play ↗</a>` : ''}
-          ${meta.screenshots ? `<a href="${meta.screenshots}" target="_blank" rel="noopener noreferrer" class="px-link-btn" title="Screenshots">📸 Screenshots ↗</a>` : ''}
-          ${meta.linkedin ? `<a href="${meta.linkedin}" target="_blank" rel="noopener noreferrer" class="px-link-btn" title="LinkedIn Post">💼 LinkedIn ↗</a>` : ''}
-          ${meta.detail ? `<button type="button" class="px-info-btn" onclick="openProjectModal('${j[0].replace(/'/g, "\\'")}')">Overview ℹ</button>` : ''}
+          ${meta.playStore ? `<a href="${meta.playStore}" target="_blank" rel="noopener noreferrer" class="px-link-btn" title="Google Play">Google Play ↗</a>` : ''}
+          ${meta.screenshots ? `<a href="${meta.screenshots}" target="_blank" rel="noopener noreferrer" class="px-link-btn" title="Screenshots">Screenshots ↗</a>` : ''}
+          ${meta.linkedin ? `<a href="${meta.linkedin}" target="_blank" rel="noopener noreferrer" class="px-link-btn" title="LinkedIn Post">LinkedIn ↗</a>` : ''}
+          ${meta.detail ? `<button type="button" class="px-info-btn" onclick="openProjectModal('${j[0].replace(/'/g, "\\'")}')">Overview ✦</button>` : ''}
         </div>` : ''}
       </div>
     </article>`;
@@ -1418,9 +1418,9 @@ function openProjectModal(title){
         <div class="pm-desc" style="white-space:pre-line;">${meta.detail||prj[1]}</div>
         <div class="pm-actions">
           <a href="${prj[3]}" target="_blank" rel="noopener noreferrer" class="pm-btn primary">View Project ↗</a>
-          ${meta.playStore?`<a href="${meta.playStore}" target="_blank" rel="noopener noreferrer" class="pm-btn secondary">📱 Google Play ↗</a>`:''}
-          ${meta.screenshots?`<a href="${meta.screenshots}" target="_blank" rel="noopener noreferrer" class="pm-btn secondary">📸 Screenshots ↗</a>`:''}
-          ${meta.linkedin?`<a href="${meta.linkedin}" target="_blank" rel="noopener noreferrer" class="pm-btn secondary">💼 LinkedIn Post ↗</a>`:''}
+          ${meta.playStore?`<a href="${meta.playStore}" target="_blank" rel="noopener noreferrer" class="pm-btn secondary">Google Play ↗</a>`:''}
+          ${meta.screenshots?`<a href="${meta.screenshots}" target="_blank" rel="noopener noreferrer" class="pm-btn secondary">Screenshots ↗</a>`:''}
+          ${meta.linkedin?`<a href="${meta.linkedin}" target="_blank" rel="noopener noreferrer" class="pm-btn secondary">LinkedIn Post ↗</a>`:''}
           ${meta.github?`<a href="${meta.github}" target="_blank" rel="noopener noreferrer" class="pm-btn secondary">GitHub ↗</a>`:''}
         </div>
       </div>
@@ -1687,7 +1687,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
         <label>Bio (Optional)</label>
         <textarea id="su-bio" rows="2" placeholder="What are you building?"></textarea>
       </div>
-      <button type="submit" class="dh-submit-btn" id="su-submit">Create Account ⚡</button>
+      <button type="submit" class="dh-submit-btn" id="su-submit">Create Account <span class="dh-ast-star">✦</span></button>
       <div class="dh-status-msg" id="su-msg"></div>
     </form>
 
@@ -1701,7 +1701,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
         <label>Password</label>
         <input type="password" id="li-pass" required placeholder="••••••••" autocomplete="current-password">
       </div>
-      <button type="submit" class="dh-submit-btn" id="li-submit">Sign In 🚀</button>
+      <button type="submit" class="dh-submit-btn" id="li-submit">Sign In <span class="dh-ast-star">✦</span></button>
       <div class="dh-status-msg" id="li-msg"></div>
     </form>
   </div>
@@ -1716,13 +1716,13 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       <div class="dh-prof-avatar" id="pm-avatar-letter">P</div>
       <div class="dh-prof-meta">
         <h3 id="pm-name">Developer</h3>
-        <p><span id="pm-user">@developer</span> · <span class="dh-badge-loc" id="pm-loc">📍 Navi Mumbai</span></p>
+        <p><span id="pm-user">@developer</span> · <span class="dh-badge-loc" id="pm-loc"><span class="dh-ast-star">✦</span> Navi Mumbai</span></p>
       </div>
     </div>
     <div class="dh-stats-grid">
-      <div class="dh-stat-box"><b id="pm-xp">0</b><span>Total XP</span></div>
-      <div class="dh-stat-box"><b id="pm-level">Lvl 1</b><span>Rank</span></div>
-      <div class="dh-stat-box"><b id="pm-streak">🔥 1</b><span>Streak</span></div>
+      <div class="dh-stat-box"><b id="pm-xp"><span class="dh-ast-star dh-star-purple">✦</span> 0</b><span>Total XP</span></div>
+      <div class="dh-stat-box"><b id="pm-level"><span class="dh-ast-star dh-star-blue">✧</span> Lvl 1</b><span>Rank</span></div>
+      <div class="dh-stat-box"><b id="pm-streak"><span class="dh-ast-star dh-star-amber">✦</span> 1</b><span>Streak</span></div>
     </div>
     <form id="form-profile" onsubmit="handleSaveProfile(event)">
       <div class="dh-field">
