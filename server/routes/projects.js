@@ -163,7 +163,7 @@ router.post('/:id/vote', (req, res) => {
 
   // Real-Time Broadcast to all connected clients!
   const likerName = req.user ? (req.user.username || req.user.full_name) : (req.body && req.body.username ? req.body.username : 'A developer');
-  const userLoc = (req.body && req.body.location ? req.body.location : (req.user && req.user.location ? req.user.location : 'Nashik')).trim();
+  const userLoc = (req.body && req.body.location ? req.body.location : (req.user && req.user.location ? req.user.location : 'Navi Mumbai')).trim();
 
   eventBus.broadcast({
     type: 'project_voted',

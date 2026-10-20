@@ -877,7 +877,7 @@ const LocalDB = {
       username: username.trim(),
       email: cleanEmail,
       password: password,
-      location: (location || 'Nashik, India').trim(),
+      location: (location || 'Navi Mumbai, India').trim(),
       bio: (bio || '').trim(),
       role: 'student',
       totalXp: 50,
@@ -998,7 +998,7 @@ function handleSignup(e) {
   const user = document.getElementById('su-user').value.trim();
   const email = document.getElementById('su-email').value.trim();
   const pass = document.getElementById('su-pass').value;
-  const loc = document.getElementById('su-loc').value.trim() || 'Nashik, India';
+  const loc = document.getElementById('su-loc').value.trim() || 'Navi Mumbai, India';
   const bio = document.getElementById('su-bio').value.trim();
   const msg = document.getElementById('su-msg');
   msg.className = 'dh-status-msg';
@@ -1106,7 +1106,7 @@ function openProfileModal() {
   if (!m) return;
   document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
   document.getElementById('pm-user').textContent = '@' + currentUser.username;
-  document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Nashik, India');
+  document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Navi Mumbai, India');
   document.getElementById('pm-avatar-letter').textContent = (currentUser.username || 'U')[0].toUpperCase();
   document.getElementById('pm-xp').textContent = currentUser.totalXp || 50;
   document.getElementById('pm-level').textContent = 'Lvl ' + (currentUser.level || 1);
@@ -1161,7 +1161,7 @@ function handleSaveProfile(e) {
       localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
       updateAuthUI();
       document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
-      document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Nashik, India');
+      document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Navi Mumbai, India');
       msg.className = 'dh-status-msg success';
       msg.textContent = '✓ Profile saved successfully!';
       setTimeout(closeProfileModal, 1200);
@@ -1176,7 +1176,7 @@ function handleSaveProfile(e) {
         localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
         updateAuthUI();
         document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
-        document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Nashik, India');
+        document.getElementById('pm-loc').textContent = '📍 ' + (currentUser.location || 'Navi Mumbai, India');
         msg.className = 'dh-status-msg success';
         msg.textContent = '✓ Profile saved locally!';
         setTimeout(closeProfileModal, 1200);
@@ -1270,7 +1270,7 @@ function toggleProjectLike(title, event) {
     localStorage.setItem('dh-project-likes', JSON.stringify(likesStore));
   } catch(e) {}
 
-  const userLoc = (currentUser && currentUser.location) ? currentUser.location : 'Nashik';
+  const userLoc = (currentUser && currentUser.location) ? currentUser.location : 'Navi Mumbai';
   const userName = (currentUser && currentUser.username) ? currentUser.username : 'A developer';
 
   // Broadcast to other open tabs / windows immediately via BroadcastChannel
@@ -1665,11 +1665,11 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
     <form id="form-signup" onsubmit="handleSignup(event)">
       <div class="dh-field">
         <label>Full Name</label>
-        <input type="text" id="su-name" required placeholder="e.g. Parth Gidde" autocomplete="name">
+        <input type="text" id="su-name" required placeholder="e.g. Parth Sharma" autocomplete="name">
       </div>
       <div class="dh-field">
         <label>Unique Username</label>
-        <input type="text" id="su-user" required placeholder="e.g. parth_nashik" autocomplete="username">
+        <input type="text" id="su-user" required placeholder="e.g. GARAA" autocomplete="username">
       </div>
       <div class="dh-field">
         <label>Email Address</label>
@@ -1681,7 +1681,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       </div>
       <div class="dh-field">
         <label>City / Location</label>
-        <input type="text" id="su-loc" placeholder="e.g. Nashik, India" value="Nashik, India">
+        <input type="text" id="su-loc" placeholder="e.g. Navi Mumbai, India" value="Navi Mumbai, India">
       </div>
       <div class="dh-field">
         <label>Bio (Optional)</label>
@@ -1695,7 +1695,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
     <form id="form-login" onsubmit="handleLogin(event)" style="display:none;">
       <div class="dh-field">
         <label>Email or Username</label>
-        <input type="text" id="li-user" required placeholder="parth_nashik or name@domain.com" autocomplete="username">
+        <input type="text" id="li-user" required placeholder="GARAA or name@domain.com" autocomplete="username">
       </div>
       <div class="dh-field">
         <label>Password</label>
@@ -1716,7 +1716,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       <div class="dh-prof-avatar" id="pm-avatar-letter">P</div>
       <div class="dh-prof-meta">
         <h3 id="pm-name">Developer</h3>
-        <p><span id="pm-user">@developer</span> · <span class="dh-badge-loc" id="pm-loc">📍 Nashik</span></p>
+        <p><span id="pm-user">@developer</span> · <span class="dh-badge-loc" id="pm-loc">📍 Navi Mumbai</span></p>
       </div>
     </div>
     <div class="dh-stats-grid">
@@ -1731,7 +1731,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       </div>
       <div class="dh-field">
         <label>City / Location</label>
-        <input type="text" id="pe-loc" placeholder="e.g. Nashik, India">
+        <input type="text" id="pe-loc" placeholder="e.g. Navi Mumbai, India">
       </div>
       <div class="dh-field">
         <label>Bio</label>
