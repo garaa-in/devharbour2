@@ -461,13 +461,134 @@ html[data-theme="mercury"] .spb{background:linear-gradient(90deg,#2c2c2f,#9a9aa2
 .fc,.fx,.lbx{background:radial-gradient(260px circle at var(--mx,-300px) var(--my,-300px),var(--spot),transparent 65%),linear-gradient(var(--card),var(--card))}
 .spb{position:fixed;left:0;top:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,#8d88a3,#fff,#8d88a3);z-index:9;pointer-events:none}
 .mq{overflow:hidden;padding:20px 0;margin-top:clamp(30px,6vh,70px);border-block:1px solid var(--line)}
-.mqt{display:flex;align-items:center;gap:26px;width:max-content;animation:mqs 32s linear infinite}
-.mqt span{font-size:clamp(28px,5vw,56px);font-weight:800;letter-spacing:-.03em;text-transform:uppercase;white-space:nowrap}
-.mqt span:nth-of-type(even){color:transparent;-webkit-text-stroke:1.5px var(--ink)}
-.mqt i{font-style:normal;color:var(--sv);font-size:20px}
-@keyframes mqs{to{transform:translateX(-50%)}}
+
+
+
+
+
 .zb{position:relative;overflow:hidden}.zb:after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.35) 50%,transparent 60%) 140% 0/260% 100% no-repeat;transition:background-position .9s var(--e);pointer-events:none}.zb:hover:after{background-position:-40% 0}
 @media(prefers-reduced-motion:reduce){.mqt,html[data-theme="mercury"] body:before,html[data-theme="mercury"] #intro{animation:none!important}}
+
+
+/* ===== LIQUID MERCURY FLOWING MARQUEE STRIP ===== */
+.mq {
+  overflow: hidden;
+  padding: 13px 0;
+  margin-top: clamp(20px, 4.5vh, 50px);
+  position: relative;
+  background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(226,229,235,0.65) 24%, rgba(180,185,197,0.45) 48%, rgba(255,255,255,0.85) 68%, rgba(158,163,175,0.5) 84%, rgba(216,219,226,0.65) 100%);
+  background-size: 260% 260%;
+  animation: mercuryFlow 10s ease-in-out infinite alternate;
+  border-block: 1px solid rgba(255,255,255,0.85);
+  box-shadow: 
+    0 6px 20px -4px rgba(20,20,35,0.12),
+    inset 0 1.5px 2px rgba(255,255,255,0.95),
+    inset 0 -1.5px 2px rgba(130,135,150,0.3);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  user-select: none;
+}
+
+.mq::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.65) 48%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.65) 52%, transparent 75%);
+  background-size: 200% 100%;
+  animation: mercuryShine 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+html[data-theme="dark"] .mq {
+  background: linear-gradient(135deg, rgba(28,28,34,0.9) 0%, rgba(44,44,54,0.7) 24%, rgba(70,70,85,0.5) 48%, rgba(32,32,38,0.9) 68%, rgba(85,85,102,0.55) 84%, rgba(24,24,28,0.95) 100%);
+  border-block: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 
+    0 8px 30px -6px rgba(0,0,0,0.6),
+    inset 0 1.5px 2px rgba(255,255,255,0.15),
+    inset 0 -1.5px 2px rgba(0,0,0,0.7);
+}
+
+html[data-theme="mercury"] .mq {
+  background: linear-gradient(135deg, #ffffff 0%, #e2e5eb 24%, #b4b9c5 48%, #ffffff 68%, #9ea3af 84%, #d8dbe2 100%);
+  border-block: 1px solid rgba(255,255,255,0.95);
+  box-shadow: 
+    0 6px 22px -4px rgba(20,20,35,0.22),
+    inset 0 1.5px 2px #fff,
+    inset 0 -1.5px 2px rgba(110,115,130,0.4);
+}
+
+.mqt {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  width: max-content;
+  animation: mqs 36s linear infinite;
+  will-change: transform;
+}
+
+.mqt span {
+  font-size: clamp(14px, 1.8vw, 22px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(110deg, #18171f 0%, #3e3a4d 25%, #8a859e 46%, #ffffff 50%, #8a859e 54%, #3e3a4d 75%, #18171f 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: mercuryTextShine 7s linear infinite;
+}
+
+.mqt span:nth-of-type(even) {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.2px #2d2b38;
+  background: none;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.8));
+}
+
+html[data-theme="dark"] .mqt span {
+  background: linear-gradient(110deg, #d2d2e0 0%, #9a9ab2 25%, #ffffff 48%, #ffffff 52%, #9a9ab2 75%, #d2d2e0 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html[data-theme="dark"] .mqt span:nth-of-type(even) {
+  -webkit-text-stroke: 1.2px rgba(255,255,255,0.55);
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+
+.mqt i {
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1;
+  color: #5b5375;
+  filter: drop-shadow(0 0 5px rgba(139,92,246,0.45));
+  animation: astStarPulse 3s ease-in-out infinite;
+  user-select: none;
+}
+
+html[data-theme="dark"] .mqt i {
+  color: #c4b5fd;
+  filter: drop-shadow(0 0 7px rgba(196,181,253,0.65));
+}
+
+@keyframes mqs {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes mercuryTextShine {
+  0% { background-position: 250% 0; }
+  100% { background-position: -250% 0; }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .mqt { animation: none !important; }
+}
 
 /* ===== COMPACT LEADERBOARD + RESPONSIVE PASS (phone / tablet / laptop / desktop) ===== */
 html{-webkit-text-size-adjust:100%}
@@ -756,6 +877,7 @@ html[data-theme="dark"] .pm-btn.secondary{background:rgba(255,255,255,.06);color
 <div class="xbm"><div class="xp"><b>+6</b><span>ways to learn, build<br>and launch</span></div>
 <p class="xb"><b>Learn.</b><b>Build.</b><b>Compete.</b></p><p class="xl" id="xl"><a data-lk="community">Community</a><s></s><a data-lk="instagram">Instagram</a><s></s><a data-lk="linkedin">LinkedIn</a><s></s><a data-lk="orcathon" class="hot">ORCAthon ↗</a></p><p class="xh">Click anywhere to enter</p></div></div><button class="sc" type="button" data-sc="#featured">Scroll to explore</button></div><canvas id="nc" aria-hidden="true"></canvas><div class="xfl"></div>
 <div id="landing">
+<div class="mq" aria-hidden="true"><div class="mqt"><span>LEARN</span><i>✦</i><span>BUILD</span><i>✦</i><span>COMPETE</span><i>✦</i><span>GROW</span><i>✦</i><span>ORCATHON 2K26</span><i>✦</i><span>DEV HARBOUR</span><i>✦</i><span>LEARN</span><i>✦</i><span>BUILD</span><i>✦</i><span>COMPETE</span><i>✦</i><span>GROW</span><i>✦</i><span>ORCATHON 2K26</span><i>✦</i><span>DEV HARBOUR</span><i>✦</i></div></div>
 
 <!-- 1 FEATURED PROJECTS -->
 <section class="zs" id="featured"><h2 class="zh">Ideas worth exploring.</h2><div class="fxg" id="zprj" data-st></div><p class="zn">Curated student projects built, tested, and published on Dev Harbour.</p></section>
