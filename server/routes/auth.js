@@ -6,7 +6,7 @@ const eventBus = require('../events');
 
 // POST /api/auth/signup
 router.post('/signup', (req, res) => {
-  const { email, username, fullName, password } = req.body;
+  const { email, username, fullName, password, location, bio } = req.body;
 
   if (!validateEmail(email)) {
     return res.status(400).json({ error: 'Valid email address is required.' });
@@ -36,7 +36,9 @@ router.post('/signup', (req, res) => {
     fullName,
     passwordHash: hash,
     salt,
-    role: 'student'
+    role: 'student',
+    location: location || '',
+    bio: bio || ''
   });
 
   const { token, expiresAt } = db.createSession(user.id);
@@ -45,7 +47,8 @@ router.post('/signup', (req, res) => {
   eventBus.broadcast({
     type: 'user_joined',
     username: user.username,
-    message: `${user.username} joined the Dev Harbour student community!`
+    location: user.location || '',
+    message: `${user.username}${user.location ? ` from ${user.location}` : ''} joined the Dev Harbour student community!`
   });
 
   res.status(201).json({
@@ -96,6 +99,7 @@ router.post('/login', (req, res) => {
       role: user.role,
       avatarUrl: user.avatar_url,
       bio: user.bio,
+      location: user.location || '',
       githubUrl: user.github_url,
       portfolioUrl: user.portfolio_url,
       streakDays: streak,
@@ -129,6 +133,7 @@ router.get('/me', requireAuth, (req, res) => {
       role: user.role,
       avatarUrl: user.avatar_url,
       bio: user.bio,
+      location: user.location || '',
       githubUrl: user.github_url,
       portfolioUrl: user.portfolio_url,
       streakDays: user.streak_days,
@@ -143,12 +148,14 @@ router.get('/me', requireAuth, (req, res) => {
 
 // PUT /api/auth/profile
 router.put('/profile', requireAuth, (req, res) => {
-  const { fullName, bio, githubUrl, portfolioUrl } = req.body;
+  const { fullName, bio, githubUrl, portfolioUrl, location, avatarUrl } = req.body;
   const updated = db.updateUserProfile(req.user.id, {
     fullName,
     bio,
     githubUrl,
-    portfolioUrl
+    portfolioUrl,
+    location,
+    avatarUrl
   });
 
   res.json({

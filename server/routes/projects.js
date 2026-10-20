@@ -148,21 +148,39 @@ router.post('/:id/vote', (req, res) => {
     return res.status(404).json({ error: 'Project not found.' });
   }
 
+  let votesCount = 0;
+  let voted = true;
+
   if (req.user) {
     const result = db.toggleProjectVote(req.user.id, project.id);
-    return res.json({
-      message: result.voted ? 'Upvote registered!' : 'Upvote removed.',
-      voted: result.voted,
-      votesCount: result.votesCount
-    });
+    voted = result.voted;
+    votesCount = result.votesCount;
   } else {
     const updated = db.incrementProjectVotes(project.id);
-    return res.json({
-      message: 'Upvote registered!',
-      voted: true,
-      votesCount: updated.votesCount
-    });
+    voted = true;
+    votesCount = updated.votesCount;
   }
+
+  // Real-Time Broadcast to all connected clients!
+  const likerName = req.user ? (req.user.username || req.user.full_name) : (req.body && req.body.username ? req.body.username : 'A developer');
+  const userLoc = (req.body && req.body.location ? req.body.location : (req.user && req.user.location ? req.user.location : 'Nashik')).trim();
+
+  eventBus.broadcast({
+    type: 'project_voted',
+    projectId: project.id,
+    projectTitle: project.title,
+    voted,
+    votesCount,
+    username: likerName,
+    location: userLoc,
+    message: `${likerName}${userLoc ? ' from ' + userLoc : ''} liked "${project.title}"! (${votesCount} ${votesCount === 1 ? 'like' : 'likes'})`
+  });
+
+  return res.json({
+    message: voted ? 'Upvote registered!' : 'Upvote removed.',
+    voted,
+    votesCount
+  });
 });
 
 // POST /api/projects/:id/bookmark

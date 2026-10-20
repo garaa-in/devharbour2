@@ -31,6 +31,7 @@ function initSchema() {
       role TEXT NOT NULL DEFAULT 'student' CHECK (role IN ('student', 'moderator', 'admin')),
       avatar_url TEXT DEFAULT '',
       bio TEXT DEFAULT '',
+      location TEXT DEFAULT '',
       github_url TEXT DEFAULT '',
       portfolio_url TEXT DEFAULT '',
       streak_days INTEGER DEFAULT 0,
@@ -431,7 +432,7 @@ function calculateLevel(xp) {
 
 // User Helpers
 function getUserById(id) {
-  return db.prepare('SELECT id, email, username, full_name, role, avatar_url, bio, github_url, portfolio_url, streak_days, last_active_date, created_at FROM users WHERE id = ?').get(id);
+  return db.prepare('SELECT id, email, username, full_name, role, avatar_url, bio, location, github_url, portfolio_url, streak_days, last_active_date, created_at FROM users WHERE id = ?').get(id);
 }
 
 function getUserByEmail(email) {
@@ -442,12 +443,12 @@ function getUserByUsername(username) {
   return db.prepare('SELECT * FROM users WHERE username = ?').get(username.trim().toLowerCase());
 }
 
-function createUser({ email, username, fullName, passwordHash, salt, role = 'student' }) {
+function createUser({ email, username, fullName, passwordHash, salt, role = 'student', location = '', bio = '' }) {
   const id = 'usr-' + crypto.randomUUID().slice(0, 8);
   db.prepare(`
-    INSERT INTO users (id, email, username, full_name, password_hash, salt, role)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(id, email.trim().toLowerCase(), username.trim().toLowerCase(), fullName.trim(), passwordHash, salt, role);
+    INSERT INTO users (id, email, username, full_name, password_hash, salt, role, location, bio)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, email.trim().toLowerCase(), username.trim().toLowerCase(), fullName.trim(), passwordHash, salt, role, (location || '').trim(), (bio || '').trim());
 
   db.prepare(`
     INSERT INTO user_settings (user_id, theme) VALUES (?, 'light')
@@ -456,16 +457,18 @@ function createUser({ email, username, fullName, passwordHash, salt, role = 'stu
   return getUserById(id);
 }
 
-function updateUserProfile(userId, { fullName, bio, githubUrl, portfolioUrl }) {
+function updateUserProfile(userId, { fullName, bio, githubUrl, portfolioUrl, location, avatarUrl }) {
   db.prepare(`
     UPDATE users
     SET full_name = COALESCE(?, full_name),
         bio = COALESCE(?, bio),
         github_url = COALESCE(?, github_url),
         portfolio_url = COALESCE(?, portfolio_url),
+        location = COALESCE(?, location),
+        avatar_url = COALESCE(?, avatar_url),
         updated_at = datetime('now')
     WHERE id = ?
-  `).run(fullName, bio, githubUrl, portfolioUrl, userId);
+  `).run(fullName, bio, githubUrl, portfolioUrl, location, avatarUrl, userId);
 
   return getUserById(userId);
 }
