@@ -940,73 +940,39 @@ function updateAuthUI() {
   if (currentUser) {
     btn.innerHTML = `👑 @${currentUser.username} <span style="opacity:0.75;margin-left:4px;font-size:11.5px">⚡ ${currentUser.totalXp || 0} XP</span>`;
     btn.title = "View Profile (" + (currentUser.location || 'Dev Harbour') + ")";
-    btn.onclick = openProfileModal;
+    btn.onclick = () => openProfileModal();
     const initial = (currentUser.username || 'U')[0].toUpperCase();
     av.innerHTML = `<span style="font-weight:800;font-size:16px;color:#fff">${initial}</span>`;
     av.style.display = 'grid';
     av.style.placeItems = 'center';
-    av.onclick = openProfileModal;
+    av.onclick = () => openProfileModal();
     if (greet) greet.textContent = currentUser.fullName || currentUser.username;
   } else {
     btn.textContent = '+ Sign up / Log in';
     btn.title = "Create an account or sign in";
-    btn.onclick = openAuthModal;
+    btn.onclick = () => openAuthModal();
     av.innerHTML = '';
-    av.onclick = openAuthModal;
+    av.onclick = () => openAuthModal();
     if (greet) greet.textContent = 'Developer';
   }
 }
 
-function checkAuthSession() {
-  const token = localStorage.getItem('dh_token');
-  if (!token) {
-    updateAuthUI();
-    return;
-  }
-  // Try backend first
-  fetch('/api/auth/me', { headers: getAuthHeaders() })
-    .then(r => {
-      if (!r.ok) throw new Error('Backend not available or invalid session');
-      return r.json();
-    })
-    .then(data => {
-      if (data && data.user) {
-        currentUser = data.user;
-        updateAuthUI();
-      }
-    })
-    .catch(() => {
-      // Fallback to local database session
-      try {
-        const localUser = JSON.parse(localStorage.getItem('dh_current_user') || 'null');
-        if (localUser) {
-          currentUser = localUser;
-        } else {
-          localStorage.removeItem('dh_token');
-          currentUser = null;
-        }
-      } catch(e) {
-        currentUser = null;
-      }
-      updateAuthUI();
-    });
-}
-checkAuthSession();
-
-window.openAuthModal = function(tab = 'signup') {
+function openAuthModal(tab = 'signup') {
   const m = document.getElementById('dh-auth-modal');
   if (m) {
     m.classList.add('open');
     switchAuthTab(tab);
   }
-};
+}
+window.openAuthModal = openAuthModal;
 
-window.closeAuthModal = function() {
+function closeAuthModal() {
   const m = document.getElementById('dh-auth-modal');
   if (m) m.classList.remove('open');
-};
+}
+window.closeAuthModal = closeAuthModal;
 
-window.switchAuthTab = function(tab) {
+function switchAuthTab(tab) {
   const suForm = document.getElementById('form-signup');
   const liForm = document.getElementById('form-login');
   const suBtn = document.getElementById('tab-btn-signup');
@@ -1024,7 +990,9 @@ window.switchAuthTab = function(tab) {
   }
 };
 
-window.handleSignup = function(e) {
+window.switchAuthTab = switchAuthTab;
+
+function handleSignup(e) {
   e.preventDefault();
   const name = document.getElementById('su-name').value.trim();
   const user = document.getElementById('su-user').value.trim();
@@ -1078,7 +1046,9 @@ window.handleSignup = function(e) {
     });
 };
 
-window.handleLogin = function(e) {
+window.handleSignup = handleSignup;
+
+function handleLogin(e) {
   e.preventDefault();
   const loginVal = document.getElementById('li-user').value.trim();
   const pass = document.getElementById('li-pass').value;
@@ -1125,7 +1095,9 @@ window.handleLogin = function(e) {
     });
 };
 
-window.openProfileModal = function() {
+window.handleLogin = handleLogin;
+
+function openProfileModal() {
   if (!currentUser) {
     openAuthModal('signup');
     return;
@@ -1150,12 +1122,16 @@ window.openProfileModal = function() {
   m.classList.add('open');
 };
 
-window.closeProfileModal = function() {
+window.openProfileModal = openProfileModal;
+
+function closeProfileModal() {
   const m = document.getElementById('dh-profile-modal');
   if (m) m.classList.remove('open');
 };
 
-window.handleSaveProfile = function(e) {
+window.closeProfileModal = closeProfileModal;
+
+function handleSaveProfile(e) {
   e.preventDefault();
   const name = document.getElementById('pe-name').value.trim();
   const loc = document.getElementById('pe-loc').value.trim();
@@ -1212,7 +1188,9 @@ window.handleSaveProfile = function(e) {
     });
 };
 
-window.handleLogout = function() {
+window.handleSaveProfile = handleSaveProfile;
+
+function handleLogout() {
   fetch('/api/auth/logout', { method: 'POST', headers: getAuthHeaders() }).catch(() => {});
   localStorage.removeItem('dh_token');
   localStorage.removeItem('dh_current_user');
@@ -1221,6 +1199,44 @@ window.handleLogout = function() {
   closeProfileModal();
   toast('Signed out.');
 };
+window.handleLogout = handleLogout;
+
+function checkAuthSession() {
+  const token = localStorage.getItem('dh_token');
+  if (!token) {
+    updateAuthUI();
+    return;
+  }
+  // Try backend first
+  fetch('/api/auth/me', { headers: getAuthHeaders() })
+    .then(r => {
+      if (!r.ok) throw new Error('Backend not available or invalid session');
+      return r.json();
+    })
+    .then(data => {
+      if (data && data.user) {
+        currentUser = data.user;
+        updateAuthUI();
+      }
+    })
+    .catch(() => {
+      // Fallback to local database session
+      try {
+        const localUser = JSON.parse(localStorage.getItem('dh_current_user') || 'null');
+        if (localUser) {
+          currentUser = localUser;
+        } else {
+          localStorage.removeItem('dh_token');
+          currentUser = null;
+        }
+      } catch(e) {
+        currentUser = null;
+      }
+      updateAuthUI();
+    });
+}
+window.checkAuthSession = checkAuthSession;
+checkAuthSession();
 
 function getProjectLikes(title) {
   const userBonus = likesStore[title] ? 1 : 0;
@@ -1232,7 +1248,7 @@ function isProjectLiked(title) {
   return Boolean(likesStore[title]);
 }
 
-window.toggleProjectLike = function(title, event) {
+function toggleProjectLike(title, event) {
   if (event) {
     event.stopPropagation();
     event.preventDefault();
@@ -1367,7 +1383,7 @@ function rp(){
   }).join('');
 }
 
-window.openProjectModal=function(title){
+function openProjectModal(title){
   const prj=J.find(x=>x[0]===title);
   if(!prj)return;
   const meta=prj[6]||{};
@@ -1470,8 +1486,43 @@ function neurons(x,y){const dpr=Math.min(devicePixelRatio||1,2),W=innerWidth,H=i
    const gr=cx.createRadialGradient(n.x,n.y,0,n.x,n.y,R2);gr.addColorStop(0,'rgba(255,255,255,'+.55*a+')');gr.addColorStop(1,'rgba(255,255,255,0)');cx.fillStyle=gr;cx.beginPath();cx.arc(n.x,n.y,R2,0,6.283);cx.fill();
    cx.fillStyle='rgba(255,255,255,'+Math.min(1,a+.2)+')';cx.beginPath();cx.arc(n.x,n.y,r,0,6.283);cx.fill()}
   requestAnimationFrame(f)})(T0)}
-const go=(x,y,v,fast)=>{if(intro.classList.contains('out'))return;if(fast)intro.classList.add('fast');else{intro.style.setProperty('--x',x+'px');intro.style.setProperty('--y',y+'px');neurons(x,y)}intro.classList.add('out');if(v)show(v);setTimeout(()=>{document.body.style.overflow='';intro.remove()},fast?600:2500)};
-const hz=$('hz');hz.onclick=e=>{const s=e.target.closest('[data-sc]');s?jump(s.dataset.sc):go(e.clientX,e.clientY)};hz.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();const s=e.target.closest('[data-sc]');s?jump(s.dataset.sc):go(innerWidth/2,innerHeight/2)}};hz.focus({preventScroll:true});
+const go=(x,y,v,fast)=>{
+  if(intro.classList.contains('out'))return;
+  if(fast)intro.classList.add('fast');
+  else{
+    const cx=(x==null||isNaN(x))?innerWidth/2:x;
+    const cy=(y==null||isNaN(y))?innerHeight/2:y;
+    intro.style.setProperty('--x',cx+'px');
+    intro.style.setProperty('--y',cy+'px');
+    neurons(cx,cy);
+  }
+  intro.classList.add('out');
+  if(v)show(v);
+  setTimeout(()=>{
+    document.body.style.overflow='';
+    intro.remove();
+  },fast?600:2500);
+};
+window.go=go;
+const hz=$('hz');
+function handleHeroTrigger(e){
+  const s=e.target.closest('[data-sc]');
+  if(s){jump(s.dataset.sc);return}
+  if(e.target.closest('a')||e.target.closest('[data-lk]'))return;
+  go(e.clientX,e.clientY);
+}
+if(hz){
+  hz.onclick=handleHeroTrigger;
+  hz.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();const s=e.target.closest('[data-sc]');s?jump(s.dataset.sc):go(innerWidth/2,innerHeight/2)}};
+  hz.focus({preventScroll:true});
+}
+if(intro){
+  intro.addEventListener('click',e=>{
+    if(e.target.closest('#landing')||e.target.closest('[data-sc]')||e.target.closest('a')||e.target.closest('[data-lk]'))return;
+    go(e.clientX,e.clientY);
+  });
+}
+
 </script>
 
 <script>
@@ -1485,6 +1536,7 @@ a.addEventListener('keydown',e=>e.stopPropagation())});
 
 function jump(s){const e=$('intro')&&$('intro').querySelector(s);if(e)e.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'})}
 function enter(v,x,y){go(x==null?innerWidth/2:x,y==null?innerHeight/2:y,v,false)}
+window.enter=enter;
 (function(){
 const intro=$('intro'),LD=$('landing'),T=a=>a.map(t=>`<span>${t}</span>`).join('');
 const ph=(k,t)=>LINKS[k]?`<a href="${LINKS[k]}" target="_blank" rel="noopener noreferrer">${t}</a>`:`<a href="#" data-t="${t} link isn’t set yet — add it in LINKS" title="Placeholder">${t}</a>`;
