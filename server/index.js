@@ -15,6 +15,7 @@ const projectRoutes = require('./routes/projects');
 const leaderboardRoutes = require('./routes/leaderboard');
 const achievementRoutes = require('./routes/achievements');
 const userRoutes = require('./routes/user');
+const workspaceRoutes = require('./routes/workspace');
 const eventBus = require('./events');
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/achievements', achievementRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/workspace', workspaceRoutes);
 
 // Real-Time Server-Sent Events (SSE) Stream
 app.get('/api/events', (req, res) => {

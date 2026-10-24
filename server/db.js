@@ -199,6 +199,71 @@ function initSchema() {
       created_at TEXT DEFAULT (datetime('now')),
       UNIQUE(user_id, project_id)
     );
+    CREATE TABLE IF NOT EXISTS workspace_tasks (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      subject TEXT DEFAULT 'General',
+      priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+      due_date TEXT,
+      status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed')),
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_ws_tasks_user ON workspace_tasks(user_id, status);
+
+    CREATE TABLE IF NOT EXISTS workspace_notes (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      content TEXT DEFAULT '',
+      subject TEXT DEFAULT 'General',
+      tags TEXT DEFAULT '',
+      link TEXT DEFAULT '',
+      is_pinned INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_ws_notes_user ON workspace_notes(user_id, is_pinned);
+
+    CREATE TABLE IF NOT EXISTS workspace_assignments (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      description TEXT DEFAULT '',
+      due_date TEXT,
+      priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+      status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'completed')),
+      link TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_ws_assignments_user ON workspace_assignments(user_id, status);
+
+    CREATE TABLE IF NOT EXISTS workspace_snippets (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      language TEXT DEFAULT 'javascript',
+      code TEXT NOT NULL,
+      input TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_ws_snippets_user ON workspace_snippets(user_id);
+
+    CREATE TABLE IF NOT EXISTS workspace_bookmarks (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      item_id TEXT,
+      item_type TEXT DEFAULT 'resource',
+      title TEXT NOT NULL,
+      url TEXT NOT NULL,
+      category TEXT DEFAULT 'general',
+      created_at TEXT DEFAULT (datetime('now')),
+      UNIQUE(user_id, url)
+    );
+    CREATE INDEX IF NOT EXISTS idx_ws_bookmarks_user ON workspace_bookmarks(user_id);
   `);
 }
 
@@ -960,6 +1025,142 @@ function saveUserSettings(userId, { theme, emailNotifications, profilePublic }) 
 initSchema();
 seedDatabase();
 
+// ==========================================
+// Workspace Data Operations
+// ==========================================
+function getWorkspaceData(userId) {
+  const tasks = db.prepare('SELECT * FROM workspace_tasks WHERE user_id = ? ORDER BY status ASC, due_date ASC, created_at DESC').all(userId);
+  const notes = db.prepare('SELECT * FROM workspace_notes WHERE user_id = ? ORDER BY is_pinned DESC, updated_at DESC').all(userId);
+  const assignments = db.prepare('SELECT * FROM workspace_assignments WHERE user_id = ? ORDER BY due_date ASC, created_at DESC').all(userId);
+  const snippets = db.prepare('SELECT * FROM workspace_snippets WHERE user_id = ? ORDER BY updated_at DESC').all(userId);
+  const bookmarks = db.prepare('SELECT * FROM workspace_bookmarks WHERE user_id = ? ORDER BY created_at DESC').all(userId);
+  return { tasks, notes, assignments, snippets, bookmarks };
+}
+
+function createWorkspaceTask(userId, { title, subject, priority, dueDate }) {
+  const id = 'tsk-' + crypto.randomUUID().slice(0, 8);
+  db.prepare(`
+    INSERT INTO workspace_tasks (id, user_id, title, subject, priority, due_date, status)
+    VALUES (?, ?, ?, ?, ?, ?, 'pending')
+  `).run(id, userId, title.trim(), (subject || 'General').trim(), priority || 'medium', dueDate || null);
+  return db.prepare('SELECT * FROM workspace_tasks WHERE id = ?').get(id);
+}
+
+function updateWorkspaceTask(userId, taskId, { title, subject, priority, dueDate, status }) {
+  const existing = db.prepare('SELECT * FROM workspace_tasks WHERE id = ? AND user_id = ?').get(taskId, userId);
+  if (!existing) return null;
+  const newTitle = title !== undefined ? title.trim() : existing.title;
+  const newSubject = subject !== undefined ? subject.trim() : existing.subject;
+  const newPriority = priority !== undefined ? priority : existing.priority;
+  const newDueDate = dueDate !== undefined ? dueDate : existing.due_date;
+  const newStatus = status !== undefined ? status : existing.status;
+  db.prepare(`
+    UPDATE workspace_tasks
+    SET title = ?, subject = ?, priority = ?, due_date = ?, status = ?, updated_at = datetime('now')
+    WHERE id = ? AND user_id = ?
+  `).run(newTitle, newSubject, newPriority, newDueDate, newStatus, taskId, userId);
+  return db.prepare('SELECT * FROM workspace_tasks WHERE id = ?').get(taskId);
+}
+
+function deleteWorkspaceTask(userId, taskId) {
+  const result = db.prepare('DELETE FROM workspace_tasks WHERE id = ? AND user_id = ?').run(taskId, userId);
+  return result.changes > 0;
+}
+
+function createWorkspaceNote(userId, { title, content, subject, tags, link, isPinned }) {
+  const id = 'not-' + crypto.randomUUID().slice(0, 8);
+  db.prepare(`
+    INSERT INTO workspace_notes (id, user_id, title, content, subject, tags, link, is_pinned)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, userId, title.trim(), (content || '').trim(), (subject || 'General').trim(), (tags || '').trim(), (link || '').trim(), isPinned ? 1 : 0);
+  return db.prepare('SELECT * FROM workspace_notes WHERE id = ?').get(id);
+}
+
+function updateWorkspaceNote(userId, noteId, { title, content, subject, tags, link, isPinned }) {
+  const existing = db.prepare('SELECT * FROM workspace_notes WHERE id = ? AND user_id = ?').get(noteId, userId);
+  if (!existing) return null;
+  const newTitle = title !== undefined ? title.trim() : existing.title;
+  const newContent = content !== undefined ? content.trim() : existing.content;
+  const newSubject = subject !== undefined ? subject.trim() : existing.subject;
+  const newTags = tags !== undefined ? tags.trim() : existing.tags;
+  const newLink = link !== undefined ? link.trim() : existing.link;
+  const newPinned = isPinned !== undefined ? (isPinned ? 1 : 0) : existing.is_pinned;
+  db.prepare(`
+    UPDATE workspace_notes
+    SET title = ?, content = ?, subject = ?, tags = ?, link = ?, is_pinned = ?, updated_at = datetime('now')
+    WHERE id = ? AND user_id = ?
+  `).run(newTitle, newContent, newSubject, newTags, newLink, newPinned, noteId, userId);
+  return db.prepare('SELECT * FROM workspace_notes WHERE id = ?').get(noteId);
+}
+
+function deleteWorkspaceNote(userId, noteId) {
+  const result = db.prepare('DELETE FROM workspace_notes WHERE id = ? AND user_id = ?').run(noteId, userId);
+  return result.changes > 0;
+}
+
+function createWorkspaceAssignment(userId, { title, description, dueDate, priority, status, link }) {
+  const id = 'asg-' + crypto.randomUUID().slice(0, 8);
+  db.prepare(`
+    INSERT INTO workspace_assignments (id, user_id, title, description, due_date, priority, status, link)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, userId, title.trim(), (description || '').trim(), dueDate || null, priority || 'medium', status || 'pending', (link || '').trim());
+  return db.prepare('SELECT * FROM workspace_assignments WHERE id = ?').get(id);
+}
+
+function updateWorkspaceAssignment(userId, assignmentId, { title, description, dueDate, priority, status, link }) {
+  const existing = db.prepare('SELECT * FROM workspace_assignments WHERE id = ? AND user_id = ?').get(assignmentId, userId);
+  if (!existing) return null;
+  const newTitle = title !== undefined ? title.trim() : existing.title;
+  const newDesc = description !== undefined ? description.trim() : existing.description;
+  const newDueDate = dueDate !== undefined ? dueDate : existing.due_date;
+  const newPriority = priority !== undefined ? priority : existing.priority;
+  const newStatus = status !== undefined ? status : existing.status;
+  const newLink = link !== undefined ? link.trim() : existing.link;
+  db.prepare(`
+    UPDATE workspace_assignments
+    SET title = ?, description = ?, due_date = ?, priority = ?, status = ?, link = ?, updated_at = datetime('now')
+    WHERE id = ? AND user_id = ?
+  `).run(newTitle, newDesc, newDueDate, newPriority, newStatus, newLink, assignmentId, userId);
+  return db.prepare('SELECT * FROM workspace_assignments WHERE id = ?').get(assignmentId);
+}
+
+function deleteWorkspaceAssignment(userId, assignmentId) {
+  const result = db.prepare('DELETE FROM workspace_assignments WHERE id = ? AND user_id = ?').run(assignmentId, userId);
+  return result.changes > 0;
+}
+
+function saveWorkspaceSnippet(userId, { name, language, code, input }) {
+  const id = 'snp-' + crypto.randomUUID().slice(0, 8);
+  db.prepare(`
+    INSERT INTO workspace_snippets (id, user_id, name, language, code, input)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(id, userId, name.trim(), language || 'javascript', code, input || '');
+  return db.prepare('SELECT * FROM workspace_snippets WHERE id = ?').get(id);
+}
+
+function deleteWorkspaceSnippet(userId, snippetId) {
+  const result = db.prepare('DELETE FROM workspace_snippets WHERE id = ? AND user_id = ?').run(snippetId, userId);
+  return result.changes > 0;
+}
+
+function addWorkspaceBookmark(userId, { itemId, itemType, title, url, category }) {
+  const id = 'bmk-' + crypto.randomUUID().slice(0, 8);
+  db.prepare(`
+    INSERT INTO workspace_bookmarks (id, user_id, item_id, item_type, title, url, category)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(user_id, url) DO UPDATE SET title = excluded.title
+  `).run(id, userId, itemId || null, itemType || 'resource', title.trim(), url.trim(), category || 'general');
+  return db.prepare('SELECT * FROM workspace_bookmarks WHERE user_id = ? AND url = ?').get(userId, url.trim());
+}
+
+function deleteWorkspaceBookmark(userId, bookmarkId) {
+  const result = db.prepare('DELETE FROM workspace_bookmarks WHERE id = ? AND user_id = ?').run(bookmarkId, userId);
+  return result.changes > 0;
+}
+
+
+
+
 module.exports = {
   db,
   calculateLevel,
@@ -998,5 +1199,19 @@ module.exports = {
   checkAndUnlockAchievements,
   getUserAchievements,
   getUserSettings,
-  saveUserSettings
+  saveUserSettings,
+  getWorkspaceData,
+  createWorkspaceTask,
+  updateWorkspaceTask,
+  deleteWorkspaceTask,
+  createWorkspaceNote,
+  updateWorkspaceNote,
+  deleteWorkspaceNote,
+  createWorkspaceAssignment,
+  updateWorkspaceAssignment,
+  deleteWorkspaceAssignment,
+  saveWorkspaceSnippet,
+  deleteWorkspaceSnippet,
+  addWorkspaceBookmark,
+  deleteWorkspaceBookmark
 };

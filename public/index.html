@@ -745,6 +745,625 @@ html[data-theme="dark"] .px-modal-close:hover{background:rgba(255,255,255,.24)}
 .pm-btn.secondary{background:rgba(0,0,0,.05);color:var(--ink);border:1px solid var(--line)}
 html[data-theme="dark"] .pm-btn.secondary{background:rgba(255,255,255,.06);color:#eee}
 
+/* ===== DEV HARBOUR: STUDENT WORKSPACE & VENOM SYMBIOE STYLES ===== */
+.dh-ws-header {
+  grid-column: span 12;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+.dh-ws-title-group h2 {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 6px 0 2px;
+}
+.dh-ws-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: var(--soft);
+  color: var(--mut);
+}
+.dh-ws-badge svg.i {
+  width: 13px;
+  height: 13px;
+}
+.dh-ws-top-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dh-ws-search-wrap {
+  position: relative;
+  min-width: 250px;
+  max-width: 360px;
+}
+.dh-ws-search-wrap svg.i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--mut);
+  pointer-events: none;
+}
+.dh-ws-search-wrap input {
+  width: 100%;
+  padding: 8px 14px 8px 34px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 13px;
+  outline: none;
+  transition: border-color .2s;
+}
+.dh-ws-search-wrap input:focus {
+  border-color: #7a62d6;
+}
+
+/* Category Filter Tabs */
+.dh-ws-filter-bar {
+  grid-column: span 12;
+  display: flex;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+.dh-ws-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dh-ws-filter {
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mut);
+  background: var(--card);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.dh-ws-filter:hover {
+  color: var(--ink);
+  border-color: rgba(110,90,200,.4);
+}
+.dh-ws-filter.on {
+  background: var(--blk);
+  color: #fff;
+  border-color: var(--blk);
+}
+html[data-theme="dark"] .dh-ws-filter.on {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+/* Quick Access Cards */
+.dh-ws-quick-card {
+  position: relative;
+  border-radius: 20px;
+  padding: 20px 22px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.dh-ws-quick-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -15px rgba(110,90,200,.18);
+  border-color: #7a62d6;
+}
+.dh-ws-qc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.dh-ws-qc-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+.dh-ws-qc-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: rgba(110,90,200,.1);
+  color: #6449c2;
+}
+html[data-theme="dark"] .dh-ws-qc-badge {
+  background: rgba(255,255,255,.1);
+  color: #e0e0e0;
+}
+.dh-ws-quick-card h3 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.dh-ws-quick-card p {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--mut);
+  margin: 0 0 12px;
+}
+.dh-ws-qc-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.dh-ws-qc-link {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap .2s ease;
+}
+.dh-ws-quick-card:hover .dh-ws-qc-link {
+  gap: 8px;
+  color: #7a62d6;
+}
+
+/* Workspace Main Cards */
+.dh-ws-card {
+  position: relative;
+  border-radius: 22px;
+  padding: 22px 24px;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.dh-ws-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.dh-ws-ch-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dh-ws-ch-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.dh-ws-ch-title h3 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+.dh-ws-ch-title small {
+  font-size: 11px;
+  color: var(--mut);
+  font-weight: 600;
+}
+.dh-ws-ch-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dh-ws-pill-group {
+  display: flex;
+  gap: 4px;
+  background: var(--soft);
+  padding: 3px;
+  border-radius: 99px;
+}
+.dh-ws-pill {
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mut);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all .2s;
+}
+.dh-ws-pill.on {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+.dh-ws-add-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.dh-ws-add-btn:hover {
+  background: var(--ink);
+  color: #fff;
+  transform: scale(1.08);
+}
+
+/* Progress bar inside card */
+.dh-ws-progress-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--soft);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.dh-ws-progress-bar {
+  height: 100%;
+  background: #27ae60;
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+
+/* Quick Add Form */
+.dh-ws-quick-add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.dh-ws-quick-add-form input {
+  flex: 2;
+  min-width: 180px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 13px;
+  outline: none;
+}
+.dh-ws-quick-add-form input:focus {
+  border-color: #7a62d6;
+  background: var(--card);
+}
+.dh-ws-quick-add-form select {
+  flex: 1;
+  min-width: 110px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+}
+.dh-ws-quick-add-form button {
+  padding: 8px 16px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+
+/* List Items (Tasks, Notes, Assignments, Bookmarks) */
+.dh-ws-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.dh-ws-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--soft);
+  border: 1px solid transparent;
+  transition: all .2s ease;
+}
+.dh-ws-item-row:hover {
+  background: rgba(110,90,200,.06);
+  border-color: rgba(110,90,200,.2);
+}
+.dh-ws-item-row.completed {
+  opacity: 0.65;
+}
+.dh-ws-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.dh-ws-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1.5px solid var(--line);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all .2s;
+  background: var(--card);
+}
+.dh-ws-checkbox.checked {
+  background: #27ae60;
+  border-color: #27ae60;
+  color: #fff;
+}
+.dh-ws-checkbox.checked::after {
+  content: '✓';
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+.dh-ws-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.dh-ws-item-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dh-ws-item-row.completed .dh-ws-item-title {
+  text-decoration: line-through;
+}
+.dh-ws-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+}
+.dh-ws-tag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(0,0,0,.05);
+  color: var(--mut);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+html[data-theme="dark"] .dh-ws-tag {
+  background: rgba(255,255,255,.08);
+}
+.dh-ws-priority-high {
+  color: #e74c3c;
+  background: rgba(231,76,60,.12);
+}
+.dh-ws-priority-med {
+  color: #e67e22;
+  background: rgba(230,126,34,.12);
+}
+.dh-ws-priority-low {
+  color: #2980b9;
+  background: rgba(41,128,185,.12);
+}
+.dh-ws-status-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+.dh-ws-status-pending { background: rgba(149,165,166,.15); color: var(--mut); }
+.dh-ws-status-in_progress { background: rgba(142,68,173,.15); color: #8e44ad; }
+.dh-ws-status-completed { background: rgba(39,174,96,.15); color: #27ae60; }
+
+.dh-ws-due-badge {
+  color: var(--mut);
+  font-size: 11px;
+  font-weight: 600;
+}
+.dh-ws-due-soon {
+  color: #e67e22;
+  font-weight: 800;
+}
+
+.dh-ws-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.dh-ws-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--mut);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.dh-ws-icon-btn:hover {
+  background: var(--card);
+  color: var(--ink);
+}
+.dh-ws-icon-btn.delete:hover {
+  color: #e74c3c;
+}
+
+/* Notes Cards in List */
+.dh-ws-note-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--soft);
+  border: 1px solid transparent;
+  transition: all .2s ease;
+}
+.dh-ws-note-item:hover {
+  background: rgba(110,90,200,.06);
+  border-color: rgba(110,90,200,.2);
+}
+.dh-ws-note-item.pinned {
+  border-color: rgba(122,98,214,.35);
+  background: rgba(122,98,214,.05);
+}
+.dh-ws-note-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.dh-ws-note-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.dh-ws-note-snippet {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--mut);
+  margin: 0;
+}
+.dh-ws-note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+.dh-ws-note-link {
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a62d6;
+  text-decoration: none;
+}
+.dh-ws-note-link:hover {
+  text-decoration: underline;
+}
+
+/* Bookmarks List Rows */
+.dh-ws-bmk-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--soft);
+  gap: 12px;
+}
+.dh-ws-bmk-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dh-ws-bmk-link:hover {
+  color: #7a62d6;
+}
+
+/* Tags Scroll Bar */
+.dh-ws-tags-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+/* Empty State */
+.dh-ws-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 16px;
+  gap: 8px;
+}
+.dh-ws-empty-state svg.i {
+  width: 32px;
+  height: 32px;
+  color: var(--mut);
+  opacity: 0.5;
+}
+.dh-ws-empty-state p {
+  font-size: 13px;
+  color: var(--mut);
+  margin: 0;
+}
+
+/* Scratchpad Enhancements */
+.dh-ws-select {
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+}
+
+/* ==========================================
+   VENOM-INSPIRED LIVING SYMBIOTE PROXIMITY EFFECT
+   ========================================== */
+.dh-venom-card,
+.dh-venom-btn {
+  position: relative;
+}
+.dh-venom-canvas {
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  width: calc(100% + 60px);
+  height: calc(100% + 60px);
+  pointer-events: none;
+  z-index: 5;
+  border-radius: inherit;
+}
+
 /* ===== DEV HARBOUR: INTERACTIVE COURSES & ROADMAPS ===== */
 .dh-learn-hero {
   grid-column: span 12;
@@ -2191,9 +2810,313 @@ html[data-theme="dark"] .dh-timer-tab.on {
 <section class="view" id="v-hack"><div class="g"><div class="c k hb s8"><span class="tag" style="align-self:flex-start;position:relative" id="hT"></span><h2 id="hN" style="margin-top:14px"></h2><p id="hD"></p></div>
  <div class="c s4"><div class="h"><h3>Event details</h3></div><dl class="dl" id="hI"></dl><div class="btns"><a href="https://unstop.com/o/vON6wtS?lb=useupllP&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Parthhyg96055" target="_blank" rel="noopener noreferrer" class="bt d" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Register Now ↗</a><a href="https://unstop.com/o/vON6wtS?lb=useupllP&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Parthhyg96055" target="_blank" rel="noopener noreferrer" class="bt" style="background:var(--soft);display:flex;align-items:center;justify-content:center;text-decoration:none">View Details ↗</a></div></div></div></section>
 
-<section class="view" id="v-work"><div class="g"><div class="c s8"><div class="wb"><strong id="wt">Two Sum</strong><select aria-label="Language"><option>JavaScript</option></select><button class="run" id="run">▶ Run Code</button><button id="rst">Reset</button><button id="cp">Copy</button></div><div class="ed"><pre id="hl" aria-hidden="true"></pre><textarea id="code" spellcheck="false" aria-label="Code editor"></textarea></div></div>
- <div class="c k s4 io"><label for="inp">INPUT</label><textarea id="inp"></textarea><label>CONSOLE / OUTPUT</label><pre id="out">Press Run Code.</pre><div class="rs" id="res"></div></div></div>
- <p class="mut" style="margin:14px 6px">JavaScript runs for real in a sandboxed frame in your browser. Python and others need a server-side runner.</p></section>
+<section class="view" id="v-work">
+  <!-- WORKSPACE HEADER -->
+  <div class="dh-ws-header">
+    <div class="dh-ws-title-group">
+      <div class="dh-ws-badge">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 4h18v13H3zM8 21h8M12 17v4"/></svg>
+        <span>Student Workbench</span>
+      </div>
+      <h2>My Workspace</h2>
+      <p class="mut">Plan. Organize. Create.</p>
+    </div>
+
+    <div class="dh-ws-top-controls">
+      <!-- Search Field -->
+      <div class="dh-ws-search-wrap">
+        <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="ws-search-input" placeholder="Search tasks, notes, assignments…" aria-label="Search workspace">
+      </div>
+
+      <!-- Primary Action Button with Venom Proximity Effect -->
+      <button class="bt d dh-venom-btn" id="ws-btn-new-item" onclick="openWsModal('task')" title="Create a new task, note, or assignment">
+        <svg class="i" viewBox="0 0 24 24" style="width:15px;height:15px;vertical-align:middle;margin-right:4px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>+ New Item</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE VIEW FILTER PILLS -->
+  <div class="dh-ws-filter-bar">
+    <div class="dh-ws-filters" role="tablist">
+      <button class="dh-ws-filter on" data-ws-filter="all">All Overview</button>
+      <button class="dh-ws-filter" data-ws-filter="tasks">My Tasks</button>
+      <button class="dh-ws-filter" data-ws-filter="notes">Notes & Resources</button>
+      <button class="dh-ws-filter" data-ws-filter="assignments">Assignments</button>
+      <button class="dh-ws-filter" data-ws-filter="bookmarks">Saved Items</button>
+      <button class="dh-ws-filter" data-ws-filter="scratchpad">Code Scratchpad</button>
+    </div>
+  </div>
+
+  <!-- QUICK ACCESS ROW (4 CARDS) -->
+  <div class="g dh-ws-quick-row" style="margin-bottom:14px">
+    <!-- Card 1: My Tasks -->
+    <div class="c s3 dh-ws-quick-card dh-venom-card" data-ws-nav="tasks" role="button" tabindex="0">
+      <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+      <div class="dh-ws-qc-head">
+        <div class="dh-ws-qc-icon">
+          <svg class="i" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <span class="dh-ws-qc-badge" id="ws-qc-tasks-count">0 pending</span>
+      </div>
+      <h3>My Tasks</h3>
+      <p class="mut">Manage daily tasks, study sprints, and priority deadlines.</p>
+      <div class="dh-ws-qc-footer">
+        <span class="dh-ws-qc-link">Manage Tasks →</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Notes & Resources -->
+    <div class="c s3 dh-ws-quick-card dh-venom-card" data-ws-nav="notes" role="button" tabindex="0">
+      <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+      <div class="dh-ws-qc-head">
+        <div class="dh-ws-qc-icon">
+          <svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <span class="dh-ws-qc-badge" id="ws-qc-notes-count">0 notes</span>
+      </div>
+      <h3>Notes & Resources</h3>
+      <p class="mut">Write revision notes, cheat-sheets, and save useful links.</p>
+      <div class="dh-ws-qc-footer">
+        <span class="dh-ws-qc-link">View Notes →</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Assignments -->
+    <div class="c s3 dh-ws-quick-card dh-venom-card" data-ws-nav="assignments" role="button" tabindex="0">
+      <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+      <div class="dh-ws-qc-head">
+        <div class="dh-ws-qc-icon">
+          <svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <span class="dh-ws-qc-badge" id="ws-qc-asg-count">0 active</span>
+      </div>
+      <h3>Assignments</h3>
+      <p class="mut">Organize college coursework, hackathon deliverables and submissions.</p>
+      <div class="dh-ws-qc-footer">
+        <span class="dh-ws-qc-link">Track Submissions →</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Saved Items -->
+    <div class="c s3 dh-ws-quick-card dh-venom-card" data-ws-nav="bookmarks" role="button" tabindex="0">
+      <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+      <div class="dh-ws-qc-head">
+        <div class="dh-ws-qc-icon">
+          <svg class="i" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <span class="dh-ws-qc-badge" id="ws-qc-bmk-count">0 saved</span>
+      </div>
+      <h3>Saved Items</h3>
+      <p class="mut">Bookmarked learning modules, practice questions, and repositories.</p>
+      <div class="dh-ws-qc-footer">
+        <span class="dh-ws-qc-link">View Bookmarks →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE CONTENT GRID -->
+  <div class="g" id="dh-ws-main-grid">
+    <!-- LEFT COLUMN: MY TASKS & ASSIGNMENTS -->
+    <div class="c s6 dh-ws-column" id="ws-col-left" style="background:transparent;border:none;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:14px">
+      
+      <!-- CARD: MY TASKS -->
+      <div class="c s12 dh-ws-card dh-venom-card" id="ws-tasks-card">
+        <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+        <div class="dh-ws-card-header">
+          <div class="dh-ws-ch-title">
+            <div class="dh-ws-ch-icon">
+              <svg class="i" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div>
+              <h3>My Tasks</h3>
+              <small class="mut" id="ws-tasks-progress-text">0 of 0 tasks completed</small>
+            </div>
+          </div>
+          <div class="dh-ws-ch-actions">
+            <div class="dh-ws-pill-group">
+              <button class="dh-ws-pill on" data-task-filter="all">All</button>
+              <button class="dh-ws-pill" data-task-filter="pending">Pending</button>
+              <button class="dh-ws-pill" data-task-filter="completed">Done</button>
+            </div>
+            <button class="dh-ws-add-btn" onclick="openWsModal('task')" title="Add new task">+</button>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="dh-ws-progress-track">
+          <div class="dh-ws-progress-bar" id="ws-tasks-progress-fill" style="width:0%"></div>
+        </div>
+
+        <!-- Quick Add Row -->
+        <form class="dh-ws-quick-add-form" onsubmit="handleQuickAddTask(event)">
+          <input type="text" id="ws-task-quick-input" placeholder="Add a new task (e.g. Master React 19, Solve Two Sum)..." required>
+          <select id="ws-task-quick-subject" aria-label="Task Subject">
+            <option value="General">General</option>
+            <option value="Web Dev">Web Dev</option>
+            <option value="Algorithms">Algorithms</option>
+            <option value="College">College</option>
+            <option value="Hackathon">Hackathon</option>
+          </select>
+          <select id="ws-task-quick-priority" aria-label="Task Priority">
+            <option value="medium">Med Priority</option>
+            <option value="high">High Priority</option>
+            <option value="low">Low Priority</option>
+          </select>
+          <button type="submit" class="bt d">Add</button>
+        </form>
+
+        <!-- Tasks List Container -->
+        <div class="dh-ws-list-container" id="ws-tasks-list"></div>
+      </div>
+
+      <!-- CARD: ASSIGNMENTS -->
+      <div class="c s12 dh-ws-card dh-venom-card" id="ws-assignments-card">
+        <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+        <div class="dh-ws-card-header">
+          <div class="dh-ws-ch-title">
+            <div class="dh-ws-ch-icon">
+              <svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div>
+              <h3>Assignments</h3>
+              <small class="mut">Coursework, projects & deadlines</small>
+            </div>
+          </div>
+          <div class="dh-ws-ch-actions">
+            <div class="dh-ws-pill-group">
+              <button class="dh-ws-pill on" data-asg-filter="all">All</button>
+              <button class="dh-ws-pill" data-asg-filter="pending">Pending</button>
+              <button class="dh-ws-pill" data-asg-filter="in_progress">In Progress</button>
+              <button class="dh-ws-pill" data-asg-filter="completed">Done</button>
+            </div>
+            <button class="dh-ws-add-btn" onclick="openWsModal('assignment')" title="Add Assignment">+</button>
+          </div>
+        </div>
+
+        <!-- Assignments List Container -->
+        <div class="dh-ws-list-container" id="ws-assignments-list"></div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: NOTES & SAVED ITEMS -->
+    <div class="c s6 dh-ws-column" id="ws-col-right" style="background:transparent;border:none;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:14px">
+      
+      <!-- CARD: NOTES & RESOURCES -->
+      <div class="c s12 dh-ws-card dh-venom-card" id="ws-notes-card">
+        <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+        <div class="dh-ws-card-header">
+          <div class="dh-ws-ch-title">
+            <div class="dh-ws-ch-icon">
+              <svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div>
+              <h3>Notes & Resources</h3>
+              <small class="mut">Personal study logs, links & cheat sheets</small>
+            </div>
+          </div>
+          <div class="dh-ws-ch-actions">
+            <button class="bt" style="background:var(--soft);padding:6px 12px;font-size:12px;border-radius:10px" onclick="openWsModal('note')">+ New Note</button>
+          </div>
+        </div>
+
+        <!-- Notes Filter Tags -->
+        <div class="dh-ws-tags-scroll" id="ws-notes-tags">
+          <button class="dh-ws-pill on" data-note-tag="all">All Notes</button>
+          <button class="dh-ws-pill" data-note-tag="pinned">Pinned</button>
+          <button class="dh-ws-pill" data-note-tag="code">Code</button>
+          <button class="dh-ws-pill" data-note-tag="revision">Revision</button>
+          <button class="dh-ws-pill" data-note-tag="links">Useful Links</button>
+        </div>
+
+        <!-- Notes List Container -->
+        <div class="dh-ws-list-container" id="ws-notes-list"></div>
+      </div>
+
+      <!-- CARD: SAVED ITEMS / BOOKMARKS -->
+      <div class="c s12 dh-ws-card dh-venom-card" id="ws-bookmarks-card">
+        <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+        <div class="dh-ws-card-header">
+          <div class="dh-ws-ch-title">
+            <div class="dh-ws-ch-icon">
+              <svg class="i" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <h3>Saved Items</h3>
+              <small class="mut">Bookmarked learning paths, challenges & links</small>
+            </div>
+          </div>
+          <div class="dh-ws-ch-actions">
+            <button class="bt" style="background:var(--soft);padding:6px 12px;font-size:12px;border-radius:10px" onclick="openWsModal('bookmark')">+ Save Link</button>
+          </div>
+        </div>
+
+        <!-- Bookmarks Filter Bar -->
+        <div class="dh-ws-tags-scroll" id="ws-bmk-tags">
+          <button class="dh-ws-pill on" data-bmk-cat="all">All Items</button>
+          <button class="dh-ws-pill" data-bmk-cat="course">Courses</button>
+          <button class="dh-ws-pill" data-bmk-cat="challenge">Challenges</button>
+          <button class="dh-ws-pill" data-bmk-cat="project">Projects</button>
+          <button class="dh-ws-pill" data-bmk-cat="resource">Resources</button>
+        </div>
+
+        <!-- Bookmarks List Container -->
+        <div class="dh-ws-list-container" id="ws-bookmarks-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM FULL-WIDTH CARD: CODE SCRATCHPAD -->
+  <div class="c s12 dh-ws-card dh-venom-card" id="ws-scratchpad-card" style="margin-top:14px">
+    <canvas class="dh-venom-canvas" aria-hidden="true"></canvas>
+    <div class="dh-ws-card-header" style="margin-bottom:12px">
+      <div class="dh-ws-ch-title">
+        <div class="dh-ws-ch-icon">
+          <svg class="i" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div>
+          <h3>Code Scratchpad</h3>
+          <small class="mut">Write, test and save algorithmic drafts and logic prototypes.</small>
+        </div>
+      </div>
+      <div class="dh-ws-ch-actions">
+        <!-- Saved snippets selector -->
+        <select id="ws-snippets-dropdown" class="dh-ws-select" aria-label="Load Saved Snippet" onchange="handleLoadSavedSnippet(this.value)">
+          <option value="">Load Saved Draft…</option>
+        </select>
+        <button class="bt" style="background:var(--soft);padding:6px 12px;font-size:12px;border-radius:10px" onclick="handleSaveCurrentSnippet()">Save Draft</button>
+      </div>
+    </div>
+
+    <!-- PRESERVED CODE EDITOR ENGINE (Maintains exact compatibility with #wt, #code, #hl, #inp, #out, #run, #rst, #cp, #res) -->
+    <div class="g">
+      <div class="c s8" style="background:transparent;border:none;box-shadow:none;padding:0">
+        <div class="wb">
+          <strong id="wt">Scratchpad</strong>
+          <select aria-label="Language"><option>JavaScript (Sandbox)</option></select>
+          <button class="run" id="run">▶ Run Code</button>
+          <button id="rst">Reset</button>
+          <button id="cp">Copy</button>
+        </div>
+        <div class="ed">
+          <pre id="hl" aria-hidden="true"></pre>
+          <textarea id="code" spellcheck="false" aria-label="Code editor"></textarea>
+        </div>
+      </div>
+      <div class="c k s4 io" style="min-height:300px">
+        <label for="inp">INPUT (Passed as global 'input')</label>
+        <textarea id="inp" placeholder="e.g. 5, 10, or JSON string"></textarea>
+        <label>CONSOLE / EXECUTION OUTPUT</label>
+        <pre id="out">Press Run Code.</pre>
+        <div class="rs" id="res"></div>
+      </div>
+    </div>
+    <p class="mut" style="margin:12px 6px 0;font-size:12px">JavaScript executes securely inside a sandboxed browser frame. Drafts are isolated and stored privately.</p>
+  </div>
+</section>
 
 <section class="view" id="v-comm">
   <div class="g">
@@ -3860,6 +4783,1497 @@ $('run').onclick=()=>{const o=$('out');o.className='';o.textContent='Running…'
 addEventListener('message',m=>{if(!fr||m.source!==fr.contentWindow)return;clearTimeout(to);const d=m.data,o=$('out'),t=d.L.join('\n');o.className=d.e?'er':'';o.textContent=(t+(d.e?'\nError: '+d.e:''))||'(no output)';
  if(!d.e){const r=$('res'),ok=t.trim()==C[cur][6];r.className='rs '+(ok?'ok':'no');r.textContent=ok?'✓ Test passed':'✕ Expected: '+C[cur][6]}});
 load(0,false);
+
+/* ==========================================================================
+   DEVHARBOUR: STUDENT WORKBENCH & VENOM PROXIMITY ENGINE
+   ========================================================================== */
+
+// 1. EXTEND LOCALDB WITH WORKSPACE CAPABILITIES (Local & Static Fallback)
+if (typeof LocalDB !== 'undefined') {
+  LocalDB.workspace = {
+    _get(key, fallback = []) {
+      try {
+        const val = localStorage.getItem('dh_ws_' + key);
+        return val ? JSON.parse(val) : fallback;
+      } catch(e) {
+        return fallback;
+      }
+    },
+    _save(key, val) {
+      try {
+        localStorage.setItem('dh_ws_' + key, JSON.stringify(val));
+      } catch(e) {}
+    },
+
+    // Seed realistic student initial data if empty
+    initSeed() {
+      if (!localStorage.getItem('dh_ws_seeded_v1')) {
+        const defaultTasks = [
+          {
+            id: 'tsk-1',
+            title: 'Implement Binary Search Tree balancing',
+            subject: 'CS201 Data Structures',
+            priority: 'high',
+            due_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+            status: 'pending',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'tsk-2',
+            title: 'Review System Design notes on caching & Redis',
+            subject: 'Web Architecture',
+            priority: 'medium',
+            due_date: new Date(Date.now() + 259200000).toISOString().split('T')[0],
+            status: 'pending',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'tsk-3',
+            title: 'Complete 30-min DevHarbour focus session',
+            subject: 'Self Study',
+            priority: 'low',
+            due_date: new Date().toISOString().split('T')[0],
+            status: 'completed',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'tsk-4',
+            title: 'Prepare presentation deck for Hackathon submission',
+            subject: 'Hackathon 2026',
+            priority: 'high',
+            due_date: new Date(Date.now() + 432000000).toISOString().split('T')[0],
+            status: 'pending',
+            created_at: new Date().toISOString()
+          }
+        ];
+
+        const defaultNotes = [
+          {
+            id: 'not-1',
+            title: 'Modern CSS Grid & Responsive Layouts',
+            subject: 'Frontend Engineering',
+            tags: 'code, revision',
+            content: 'CSS Grid areas, minmax(280px, 1fr) auto-fit grids, subgrid alignment for card headers and footers without nested calc tricks.',
+            link_url: '',
+            is_pinned: 1,
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'not-2',
+            title: 'JavaScript Event Loop & Microtask Timing',
+            subject: 'Core JS Engine',
+            tags: 'code',
+            content: 'Execution order: Call Stack -> Microtasks queue (Promise.then, queueMicrotask, MutationObserver) -> Macrotask queue (setTimeout, setInterval, UI repaint).',
+            link_url: '',
+            is_pinned: 1,
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'not-3',
+            title: 'System Design: High-Throughput Rate Limiting',
+            subject: 'Backend Architecture',
+            tags: 'revision, links',
+            content: 'Comparison between Token Bucket, Leaky Bucket and Redis sliding-window log algorithms for API rate limiters.',
+            link_url: 'https://en.wikipedia.org/wiki/Token_bucket',
+            is_pinned: 0,
+            created_at: new Date().toISOString()
+          }
+        ];
+
+        const defaultAssignments = [
+          {
+            id: 'asg-1',
+            title: 'Distributed Systems: Raft Consensus Protocol',
+            subject: 'CS402 Systems',
+            description: 'Implement leader election, term numbering, and heartbeat broadcasting between cluster nodes.',
+            deadline: new Date(Date.now() + 345600000).toISOString().split('T')[0],
+            priority: 'high',
+            status: 'in_progress',
+            link_url: 'https://raft.github.io/',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'asg-2',
+            title: 'UI Usability & Accessibility Heuristic Evaluation',
+            subject: 'HCI301 Design',
+            description: 'Audit 5 core user journeys against WCAG 2.1 AA standards including keyboard focus traps and contrast ratios.',
+            deadline: new Date(Date.now() + 691200000).toISOString().split('T')[0],
+            priority: 'medium',
+            status: 'pending',
+            link_url: '',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'asg-3',
+            title: 'Database Normalization to 3NF & Query Tuning',
+            subject: 'DB204 Databases',
+            description: 'Decompose unnormalized relations to Boyce-Codd normal form and add composite indexes for query optimization.',
+            deadline: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+            priority: 'low',
+            status: 'completed',
+            link_url: '',
+            created_at: new Date().toISOString()
+          }
+        ];
+
+        const defaultBookmarks = [
+          {
+            id: 'bmk-1',
+            title: 'Full-Stack Modern Web Engineering',
+            category: 'course',
+            target_url: '#v-learn',
+            description: 'Complete path covering semantic HTML, responsive CSS, async JS, backend APIs and deployment.',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'bmk-2',
+            title: 'Two Sum & Hash Map Lookup Optimization',
+            category: 'challenge',
+            target_url: '#v-work',
+            description: 'Master associative array lookup to achieve linear O(n) algorithmic complexity.',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'bmk-3',
+            title: 'DevHarbour Pomodoro & Flip Clock Timer',
+            category: 'resource',
+            target_url: '#v-timer',
+            description: 'Structured 25-minute focus intervals and 5-minute break timers with flipping cards.',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'bmk-4',
+            title: 'Orca Coders Developer Community',
+            category: 'resource',
+            target_url: 'https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s',
+            description: 'Official WhatsApp developer group for code reviews, hackathon teams and project demos.',
+            created_at: new Date().toISOString()
+          }
+        ];
+
+        const defaultSnippets = [
+          {
+            id: 'snp-1',
+            title: 'Binary Search Algorithm (Iterative)',
+            language: 'JavaScript',
+            code: '// Binary search on a sorted integer array\nfunction binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}\n\nconst nums = [1, 3, 5, 7, 9, 11, 15, 23];\nconst target = 7;\nconsole.log("Searching for", target, "in", nums);\nconsole.log("Found index:", binarySearch(nums, target));',
+            input_data: '7',
+            created_at: new Date().toISOString()
+          }
+        ];
+
+        this._save('tasks', defaultTasks);
+        this._save('notes', defaultNotes);
+        this._save('assignments', defaultAssignments);
+        this._save('bookmarks', defaultBookmarks);
+        this._save('snippets', defaultSnippets);
+        try { localStorage.setItem('dh_ws_seeded_v1', 'true'); } catch(e) {}
+      }
+    },
+
+    // Tasks CRUD
+    getTasks() { return this._get('tasks', []); },
+    saveTask(task) {
+      const tasks = this.getTasks();
+      if (!task.id) task.id = 'tsk-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      if (!task.created_at) task.created_at = new Date().toISOString();
+      const idx = tasks.findIndex(t => t.id === task.id);
+      if (idx !== -1) tasks[idx] = { ...tasks[idx], ...task };
+      else tasks.unshift(task);
+      this._save('tasks', tasks);
+      return task;
+    },
+    deleteTask(id) {
+      const tasks = this.getTasks().filter(t => t.id !== id);
+      this._save('tasks', tasks);
+    },
+
+    // Notes CRUD
+    getNotes() { return this._get('notes', []); },
+    saveNote(note) {
+      const notes = this.getNotes();
+      if (!note.id) note.id = 'not-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      if (!note.created_at) note.created_at = new Date().toISOString();
+      const idx = notes.findIndex(n => n.id === note.id);
+      if (idx !== -1) notes[idx] = { ...notes[idx], ...note };
+      else notes.unshift(note);
+      this._save('notes', notes);
+      return note;
+    },
+    deleteNote(id) {
+      const notes = this.getNotes().filter(n => n.id !== id);
+      this._save('notes', notes);
+    },
+
+    // Assignments CRUD
+    getAssignments() { return this._get('assignments', []); },
+    saveAssignment(asg) {
+      const asgs = this.getAssignments();
+      if (!asg.id) asg.id = 'asg-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      if (!asg.created_at) asg.created_at = new Date().toISOString();
+      const idx = asgs.findIndex(a => a.id === asg.id);
+      if (idx !== -1) asgs[idx] = { ...asgs[idx], ...asg };
+      else asgs.unshift(asg);
+      this._save('assignments', asgs);
+      return asg;
+    },
+    deleteAssignment(id) {
+      const asgs = this.getAssignments().filter(a => a.id !== id);
+      this._save('assignments', asgs);
+    },
+
+    // Bookmarks CRUD
+    getBookmarks() { return this._get('bookmarks', []); },
+    saveBookmark(bmk) {
+      const bmks = this.getBookmarks();
+      if (!bmk.id) bmk.id = 'bmk-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      if (!bmk.created_at) bmk.created_at = new Date().toISOString();
+      const idx = bmks.findIndex(b => b.id === bmk.id);
+      if (idx !== -1) bmks[idx] = { ...bmks[idx], ...bmk };
+      else bmks.unshift(bmk);
+      this._save('bookmarks', bmks);
+      return bmk;
+    },
+    deleteBookmark(id) {
+      const bmks = this.getBookmarks().filter(b => b.id !== id);
+      this._save('bookmarks', bmks);
+    },
+
+    // Snippets CRUD
+    getSnippets() { return this._get('snippets', []); },
+    saveSnippet(snp) {
+      const snps = this.getSnippets();
+      if (!snp.id) snp.id = 'snp-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      if (!snp.created_at) snp.created_at = new Date().toISOString();
+      const idx = snps.findIndex(s => s.id === snp.id);
+      if (idx !== -1) snps[idx] = { ...snps[idx], ...snp };
+      else snps.unshift(snp);
+      this._save('snippets', snps);
+      return snp;
+    },
+    deleteSnippet(id) {
+      const snps = this.getSnippets().filter(s => s.id !== id);
+      this._save('snippets', snps);
+    }
+  };
+
+  LocalDB.workspace.initSeed();
+}
+
+// 2. WORKSPACE MANAGER CONTROLLER
+const WorkspaceManager = {
+  activeViewFilter: 'all',
+  taskFilter: 'all',
+  noteTagFilter: 'all',
+  asgFilter: 'all',
+  bmkFilter: 'all',
+  searchQuery: '',
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  },
+
+  async syncWithBackend() {
+    if (!window.currentUser || !localStorage.getItem('dh_token')) return;
+    try {
+      const res = await fetch('/api/workspace', { headers: getAuthHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.tasks) LocalDB.workspace._save('tasks', data.tasks);
+        if (data.notes) LocalDB.workspace._save('notes', data.notes);
+        if (data.assignments) LocalDB.workspace._save('assignments', data.assignments);
+        if (data.bookmarks) LocalDB.workspace._save('bookmarks', data.bookmarks);
+        if (data.snippets) LocalDB.workspace._save('snippets', data.snippets);
+        this.renderAll();
+      }
+    } catch(e) {}
+  },
+
+  init() {
+    this.bindEvents();
+    this.renderAll();
+    this.syncWithBackend();
+  },
+
+  bindEvents() {
+    // Top view filters
+    const filterBtns = document.querySelectorAll('.dh-ws-filter');
+    filterBtns.forEach(btn => {
+      btn.onclick = () => {
+        filterBtns.forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        const filter = btn.dataset.wsFilter;
+        this.activeViewFilter = filter;
+        this.applyViewFilter(filter);
+      };
+    });
+
+    // Quick access card clicks
+    const quickCards = document.querySelectorAll('.dh-ws-quick-card');
+    quickCards.forEach(card => {
+      const navTarget = card.dataset.wsNav;
+      const targetMap = {
+        'tasks': 'ws-tasks-card',
+        'notes': 'ws-notes-card',
+        'assignments': 'ws-assignments-card',
+        'bookmarks': 'ws-bookmarks-card'
+      };
+      const jump = () => {
+        const targetId = targetMap[navTarget];
+        if (targetId) {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.style.outline = '2px solid var(--blk)';
+            setTimeout(() => { el.style.outline = 'none'; }, 1200);
+          }
+        }
+      };
+      card.onclick = jump;
+      card.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); } };
+    });
+
+    // Task filter pills
+    const taskBtns = document.querySelectorAll('#ws-task-filters button');
+    taskBtns.forEach(btn => {
+      btn.onclick = () => {
+        taskBtns.forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        this.taskFilter = btn.dataset.taskFilter;
+        this.renderTasks();
+      };
+    });
+
+    // Note tag pills
+    const noteBtns = document.querySelectorAll('#ws-notes-tags button');
+    noteBtns.forEach(btn => {
+      btn.onclick = () => {
+        noteBtns.forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        this.noteTagFilter = btn.dataset.noteTag;
+        this.renderNotes();
+      };
+    });
+
+    // Assignment filter pills
+    const asgBtns = document.querySelectorAll('#ws-asg-filters button');
+    asgBtns.forEach(btn => {
+      btn.onclick = () => {
+        asgBtns.forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        this.asgFilter = btn.dataset.asgFilter;
+        this.renderAssignments();
+      };
+    });
+
+    // Bookmark filter pills
+    const bmkBtns = document.querySelectorAll('#ws-bmk-tags button');
+    bmkBtns.forEach(btn => {
+      btn.onclick = () => {
+        bmkBtns.forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        this.bmkFilter = btn.dataset.bmkCat;
+        this.renderBookmarks();
+      };
+    });
+
+    // Search input
+    const searchInput = document.getElementById('ws-search-input');
+    if (searchInput) {
+      searchInput.oninput = (e) => {
+        this.searchQuery = (e.target.value || '').trim().toLowerCase();
+        this.renderAll();
+      };
+    }
+  },
+
+  applyViewFilter(filter) {
+    const tasksCard = document.getElementById('ws-tasks-card');
+    const notesCard = document.getElementById('ws-notes-card');
+    const asgCard = document.getElementById('ws-assignments-card');
+    const bmkCard = document.getElementById('ws-bookmarks-card');
+    const scratchCard = document.getElementById('ws-scratchpad-card');
+
+    const showAll = filter === 'all';
+    if (tasksCard) tasksCard.style.display = (showAll || filter === 'tasks') ? '' : 'none';
+    if (notesCard) notesCard.style.display = (showAll || filter === 'notes') ? '' : 'none';
+    if (asgCard) asgCard.style.display = (showAll || filter === 'assignments') ? '' : 'none';
+    if (bmkCard) bmkCard.style.display = (showAll || filter === 'bookmarks') ? '' : 'none';
+    if (scratchCard) scratchCard.style.display = (showAll || filter === 'scratchpad') ? '' : 'none';
+
+    if (!showAll) {
+      const map = {
+        'tasks': tasksCard,
+        'notes': notesCard,
+        'assignments': asgCard,
+        'bookmarks': bmkCard,
+        'scratchpad': scratchCard
+      };
+      if (map[filter]) map[filter].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  },
+
+  renderAll() {
+    this.renderTasks();
+    this.renderNotes();
+    this.renderAssignments();
+    this.renderBookmarks();
+    this.renderSnippetsDropdown();
+  },
+
+  // ---------------- TASKS ----------------
+  renderTasks() {
+    const listEl = document.getElementById('ws-tasks-list');
+    const qcBadge = document.getElementById('ws-qc-tasks-count');
+    const headerBadge = document.getElementById('ws-tasks-badge');
+    if (!listEl) return;
+
+    let tasks = LocalDB.workspace.getTasks();
+    const pendingCount = tasks.filter(t => t.status !== 'completed').length;
+    if (qcBadge) qcBadge.textContent = pendingCount + ' pending';
+    if (headerBadge) headerBadge.textContent = pendingCount + ' pending';
+
+    // Filter
+    if (this.taskFilter === 'pending') tasks = tasks.filter(t => t.status !== 'completed');
+    else if (this.taskFilter === 'completed') tasks = tasks.filter(t => t.status === 'completed');
+    else if (this.taskFilter === 'high') tasks = tasks.filter(t => t.priority === 'high');
+
+    // Search
+    if (this.searchQuery) {
+      const q = this.searchQuery;
+      tasks = tasks.filter(t => 
+        (t.title && t.title.toLowerCase().includes(q)) || 
+        (t.subject && t.subject.toLowerCase().includes(q))
+      );
+    }
+
+    if (tasks.length === 0) {
+      listEl.innerHTML = `<div class="dh-ws-empty">
+        <svg class="i" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <p>No tasks found. Click "+ New Task" above to add one.</p>
+      </div>`;
+      return;
+    }
+
+    listEl.innerHTML = tasks.map(task => {
+      const isDone = task.status === 'completed';
+      const isHigh = task.priority === 'high';
+      const isLow = task.priority === 'low';
+      const prioClass = isHigh ? 'p-high' : (isLow ? 'p-low' : 'p-med');
+      const prioLabel = isHigh ? 'High Priority' : (isLow ? 'Low' : 'Medium');
+
+      let dueText = '';
+      if (task.due_date) {
+        const today = new Date().toISOString().split('T')[0];
+        if (task.due_date === today) dueText = 'Due Today';
+        else if (task.due_date < today) dueText = 'Overdue (' + task.due_date + ')';
+        else dueText = 'Due ' + task.due_date;
+      }
+
+      return `
+        <div class="dh-ws-item ${isDone ? 'is-completed' : ''}" id="task-item-${task.id}">
+          <button type="button" class="dh-ws-check-btn ${isDone ? 'checked' : ''}" onclick="WorkspaceManager.toggleTask('${task.id}')" aria-label="Toggle task completion">
+            ${isDone ? '<svg class="i" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+          </button>
+          <div class="dh-ws-item-body">
+            <div class="dh-ws-item-title">${this.escapeHtml(task.title)}</div>
+            <div class="dh-ws-item-meta">
+              ${task.subject ? `<span class="dh-ws-badge-soft">${this.escapeHtml(task.subject)}</span>` : ''}
+              <span class="dh-ws-prio ${prioClass}">${prioLabel}</span>
+              ${dueText ? `<span class="dh-ws-due">${dueText}</span>` : ''}
+            </div>
+          </div>
+          <div class="dh-ws-item-actions">
+            <button class="dh-ws-act-btn" onclick="openWsModal('task', '${task.id}')" title="Edit task" aria-label="Edit">
+              <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </button>
+            <button class="dh-ws-act-btn" onclick="WorkspaceManager.deleteTask('${task.id}')" title="Delete task" aria-label="Delete">
+              <svg class="i" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async toggleTask(id) {
+    const tasks = LocalDB.workspace.getTasks();
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    task.status = (task.status === 'completed') ? 'pending' : 'completed';
+    LocalDB.workspace.saveTask(task);
+    this.renderTasks();
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/tasks/' + id, {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(task)
+        });
+      } catch(e) {}
+    }
+  },
+
+  async deleteTask(id) {
+    LocalDB.workspace.deleteTask(id);
+    this.renderTasks();
+    toast('Task deleted');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/tasks/' + id, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+      } catch(e) {}
+    }
+  },
+
+  // ---------------- NOTES ----------------
+  renderNotes() {
+    const listEl = document.getElementById('ws-notes-list');
+    const qcBadge = document.getElementById('ws-qc-notes-count');
+    if (!listEl) return;
+
+    let notes = LocalDB.workspace.getNotes();
+    if (qcBadge) qcBadge.textContent = notes.length + ' notes';
+
+    // Sort pinned to top
+    notes.sort((a, b) => (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0));
+
+    // Filter
+    if (this.noteTagFilter === 'pinned') notes = notes.filter(n => n.is_pinned);
+    else if (this.noteTagFilter !== 'all') {
+      const tag = this.noteTagFilter.toLowerCase();
+      notes = notes.filter(n => (n.tags || '').toLowerCase().includes(tag));
+    }
+
+    // Search
+    if (this.searchQuery) {
+      const q = this.searchQuery;
+      notes = notes.filter(n => 
+        (n.title && n.title.toLowerCase().includes(q)) || 
+        (n.subject && n.subject.toLowerCase().includes(q)) ||
+        (n.content && n.content.toLowerCase().includes(q)) ||
+        (n.tags && n.tags.toLowerCase().includes(q))
+      );
+    }
+
+    if (notes.length === 0) {
+      listEl.innerHTML = `<div class="dh-ws-empty">
+        <svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        <p>No notes found. Click "+ New Note" above to write one.</p>
+      </div>`;
+      return;
+    }
+
+    listEl.innerHTML = notes.map(note => {
+      const tags = (note.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+      return `
+        <div class="dh-ws-note-card ${note.is_pinned ? 'is-pinned' : ''}" id="note-item-${note.id}">
+          <div class="dh-ws-note-header">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${note.is_pinned ? '<span class="dh-ws-pin-icon" title="Pinned Note"><svg class="i" viewBox="0 0 24 24"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-2l-2-3V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v8l-2 3v2z"/></svg></span>' : ''}
+              <div class="dh-ws-item-title">${this.escapeHtml(note.title)}</div>
+            </div>
+            <div class="dh-ws-item-actions">
+              <button class="dh-ws-act-btn" onclick="WorkspaceManager.togglePinNote('${note.id}')" title="${note.is_pinned ? 'Unpin note' : 'Pin to top'}">
+                <svg class="i" viewBox="0 0 24 24"><path d="M5 17h14v-2l-2-3V4a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v8l-2 3v2z"/></svg>
+              </button>
+              <button class="dh-ws-act-btn" onclick="openWsModal('note', '${note.id}')" title="Edit note">
+                <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button class="dh-ws-act-btn" onclick="WorkspaceManager.deleteNote('${note.id}')" title="Delete note">
+                <svg class="i" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+          ${note.content ? `<div class="dh-ws-note-text">${this.escapeHtml(note.content)}</div>` : ''}
+          <div class="dh-ws-item-meta" style="margin-top:8px">
+            ${note.subject ? `<span class="dh-ws-badge-soft">${this.escapeHtml(note.subject)}</span>` : ''}
+            ${tags.map(tag => `<span class="dh-ws-badge-soft">#${this.escapeHtml(tag)}</span>`).join('')}
+            ${note.link_url ? `<a href="${this.escapeHtml(note.link_url)}" target="_blank" rel="noopener noreferrer" class="dh-ws-link-pill">Visit Link ↗</a>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async togglePinNote(id) {
+    const notes = LocalDB.workspace.getNotes();
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    note.is_pinned = note.is_pinned ? 0 : 1;
+    LocalDB.workspace.saveNote(note);
+    this.renderNotes();
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/notes/' + id, {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(note)
+        });
+      } catch(e) {}
+    }
+  },
+
+  async deleteNote(id) {
+    LocalDB.workspace.deleteNote(id);
+    this.renderNotes();
+    toast('Note deleted');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/notes/' + id, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+      } catch(e) {}
+    }
+  },
+
+  // ---------------- ASSIGNMENTS ----------------
+  renderAssignments() {
+    const listEl = document.getElementById('ws-assignments-list');
+    const qcBadge = document.getElementById('ws-qc-asg-count');
+    const headerBadge = document.getElementById('ws-asg-badge');
+    if (!listEl) return;
+
+    let asgs = LocalDB.workspace.getAssignments();
+    const activeCount = asgs.filter(a => a.status !== 'completed').length;
+    if (qcBadge) qcBadge.textContent = activeCount + ' active';
+    if (headerBadge) headerBadge.textContent = activeCount + ' active';
+
+    // Filter
+    if (this.asgFilter !== 'all') {
+      asgs = asgs.filter(a => a.status === this.asgFilter);
+    }
+
+    // Search
+    if (this.searchQuery) {
+      const q = this.searchQuery;
+      asgs = asgs.filter(a => 
+        (a.title && a.title.toLowerCase().includes(q)) || 
+        (a.subject && a.subject.toLowerCase().includes(q)) ||
+        (a.description && a.description.toLowerCase().includes(q))
+      );
+    }
+
+    if (asgs.length === 0) {
+      listEl.innerHTML = `<div class="dh-ws-empty">
+        <svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <p>No assignments found. Click "+ New Assignment" to add college or hackathon tasks.</p>
+      </div>`;
+      return;
+    }
+
+    listEl.innerHTML = asgs.map(asg => {
+      const isDone = asg.status === 'completed';
+      const isInProg = asg.status === 'in_progress';
+      const statusLabel = isDone ? 'Completed' : (isInProg ? 'In Progress' : 'Pending');
+      const statusClass = isDone ? 'status-done' : (isInProg ? 'status-prog' : 'status-pend');
+
+      let deadlineText = '';
+      if (asg.deadline) {
+        const today = new Date().toISOString().split('T')[0];
+        if (asg.deadline === today) deadlineText = 'Due Today';
+        else if (asg.deadline < today) deadlineText = 'Overdue (' + asg.deadline + ')';
+        else deadlineText = 'Due ' + asg.deadline;
+      }
+
+      return `
+        <div class="dh-ws-asg-item ${isDone ? 'is-completed' : ''}" id="asg-item-${asg.id}">
+          <div class="dh-ws-asg-header">
+            <div>
+              <div class="dh-ws-item-title">${this.escapeHtml(asg.title)}</div>
+              ${asg.subject ? `<small class="mut">${this.escapeHtml(asg.subject)}</small>` : ''}
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="dh-ws-status-badge ${statusClass}">${statusLabel}</span>
+              <div class="dh-ws-item-actions">
+                <button class="dh-ws-act-btn" onclick="openWsModal('assignment', '${asg.id}')" title="Edit assignment">
+                  <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </button>
+                <button class="dh-ws-act-btn" onclick="WorkspaceManager.deleteAssignment('${asg.id}')" title="Delete assignment">
+                  <svg class="i" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          ${asg.description ? `<p class="mut" style="font-size:13px;line-height:1.5;margin:8px 0">${this.escapeHtml(asg.description)}</p>` : ''}
+          <div class="dh-ws-item-meta" style="margin-top:6px;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:8px">
+              ${deadlineText ? `<span class="dh-ws-due">${deadlineText}</span>` : ''}
+              ${asg.priority ? `<span class="dh-ws-prio p-${asg.priority}">${asg.priority.toUpperCase()}</span>` : ''}
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              ${asg.link_url ? `<a href="${this.escapeHtml(asg.link_url)}" target="_blank" rel="noopener noreferrer" class="dh-ws-link-pill">Resources / Submission ↗</a>` : ''}
+              <button class="dh-ws-sm-btn" onclick="WorkspaceManager.cycleAsgStatus('${asg.id}')">Change Status</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async cycleAsgStatus(id) {
+    const asgs = LocalDB.workspace.getAssignments();
+    const asg = asgs.find(a => a.id === id);
+    if (!asg) return;
+    const states = ['pending', 'in_progress', 'completed'];
+    const nextIdx = (states.indexOf(asg.status) + 1) % states.length;
+    asg.status = states[nextIdx];
+    LocalDB.workspace.saveAssignment(asg);
+    this.renderAssignments();
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/assignments/' + id, {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(asg)
+        });
+      } catch(e) {}
+    }
+  },
+
+  async deleteAssignment(id) {
+    LocalDB.workspace.deleteAssignment(id);
+    this.renderAssignments();
+    toast('Assignment removed');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/assignments/' + id, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+      } catch(e) {}
+    }
+  },
+
+  // ---------------- BOOKMARKS / SAVED ITEMS ----------------
+  renderBookmarks() {
+    const listEl = document.getElementById('ws-bookmarks-list');
+    const qcBadge = document.getElementById('ws-qc-bmk-count');
+    if (!listEl) return;
+
+    let bmks = LocalDB.workspace.getBookmarks();
+    if (qcBadge) qcBadge.textContent = bmks.length + ' saved';
+
+    // Filter
+    if (this.bmkFilter !== 'all') {
+      bmks = bmks.filter(b => b.category === this.bmkFilter);
+    }
+
+    // Search
+    if (this.searchQuery) {
+      const q = this.searchQuery;
+      bmks = bmks.filter(b => 
+        (b.title && b.title.toLowerCase().includes(q)) || 
+        (b.description && b.description.toLowerCase().includes(q)) ||
+        (b.category && b.category.toLowerCase().includes(q))
+      );
+    }
+
+    if (bmks.length === 0) {
+      listEl.innerHTML = `<div class="dh-ws-empty">
+        <svg class="i" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <p>No saved bookmarks found. Click "+ Save Link" to bookmark resources.</p>
+      </div>`;
+      return;
+    }
+
+    listEl.innerHTML = bmks.map(bmk => {
+      const isInternal = bmk.target_url && bmk.target_url.startsWith('#');
+      const clickHandler = isInternal ? `onclick="WorkspaceManager.navigateBookmark('${bmk.target_url}')"` : '';
+      const href = isInternal ? '#' : (bmk.target_url || '#');
+      const targetAttr = isInternal ? '' : 'target="_blank" rel="noopener noreferrer"';
+
+      return `
+        <div class="dh-ws-item" id="bmk-item-${bmk.id}">
+          <div class="dh-ws-item-body">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="dh-ws-badge-soft" style="text-transform:uppercase;font-size:10px">${this.escapeHtml(bmk.category || 'resource')}</span>
+              <div class="dh-ws-item-title">${this.escapeHtml(bmk.title)}</div>
+            </div>
+            ${bmk.description ? `<p class="mut" style="font-size:12.5px;margin:4px 0 0">${this.escapeHtml(bmk.description)}</p>` : ''}
+          </div>
+          <div class="dh-ws-item-actions">
+            ${bmk.target_url ? `<a href="${this.escapeHtml(href)}" ${targetAttr} ${clickHandler} class="dh-ws-link-pill">Open ↗</a>` : ''}
+            <button class="dh-ws-act-btn" onclick="WorkspaceManager.deleteBookmark('${bmk.id}')" title="Remove bookmark">
+              <svg class="i" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  navigateBookmark(target) {
+    if (target === '#v-learn') show('learn');
+    else if (target === '#v-work') show('work');
+    else if (target === '#v-timer') show('timer');
+    else if (target === '#v-projects') show('projects');
+    else if (target === '#v-comm') show('comm');
+    else if (target.startsWith('#')) {
+      const viewName = target.replace('#v-', '').replace('#', '');
+      if (typeof show === 'function') show(viewName);
+    }
+  },
+
+  async deleteBookmark(id) {
+    LocalDB.workspace.deleteBookmark(id);
+    this.renderBookmarks();
+    toast('Bookmark removed');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/bookmarks/' + id, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+      } catch(e) {}
+    }
+  },
+
+  // ---------------- SNIPPET MANAGER ----------------
+  renderSnippetsDropdown() {
+    const sel = document.getElementById('ws-snippets-dropdown');
+    if (!sel) return;
+    const snippets = LocalDB.workspace.getSnippets();
+    sel.innerHTML = '<option value="">Load Saved Draft…</option>' + 
+      snippets.map(s => `<option value="${s.id}">${this.escapeHtml(s.title)} (${s.language || 'JS'})</option>`).join('');
+  }
+};
+
+// Global helper for Scratchpad Load & Save
+window.handleLoadSavedSnippet = function(id) {
+  if (!id) return;
+  const snippets = LocalDB.workspace.getSnippets();
+  const snp = snippets.find(s => s.id === id);
+  if (!snp) return;
+
+  const codeEl = $('code');
+  const inpEl = $('inp');
+  const wtEl = $('wt');
+  if (codeEl) codeEl.value = snp.code || '';
+  if (inpEl) inpEl.value = snp.input_data || '';
+  if (wtEl) wtEl.textContent = snp.title;
+  if (typeof paint === 'function') paint();
+  toast('Draft loaded: ' + snp.title);
+};
+
+window.handleSaveCurrentSnippet = async function() {
+  const codeEl = $('code');
+  const inpEl = $('inp');
+  const currentTitle = $('wt') ? $('wt').textContent : 'Scratchpad Draft';
+
+  const title = prompt('Enter a name for this snippet draft:', currentTitle.startsWith('Two Sum') ? 'My Draft' : currentTitle);
+  if (!title || !title.trim()) return;
+
+  const snippet = {
+    title: title.trim(),
+    language: 'JavaScript',
+    code: codeEl ? codeEl.value : '',
+    input_data: inpEl ? inpEl.value : ''
+  };
+
+  LocalDB.workspace.saveSnippet(snippet);
+  WorkspaceManager.renderSnippetsDropdown();
+  toast('Draft saved to Workspace');
+
+  if (window.currentUser && localStorage.getItem('dh_token')) {
+    try {
+      await fetch('/api/workspace/snippets', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(snippet)
+      });
+    } catch(e) {}
+  }
+};
+
+// ---------------- UNIVERSAL WORKSPACE MODAL CONTROLLER ----------------
+let currentModalType = 'task';
+let currentEditingId = null;
+
+window.openWsModal = function(type = 'task', editId = null) {
+  currentModalType = type;
+  currentEditingId = editId;
+  const modal = document.getElementById('dh-ws-modal');
+  if (!modal) return;
+
+  // Set active tab
+  ['task', 'note', 'assignment', 'bookmark'].forEach(t => {
+    const tabBtn = document.getElementById('ws-tab-' + t);
+    if (tabBtn) tabBtn.classList.toggle('active', t === type);
+  });
+
+  renderModalForm();
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // Focus primary input
+  setTimeout(() => {
+    const firstInput = modal.querySelector('input, textarea');
+    if (firstInput) firstInput.focus();
+  }, 50);
+};
+
+window.closeWsModal = function() {
+  const modal = document.getElementById('dh-ws-modal');
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+  currentEditingId = null;
+};
+
+window.switchWsModalTab = function(type) {
+  currentModalType = type;
+  currentEditingId = null;
+  ['task', 'note', 'assignment', 'bookmark'].forEach(t => {
+    const tabBtn = document.getElementById('ws-tab-' + t);
+    if (tabBtn) tabBtn.classList.toggle('active', t === type);
+  });
+  renderModalForm();
+};
+
+function renderModalForm() {
+  const container = document.getElementById('ws-modal-form-body');
+  if (!container) return;
+
+  const type = currentModalType;
+  const editId = currentEditingId;
+
+  if (type === 'task') {
+    let task = { title: '', subject: '', priority: 'medium', due_date: '' };
+    if (editId) {
+      task = LocalDB.workspace.getTasks().find(t => t.id === editId) || task;
+    }
+
+    container.innerHTML = `
+      <form onsubmit="handleWsFormSubmit(event, 'task', '${editId || ''}')">
+        <div class="dh-fg">
+          <label>Task Title *</label>
+          <input type="text" id="ws-form-task-title" required value="${WorkspaceManager.escapeHtml(task.title)}" placeholder="e.g. Implement Dijkstra's Algorithm">
+        </div>
+        <div class="dh-fg">
+          <label>Subject / Topic</label>
+          <input type="text" id="ws-form-task-subj" value="${WorkspaceManager.escapeHtml(task.subject || '')}" placeholder="e.g. Algorithms & Data Structures">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="dh-fg">
+            <label>Priority</label>
+            <select id="ws-form-task-prio" class="dh-ws-select" style="width:100%">
+              <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High Priority</option>
+              <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium Priority</option>
+              <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low Priority</option>
+            </select>
+          </div>
+          <div class="dh-fg">
+            <label>Due Date</label>
+            <input type="date" id="ws-form-task-due" value="${task.due_date || ''}">
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+          <button type="button" class="bt" onclick="closeWsModal()">Cancel</button>
+          <button type="submit" class="bt d">${editId ? 'Save Changes' : '+ Create Task'}</button>
+        </div>
+      </form>
+    `;
+  } else if (type === 'note') {
+    let note = { title: '', subject: '', tags: '', content: '', link_url: '', is_pinned: 0 };
+    if (editId) {
+      note = LocalDB.workspace.getNotes().find(n => n.id === editId) || note;
+    }
+
+    container.innerHTML = `
+      <form onsubmit="handleWsFormSubmit(event, 'note', '${editId || ''}')">
+        <div class="dh-fg">
+          <label>Note Title *</label>
+          <input type="text" id="ws-form-note-title" required value="${WorkspaceManager.escapeHtml(note.title)}" placeholder="e.g. Microservices vs Monolith trade-offs">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="dh-fg">
+            <label>Subject</label>
+            <input type="text" id="ws-form-note-subj" value="${WorkspaceManager.escapeHtml(note.subject || '')}" placeholder="e.g. System Design">
+          </div>
+          <div class="dh-fg">
+            <label>Tags (comma separated)</label>
+            <input type="text" id="ws-form-note-tags" value="${WorkspaceManager.escapeHtml(note.tags || '')}" placeholder="e.g. code, revision, links">
+          </div>
+        </div>
+        <div class="dh-fg">
+          <label>Note Content</label>
+          <textarea id="ws-form-note-content" rows="4" style="resize:vertical" placeholder="Write key bullet points, formulas or cheat sheet notes…">${WorkspaceManager.escapeHtml(note.content || '')}</textarea>
+        </div>
+        <div class="dh-fg">
+          <label>Reference Link (Optional URL)</label>
+          <input type="url" id="ws-form-note-link" value="${WorkspaceManager.escapeHtml(note.link_url || '')}" placeholder="https://example.com/guide">
+        </div>
+        <div style="margin:10px 0 16px;display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="ws-form-note-pinned" ${note.is_pinned ? 'checked' : ''} style="width:auto">
+          <label for="ws-form-note-pinned" style="font-size:13px;font-weight:600;margin:0;cursor:pointer">Pin to top of Notes</label>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+          <button type="button" class="bt" onclick="closeWsModal()">Cancel</button>
+          <button type="submit" class="bt d">${editId ? 'Save Note' : '+ Add Note'}</button>
+        </div>
+      </form>
+    `;
+  } else if (type === 'assignment') {
+    let asg = { title: '', subject: '', description: '', deadline: '', priority: 'medium', status: 'pending', link_url: '' };
+    if (editId) {
+      asg = LocalDB.workspace.getAssignments().find(a => a.id === editId) || asg;
+    }
+
+    container.innerHTML = `
+      <form onsubmit="handleWsFormSubmit(event, 'assignment', '${editId || ''}')">
+        <div class="dh-fg">
+          <label>Assignment Title *</label>
+          <input type="text" id="ws-form-asg-title" required value="${WorkspaceManager.escapeHtml(asg.title)}" placeholder="e.g. Compiler Design: Lexical Analyzer">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="dh-fg">
+            <label>Course / Subject</label>
+            <input type="text" id="ws-form-asg-subj" value="${WorkspaceManager.escapeHtml(asg.subject || '')}" placeholder="e.g. CS305 Compilers">
+          </div>
+          <div class="dh-fg">
+            <label>Deadline</label>
+            <input type="date" id="ws-form-asg-due" value="${asg.deadline || ''}">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="dh-fg">
+            <label>Status</label>
+            <select id="ws-form-asg-status" class="dh-ws-select" style="width:100%">
+              <option value="pending" ${asg.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="in_progress" ${asg.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+              <option value="completed" ${asg.status === 'completed' ? 'selected' : ''}>Completed</option>
+            </select>
+          </div>
+          <div class="dh-fg">
+            <label>Priority</label>
+            <select id="ws-form-asg-prio" class="dh-ws-select" style="width:100%">
+              <option value="high" ${asg.priority === 'high' ? 'selected' : ''}>High</option>
+              <option value="medium" ${asg.priority === 'medium' ? 'selected' : ''}>Medium</option>
+              <option value="low" ${asg.priority === 'low' ? 'selected' : ''}>Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="dh-fg">
+          <label>Description & Instructions</label>
+          <textarea id="ws-form-asg-desc" rows="3" style="resize:vertical" placeholder="Deliverables, requirements and test specs…">${WorkspaceManager.escapeHtml(asg.description || '')}</textarea>
+        </div>
+        <div class="dh-fg">
+          <label>Submission / Repository Link</label>
+          <input type="url" id="ws-form-asg-link" value="${WorkspaceManager.escapeHtml(asg.link_url || '')}" placeholder="https://github.com/my-repo">
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+          <button type="button" class="bt" onclick="closeWsModal()">Cancel</button>
+          <button type="submit" class="bt d">${editId ? 'Save Assignment' : '+ Add Assignment'}</button>
+        </div>
+      </form>
+    `;
+  } else if (type === 'bookmark') {
+    let bmk = { title: '', category: 'resource', target_url: '', description: '' };
+    if (editId) {
+      bmk = LocalDB.workspace.getBookmarks().find(b => b.id === editId) || bmk;
+    }
+
+    container.innerHTML = `
+      <form onsubmit="handleWsFormSubmit(event, 'bookmark', '${editId || ''}')">
+        <div class="dh-fg">
+          <label>Title *</label>
+          <input type="text" id="ws-form-bmk-title" required value="${WorkspaceManager.escapeHtml(bmk.title)}" placeholder="e.g. Clean Code Architecture Reference">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="dh-fg">
+            <label>Category</label>
+            <select id="ws-form-bmk-cat" class="dh-ws-select" style="width:100%">
+              <option value="course" ${bmk.category === 'course' ? 'selected' : ''}>Course</option>
+              <option value="challenge" ${bmk.category === 'challenge' ? 'selected' : ''}>Challenge</option>
+              <option value="project" ${bmk.category === 'project' ? 'selected' : ''}>Project</option>
+              <option value="resource" ${bmk.category === 'resource' ? 'selected' : ''}>Resource</option>
+            </select>
+          </div>
+          <div class="dh-fg">
+            <label>Target URL / View *</label>
+            <input type="text" id="ws-form-bmk-url" required value="${WorkspaceManager.escapeHtml(bmk.target_url || '')}" placeholder="e.g. #v-learn or https://...">
+          </div>
+        </div>
+        <div class="dh-fg">
+          <label>Short Description</label>
+          <textarea id="ws-form-bmk-desc" rows="2" style="resize:vertical" placeholder="Quick bookmark summary…">${WorkspaceManager.escapeHtml(bmk.description || '')}</textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+          <button type="button" class="bt" onclick="closeWsModal()">Cancel</button>
+          <button type="submit" class="bt d">${editId ? 'Save Bookmark' : '+ Save Item'}</button>
+        </div>
+      </form>
+    `;
+  }
+}
+
+window.handleWsFormSubmit = async function(e, type, editId) {
+  e.preventDefault();
+
+  if (type === 'task') {
+    const title = document.getElementById('ws-form-task-title').value.trim();
+    const subject = document.getElementById('ws-form-task-subj').value.trim();
+    const priority = document.getElementById('ws-form-task-prio').value;
+    const due_date = document.getElementById('ws-form-task-due').value;
+
+    const task = { id: editId || undefined, title, subject, priority, due_date, status: 'pending' };
+    LocalDB.workspace.saveTask(task);
+    WorkspaceManager.renderTasks();
+    closeWsModal();
+    toast(editId ? 'Task updated' : 'Task added');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch(editId ? '/api/workspace/tasks/' + editId : '/api/workspace/tasks', {
+          method: editId ? 'PUT' : 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(task)
+        });
+      } catch(e) {}
+    }
+  } else if (type === 'note') {
+    const title = document.getElementById('ws-form-note-title').value.trim();
+    const subject = document.getElementById('ws-form-note-subj').value.trim();
+    const tags = document.getElementById('ws-form-note-tags').value.trim();
+    const content = document.getElementById('ws-form-note-content').value.trim();
+    const link_url = document.getElementById('ws-form-note-link').value.trim();
+    const is_pinned = document.getElementById('ws-form-note-pinned').checked ? 1 : 0;
+
+    const note = { id: editId || undefined, title, subject, tags, content, link_url, is_pinned };
+    LocalDB.workspace.saveNote(note);
+    WorkspaceManager.renderNotes();
+    closeWsModal();
+    toast(editId ? 'Note saved' : 'Note created');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch(editId ? '/api/workspace/notes/' + editId : '/api/workspace/notes', {
+          method: editId ? 'PUT' : 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(note)
+        });
+      } catch(e) {}
+    }
+  } else if (type === 'assignment') {
+    const title = document.getElementById('ws-form-asg-title').value.trim();
+    const subject = document.getElementById('ws-form-asg-subj').value.trim();
+    const deadline = document.getElementById('ws-form-asg-due').value;
+    const status = document.getElementById('ws-form-asg-status').value;
+    const priority = document.getElementById('ws-form-asg-prio').value;
+    const description = document.getElementById('ws-form-asg-desc').value.trim();
+    const link_url = document.getElementById('ws-form-asg-link').value.trim();
+
+    const asg = { id: editId || undefined, title, subject, deadline, status, priority, description, link_url };
+    LocalDB.workspace.saveAssignment(asg);
+    WorkspaceManager.renderAssignments();
+    closeWsModal();
+    toast(editId ? 'Assignment updated' : 'Assignment created');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch(editId ? '/api/workspace/assignments/' + editId : '/api/workspace/assignments', {
+          method: editId ? 'PUT' : 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(asg)
+        });
+      } catch(e) {}
+    }
+  } else if (type === 'bookmark') {
+    const title = document.getElementById('ws-form-bmk-title').value.trim();
+    const category = document.getElementById('ws-form-bmk-cat').value;
+    const target_url = document.getElementById('ws-form-bmk-url').value.trim();
+    const description = document.getElementById('ws-form-bmk-desc').value.trim();
+
+    const bmk = { id: editId || undefined, title, category, target_url, description };
+    LocalDB.workspace.saveBookmark(bmk);
+    WorkspaceManager.renderBookmarks();
+    closeWsModal();
+    toast('Bookmark saved');
+
+    if (window.currentUser && localStorage.getItem('dh_token')) {
+      try {
+        await fetch('/api/workspace/bookmarks', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(bmk)
+        });
+      } catch(e) {}
+    }
+  }
+};
+
+
+// 3. VENOM-INSPIRED CURSOR PROXIMITY ENGINE (Aesthetic, Smooth & Lightweight)
+const VenomProximityEngine = {
+  activeCards: [],
+  animFrameId: null,
+  mouse: { x: -9999, y: -9999 },
+  isPointerActive: false,
+  PROXIMITY_RADIUS: 135,
+  DAMPING: 0.12,
+
+  init() {
+    // Accessibility check: Reduced motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    // Touch coarse check
+    if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+      return;
+    }
+
+    const cards = document.querySelectorAll('.dh-venom-card, .dh-venom-btn');
+    this.activeCards = Array.from(cards).map(el => {
+      let canvas = el.querySelector('.dh-venom-canvas');
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.className = 'dh-venom-canvas';
+        canvas.setAttribute('aria-hidden', 'true');
+        el.style.position = 'relative';
+        el.appendChild(canvas);
+      }
+
+      // Generate initial tendrils for this card
+      const tendrilCount = el.classList.contains('dh-venom-btn') ? 2 : 4;
+      const tendrils = [];
+      for (let i = 0; i < tendrilCount; i++) {
+        tendrils.push({
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.003 + Math.random() * 0.003,
+          lengthFactor: 0.7 + Math.random() * 0.6,
+          curveFactor: (Math.random() - 0.5) * 20
+        });
+      }
+
+      return {
+        el,
+        canvas,
+        ctx: canvas.getContext('2d'),
+        intensity: 0,
+        targetIntensity: 0,
+        tendrils,
+        rect: null
+      };
+    });
+
+    this.bindEvents();
+  },
+
+  bindEvents() {
+    const wsSection = document.getElementById('v-work') || document.body;
+
+    const onPointerMove = (e) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+      this.isPointerActive = true;
+      this.updateProximities();
+      this.wakeLoop();
+    };
+
+    const onPointerLeave = () => {
+      this.mouse.x = -9999;
+      this.mouse.y = -9999;
+      this.updateProximities();
+    };
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    document.addEventListener('pointerleave', onPointerLeave, { passive: true });
+    window.addEventListener('resize', () => { this.handleResize(); }, { passive: true });
+  },
+
+  handleResize() {
+    this.activeCards.forEach(card => {
+      const rect = card.el.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const w = rect.width + 40;
+      const h = rect.height + 40;
+      if (card.canvas.width !== Math.floor(w * dpr) || card.canvas.height !== Math.floor(h * dpr)) {
+        card.canvas.width = Math.floor(w * dpr);
+        card.canvas.height = Math.floor(h * dpr);
+        card.ctx.scale(dpr, dpr);
+      }
+    });
+  },
+
+  updateProximities() {
+    let hasExcitement = false;
+    const mx = this.mouse.x;
+    const my = this.mouse.y;
+
+    this.activeCards.forEach(card => {
+      // Check if element is currently displayed
+      if (card.el.offsetParent === null) {
+        card.targetIntensity = 0;
+        return;
+      }
+
+      const rect = card.el.getBoundingClientRect();
+      card.rect = rect;
+
+      // Find closest point on element boundary to mouse
+      const cx = Math.max(rect.left, Math.min(rect.right, mx));
+      const cy = Math.max(rect.top, Math.min(rect.bottom, my));
+      const dist = Math.hypot(mx - cx, my - cy);
+
+      if (dist < this.PROXIMITY_RADIUS) {
+        const factor = 1 - (dist / this.PROXIMITY_RADIUS);
+        card.targetIntensity = Math.min(1, Math.pow(factor, 1.15) * 1.1);
+        hasExcitement = true;
+      } else {
+        card.targetIntensity = 0;
+      }
+
+      if (card.intensity > 0.005) {
+        hasExcitement = true;
+      }
+    });
+
+    if (hasExcitement) this.wakeLoop();
+  },
+
+  wakeLoop() {
+    if (!this.animFrameId) {
+      this.animFrameId = requestAnimationFrame((t) => this.render(t));
+    }
+  },
+
+  render(timestamp) {
+    let stillActive = false;
+    const dpr = window.devicePixelRatio || 1;
+    const mx = this.mouse.x;
+    const my = this.mouse.y;
+
+    this.activeCards.forEach(card => {
+      // Smooth interpolation
+      card.intensity += (card.targetIntensity - card.intensity) * this.DAMPING;
+
+      if (card.intensity < 0.004 && card.targetIntensity === 0) {
+        card.intensity = 0;
+      } else {
+        stillActive = true;
+      }
+
+      const ctx = card.ctx;
+      const rect = card.rect || card.el.getBoundingClientRect();
+      const cw = rect.width + 40;
+      const ch = rect.height + 40;
+
+      // Ensure canvas size
+      if (card.canvas.width !== Math.floor(cw * dpr)) {
+        card.canvas.width = Math.floor(cw * dpr);
+        card.canvas.height = Math.floor(ch * dpr);
+        ctx.scale(dpr, dpr);
+      }
+
+      ctx.clearRect(0, 0, cw, ch);
+
+      if (card.intensity > 0.005) {
+        // Nearest point on card boundary in local canvas coords (+20 offset)
+        const localLeft = 20;
+        const localRight = rect.width + 20;
+        const localTop = 20;
+        const localBottom = rect.height + 20;
+
+        const globalCx = Math.max(rect.left, Math.min(rect.right, mx));
+        const globalCy = Math.max(rect.top, Math.min(rect.bottom, my));
+
+        const baseLocalX = 20 + (globalCx - rect.left);
+        const baseLocalY = 20 + (globalCy - rect.top);
+
+        const localMx = 20 + (mx - rect.left);
+        const localMy = 20 + (my - rect.top);
+
+        const cardAngle = Math.atan2(localMy - baseLocalY, localMx - baseLocalX);
+
+        card.tendrils.forEach((tendril, idx) => {
+          const spreadOffset = (idx - (card.tendrils.length - 1) / 2) * 14;
+          const anchorX = baseLocalX + Math.cos(cardAngle + Math.PI / 2) * spreadOffset;
+          const anchorY = baseLocalY + Math.sin(cardAngle + Math.PI / 2) * spreadOffset;
+
+          const stretchDist = Math.min(65, Math.hypot(localMx - anchorX, localMy - anchorY)) * card.intensity * tendril.lengthFactor;
+          const wave = Math.sin(timestamp * tendril.speed + tendril.phase) * (8 * card.intensity);
+
+          const tipX = anchorX + Math.cos(cardAngle) * stretchDist + Math.cos(cardAngle + Math.PI / 2) * wave;
+          const tipY = anchorY + Math.sin(cardAngle) * stretchDist + Math.sin(cardAngle + Math.PI / 2) * wave;
+
+          const ctrlX = (anchorX + tipX) * 0.5 + Math.sin(timestamp * 0.004 + tendril.phase) * tendril.curveFactor * card.intensity;
+          const ctrlY = (anchorY + tipY) * 0.5 + Math.cos(timestamp * 0.004 + tendril.phase) * tendril.curveFactor * card.intensity;
+
+          // Layer 1: Obsidian Black Liquid Body
+          ctx.beginPath();
+          ctx.moveTo(anchorX, anchorY);
+          ctx.quadraticCurveTo(ctrlX, ctrlY, tipX, tipY);
+          ctx.strokeStyle = `rgba(15, 12, 22, ${(card.intensity * 0.9).toFixed(3)})`;
+          ctx.lineWidth = Math.max(1, 3.2 * card.intensity);
+          ctx.lineCap = 'round';
+          ctx.stroke();
+
+          // Layer 2: Glossy Spine Specular Sheen
+          ctx.beginPath();
+          ctx.moveTo(anchorX, anchorY);
+          ctx.quadraticCurveTo(ctrlX, ctrlY, tipX, tipY);
+          ctx.strokeStyle = `rgba(215, 215, 235, ${(card.intensity * 0.4).toFixed(3)})`;
+          ctx.lineWidth = Math.max(0.6, 1.0 * card.intensity);
+          ctx.stroke();
+
+          // Layer 3: Restrained Micro Crimson Accent
+          ctx.beginPath();
+          ctx.arc(tipX, tipY, Math.max(0.8, 1.6 * card.intensity), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(225, 29, 72, ${(card.intensity * 0.85).toFixed(3)})`;
+          ctx.fill();
+        });
+      }
+    });
+
+    if (stillActive) {
+      this.animFrameId = requestAnimationFrame((t) => this.render(t));
+    } else {
+      this.animFrameId = null; // Enter dormant 0% CPU state
+    }
+  }
+};
+
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    WorkspaceManager.init();
+    VenomProximityEngine.init();
+  });
+} else {
+  WorkspaceManager.init();
+  VenomProximityEngine.init();
+}
+
+// Hook into global view change so Venom canvases re-measure properly
+const originalShow = window.show;
+if (typeof originalShow === 'function') {
+  window.show = function(name) {
+    originalShow(name);
+    if (name === 'work') {
+      setTimeout(() => {
+        WorkspaceManager.renderAll();
+        VenomProximityEngine.handleResize();
+      }, 50);
+    }
+  };
+}
+
 /* search */
 const idx=[...P.map(p=>[p[0],'Learning path','learn']),...C.map((c,i)=>[c[0],'Challenge','practice']),['Study Timer & Flip Clock','Timer','timer'],...J.map(j=>[j[0],'Project','projects']),[H.name,'Hackathon','hack'],['Settings — Light / Dark mode','Settings','settings']];
 const sr=$('sr');$('sb').onclick=()=>{sr.classList.add('open');$('si').focus();rs2()};
@@ -4051,6 +6465,23 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
 </script>
 
 <!-- AUTH MODAL: SIGN UP & SIGN IN -->
+
+<!-- UNIVERSAL WORKSPACE MODAL -->
+<div class="dh-modal-wrap" id="dh-ws-modal">
+  <div class="dh-modal-overlay" onclick="closeWsModal()"></div>
+  <div class="dh-modal-card" style="max-width:540px">
+    <button type="button" class="dh-modal-close" onclick="closeWsModal()" aria-label="Close">✕</button>
+    <div class="dh-tabs" id="ws-modal-tabs">
+      <button type="button" class="dh-tab-btn active" id="ws-tab-task" onclick="switchWsModalTab('task')">Task</button>
+      <button type="button" class="dh-tab-btn" id="ws-tab-note" onclick="switchWsModalTab('note')">Note</button>
+      <button type="button" class="dh-tab-btn" id="ws-tab-assignment" onclick="switchWsModalTab('assignment')">Assignment</button>
+      <button type="button" class="dh-tab-btn" id="ws-tab-bookmark" onclick="switchWsModalTab('bookmark')">Bookmark</button>
+    </div>
+    
+    <div id="ws-modal-form-body"></div>
+  </div>
+</div>
+
 <div class="dh-modal-wrap" id="dh-auth-modal">
   <div class="dh-modal-overlay" onclick="closeAuthModal()"></div>
   <div class="dh-modal-card">
