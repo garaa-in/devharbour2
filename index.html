@@ -2710,7 +2710,14 @@ html[data-theme="dark"] .dh-timer-tab.on {
 }
 
 
-/* ===== DEV HARBOUR: GLOBAL AESTHETIC ANIMATION & MOTION SYSTEM ===== */
+/* ===== DEV HARBOUR: FUTURISTIC SMOOTH ANIMATION & AESTHETIC MOTION SYSTEM ===== */
+
+:root {
+  --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-fluid: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --glow-accent: rgba(140, 120, 235, 0.25);
+}
 
 /* 1. Global View Entrance & Cinematic Stagger */
 .view {
@@ -2719,13 +2726,13 @@ html[data-theme="dark"] .dh-timer-tab.on {
 }
 .view.on {
   display: block;
-  animation: viewFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: futuristicViewFadeIn 0.5s var(--ease-expo) forwards;
 }
 
-@keyframes viewFadeIn {
+@keyframes futuristicViewFadeIn {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -2733,7 +2740,7 @@ html[data-theme="dark"] .dh-timer-tab.on {
   }
 }
 
-/* Staggered card spring entrance across all sections */
+/* Staggered 3D Depth Card Assembly */
 .view.on .c,
 .view.on .t,
 .view.on .pk,
@@ -2747,76 +2754,132 @@ html[data-theme="dark"] .dh-timer-tab.on {
 .view.on .card,
 .view.on .ws-roller-capsule,
 .view.on .dh-section-card {
-  animation: cardRiseStagger 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  animation-delay: calc(var(--d, 0) * 45ms);
+  animation: futuristicCardAssemble 0.7s var(--ease-expo) backwards;
+  animation-delay: calc(var(--d, 0) * 40ms);
 }
 
-@keyframes cardRiseStagger {
+@keyframes futuristicCardAssemble {
   0% {
     opacity: 0;
-    transform: translateY(22px) scale(0.975);
-    filter: blur(3px);
+    transform: translateY(26px) scale(0.97) rotateX(3deg);
+    filter: blur(5px);
   }
-  60% {
-    opacity: 0.92;
+  65% {
+    opacity: 0.95;
+    filter: blur(1px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotateX(0deg);
     filter: blur(0);
   }
 }
 
-/* 2. Living Ambient Fluid Background */
+/* 2. Living Ambient Fluid Nebula Background */
 body::before {
-  animation: ambientLightBreathe 25s ease-in-out infinite alternate !important;
-  background-size: 140% 140% !important;
+  animation: futuristicAuroraBreathe 28s ease-in-out infinite alternate !important;
+  background-size: 150% 150% !important;
   will-change: transform, opacity;
 }
 
-@keyframes ambientLightBreathe {
+@keyframes futuristicAuroraBreathe {
   0% {
     transform: scale(1) translate3d(0, 0, 0);
     opacity: 0.92;
   }
   50% {
-    transform: scale(1.06) translate3d(1.5%, -1%, 0);
+    transform: scale(1.08) translate3d(2%, -1.5%, 0);
     opacity: 1;
   }
   100% {
-    transform: scale(1.02) translate3d(-1%, 1.2%, 0);
-    opacity: 0.94;
+    transform: scale(1.03) translate3d(-1.5%, 1.8%, 0);
+    opacity: 0.95;
   }
 }
 
-/* Dark mode ambient nebula breathing */
+/* Dark mode deep cosmic nebula */
 html[data-theme="dark"] body::before {
   background: 
-    radial-gradient(65vw 55vh at 85% 15%, rgba(91, 79, 160, 0.14), transparent 70%),
-    radial-gradient(55vw 65vh at 10% 80%, rgba(61, 55, 84, 0.16), transparent 70%),
-    radial-gradient(45vw 45vh at 50% 100%, rgba(138, 90, 168, 0.10), transparent 70%) !important;
-  animation: ambientLightBreathe 28s ease-in-out infinite alternate !important;
+    radial-gradient(65vw 55vh at 85% 15%, rgba(91, 79, 160, 0.16), transparent 70%),
+    radial-gradient(55vw 65vh at 10% 80%, rgba(61, 55, 84, 0.18), transparent 70%),
+    radial-gradient(45vw 45vh at 50% 100%, rgba(138, 90, 168, 0.12), transparent 70%) !important;
+  animation: futuristicAuroraBreathe 30s ease-in-out infinite alternate !important;
 }
 
-/* 3. Sidebar Navigation Micro-Interactions */
+/* 3. Interactive Futuristic Card Spotlight & Hairline Glass */
+.c, .pk, .ci, .ws-card, .ws-stat-card, .course-card, .dh-section-card, .j {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s var(--ease-expo), box-shadow 0.4s var(--ease-expo), border-color 0.25s ease !important;
+  border: 1px solid var(--line);
+}
+
+/* Dynamic Interactive Spotlight Sheen */
+.c::before, .pk::before, .ci::before, .ws-card::before, .ws-stat-card::before, .course-card::before, .dh-section-card::before, .j::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(160, 145, 235, 0.12), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.c:hover::before, .pk:hover::before, .ci:hover::before, .ws-card:hover::before, .ws-stat-card:hover::before, .course-card:hover::before, .dh-section-card:hover::before, .j:hover::before {
+  opacity: 1;
+}
+
+.c:hover, .pk:hover, .ci:hover, .course-card:hover, .dh-section-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 24px 48px -18px rgba(40, 34, 66, 0.16),
+    0 0 24px rgba(160, 145, 215, 0.1) !important;
+}
+.c:active, .pk:active, .ci:active, .ws-card:active, .course-card:active {
+  transform: translateY(-2px) scale(0.99);
+}
+
+/* Dark mode card hover elevation & cyber glow */
+html[data-theme="dark"] .c::before,
+html[data-theme="dark"] .pk::before,
+html[data-theme="dark"] .ci::before,
+html[data-theme="dark"] .ws-card::before,
+html[data-theme="dark"] .ws-stat-card::before,
+html[data-theme="dark"] .course-card::before {
+  background: radial-gradient(450px circle at var(--mx, 50%) var(--my, 50%), rgba(140, 126, 235, 0.16), transparent 70%);
+}
+
+html[data-theme="dark"] .c:hover,
+html[data-theme="dark"] .pk:hover,
+html[data-theme="dark"] .ci:hover,
+html[data-theme="dark"] .course-card:hover,
+html[data-theme="dark"] .ws-card:hover {
+  border-color: rgba(160, 145, 245, 0.4) !important;
+  box-shadow: 
+    0 20px 48px rgba(0, 0, 0, 0.7),
+    0 0 28px rgba(140, 126, 235, 0.18) !important;
+}
+
+/* 4. Sidebar Navigation Fluid Motion */
 .sb .nv {
   position: relative;
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease !important;
+  transition: transform 0.28s var(--ease-expo), background-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease !important;
 }
 .sb .nv svg.i {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition: transform 0.35s var(--ease-spring) !important;
 }
 .sb .nv:hover {
   transform: translateX(4px);
 }
 .sb .nv:hover svg.i {
-  transform: scale(1.18) rotate(-4deg);
+  transform: scale(1.2) rotate(-4deg);
 }
 .sb .nv:active {
   transform: scale(0.97) translateX(2px);
 }
 
-/* Active Nav Indicator with Gentle Pulse */
+/* Glowing Active Nav Indicator Pill */
 .sb .nv.on::after {
   content: '';
   position: absolute;
@@ -2828,67 +2891,67 @@ html[data-theme="dark"] body::before {
   border-radius: 50%;
   background: currentColor;
   box-shadow: 0 0 8px currentColor;
-  animation: navDotPulse 2.4s ease-in-out infinite;
+  animation: cyberNavDotPulse 2.4s ease-in-out infinite;
 }
-@keyframes navDotPulse {
-  0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.8; }
-  50% { transform: translateY(-50%) scale(1.4); opacity: 1; }
-}
-
-/* 4. Interactive Card Elevation & Tactile Depth */
-.c, .pk, .ci, .ws-card, .ws-stat-card, .course-card, .dh-section-card {
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease !important;
-}
-.c:hover, .pk:hover, .ci:hover, .course-card:hover, .dh-section-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 24px 48px -18px rgba(40, 34, 66, 0.18), 0 0 24px rgba(160, 145, 215, 0.08) !important;
-}
-.c:active, .pk:active, .ci:active, .ws-card:active, .course-card:active {
-  transform: translateY(-2px) scale(0.99);
+@keyframes cyberNavDotPulse {
+  0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.8; filter: drop-shadow(0 0 2px currentColor); }
+  50% { transform: translateY(-50%) scale(1.4); opacity: 1; filter: drop-shadow(0 0 6px currentColor); }
 }
 
-/* Dark mode card hover elevation & glow */
-html[data-theme="dark"] .c:hover,
-html[data-theme="dark"] .pk:hover,
-html[data-theme="dark"] .ci:hover,
-html[data-theme="dark"] .course-card:hover,
-html[data-theme="dark"] .ws-card:hover {
-  border-color: rgba(255, 255, 255, 0.22) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(129, 114, 216, 0.15) !important;
-}
-
-/* 5. Buttons Tactile Spring & Shimmer Micro-Animations */
+/* 5. Futuristic Tactile Buttons & Holographic Specular Sweep */
 .bt, .cr, .zb, .run, .rst, .cp, .go, .ws-pill-btn, .pill {
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, background-color 0.2s ease, color 0.2s ease !important;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.25s ease, background-color 0.2s ease, color 0.2s ease !important;
   position: relative;
   overflow: hidden;
 }
 .bt:hover, .cr:hover, .zb:hover, .run:hover, .go:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(61, 55, 84, 0.16);
+  box-shadow: 0 8px 22px rgba(61, 55, 84, 0.18), 0 0 16px rgba(140, 120, 235, 0.14);
 }
 .bt:active, .cr:active, .zb:active, .run:active, .rst:active, .cp:active, .go:active, .ws-pill-btn:active, .pill:active {
-  transform: scale(0.955) !important;
+  transform: scale(0.95) !important;
 }
 
-/* Specular Shimmer Sweep on Primary Action Buttons */
+/* Multi-layer Holographic Refraction Sweep on Primary Action Buttons */
 .bt.d::before, .run::before, .go::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -120%;
-  width: 80%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
-  transform: skewX(-20deg);
-  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  inset: 0;
+  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.25) 45%, rgba(180, 160, 240, 0.3) 50%, rgba(255, 255, 255, 0.25) 55%, transparent 80%);
+  transform: translateX(-140%) skewX(-20deg);
+  transition: transform 0.65s var(--ease-expo);
   pointer-events: none;
 }
 .bt.d:hover::before, .run:hover::before, .go:hover::before {
-  left: 140%;
+  transform: translateX(140%) skewX(-20deg);
 }
 
-/* 6. Header XP Star Orbit & Pulse */
+/* 6. Futuristic Mercury Roller Sheen */
+.ws-mercury-orb {
+  animation: mercuryLiquidPulse 4s ease-in-out infinite alternate;
+}
+@keyframes mercuryLiquidPulse {
+  0% {
+    box-shadow: 0 4px 18px rgba(61, 55, 84, 0.16), 0 0 20px rgba(255, 255, 255, 0.8), inset 0 2px 2px rgba(255, 255, 255, 0.95);
+  }
+  100% {
+    box-shadow: 0 6px 24px rgba(61, 55, 84, 0.22), 0 0 30px rgba(255, 255, 255, 0.95), 0 0 16px rgba(160, 145, 215, 0.4), inset 0 2px 2px rgba(255, 255, 255, 1);
+  }
+}
+
+html[data-theme="dark"] .ws-mercury-orb {
+  animation: darkMercuryChromeGlow 4s ease-in-out infinite alternate;
+}
+@keyframes darkMercuryChromeGlow {
+  0% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 18px rgba(255, 255, 255, 0.2), inset 0 1px 2px #fff;
+  }
+  100% {
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 255, 255, 0.45), 0 0 16px rgba(129, 114, 216, 0.35), inset 0 1px 2px #fff;
+  }
+}
+
+/* 7. Header XP Star Orbit & Holographic Pulse */
 .dh-mercury-star {
   display: inline-block;
   animation: starFloatSpin 5s ease-in-out infinite alternate !important;
@@ -2896,30 +2959,30 @@ html[data-theme="dark"] .ws-card:hover {
 }
 @keyframes starFloatSpin {
   0% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5)); }
-  50% { transform: rotate(18deg) scale(1.15); filter: drop-shadow(0 0 6px rgba(180, 160, 240, 0.8)); }
-  100% { transform: rotate(-12deg) scale(1.05); filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); }
+  50% { transform: rotate(18deg) scale(1.15); filter: drop-shadow(0 0 8px rgba(180, 160, 240, 0.85)); }
+  100% { transform: rotate(-14deg) scale(1.05); filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); }
 }
 
-/* 7. Timer & Flip Clock Living Glow */
+/* 8. Timer & Flip Clock Cyber Aura */
 .dh-timer-stage.is-running {
-  animation: timerAuraPulse 3s ease-in-out infinite alternate;
+  animation: cyberTimerAura 3s ease-in-out infinite alternate;
 }
-@keyframes timerAuraPulse {
+@keyframes cyberTimerAura {
   0% {
-    box-shadow: 0 10px 30px rgba(91, 79, 160, 0.08), 0 0 20px rgba(140, 120, 220, 0.06);
+    box-shadow: 0 10px 30px rgba(91, 79, 160, 0.1), 0 0 20px rgba(140, 120, 220, 0.08);
   }
   100% {
-    box-shadow: 0 14px 45px rgba(91, 79, 160, 0.18), 0 0 35px rgba(140, 120, 220, 0.18);
+    box-shadow: 0 16px 48px rgba(91, 79, 160, 0.22), 0 0 40px rgba(140, 120, 220, 0.25);
   }
 }
 .dh-flip-card-unit {
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.28s var(--ease-spring);
 }
 .dh-flip-card-unit:hover {
-  transform: translateY(-3px) scale(1.015);
+  transform: translateY(-4px) scale(1.02);
 }
 
-/* 8. Progress Bars Liquid Shine Sweep */
+/* 9. Liquid Sheen Sweep on Progress Bars */
 .dh-prog-fill, .bar, .ws-bar-fill {
   position: relative;
   overflow: hidden;
@@ -2928,32 +2991,32 @@ html[data-theme="dark"] .ws-card:hover {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   transform: translateX(-100%);
-  animation: progressShineSweep 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: progressShineSweep 3s var(--ease-fluid) infinite;
 }
 @keyframes progressShineSweep {
-  0%, 40% { transform: translateX(-100%); }
-  80%, 100% { transform: translateX(100%); }
+  0%, 35% { transform: translateX(-100%); }
+  75%, 100% { transform: translateX(100%); }
 }
 
-/* 9. Modals Silky Spring Entrance */
+/* 10. Modals Frosted Glass & Spring Pop */
 .dh-modal-wrap {
   animation: modalOverlayIn 0.25s ease forwards;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 @keyframes modalOverlayIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 .dh-modal-card {
-  animation: modalCardPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: modalCardPop 0.38s var(--ease-expo) forwards;
 }
 @keyframes modalCardPop {
   0% {
     opacity: 0;
-    transform: translateY(20px) scale(0.96);
+    transform: translateY(24px) scale(0.95);
   }
   100% {
     opacity: 1;
@@ -2961,21 +3024,21 @@ html[data-theme="dark"] .ws-card:hover {
   }
 }
 .dh-modal-close {
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, color 0.2s ease !important;
+  transition: transform 0.28s var(--ease-spring), background-color 0.2s ease, color 0.2s ease !important;
 }
 .dh-modal-close:hover {
-  transform: rotate(90deg) scale(1.15) !important;
+  transform: rotate(90deg) scale(1.18) !important;
 }
 
-/* 10. Toast Notification Fluid Bounce */
+/* 11. Toast Notification Fluid Bounce */
 #toast {
-  animation: toastPopBounce 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 20px rgba(140, 120, 220, 0.25) !important;
+  animation: toastPopBounce 0.4s var(--ease-spring) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25), 0 0 24px rgba(140, 120, 220, 0.3) !important;
 }
 @keyframes toastPopBounce {
   0% {
     opacity: 0;
-    transform: translate(-50%, 20px) scale(0.92);
+    transform: translate(-50%, 24px) scale(0.9);
   }
   100% {
     opacity: 1;
@@ -2983,13 +3046,13 @@ html[data-theme="dark"] .ws-card:hover {
   }
 }
 
-/* 11. Code Editor Passed / Error Test Feedback */
+/* 12. Code Sandbox Passing Celebration & Error Shake */
 .rs.ok {
-  animation: testPassCelebrate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  animation: testPassCelebrate 0.45s var(--ease-spring) !important;
 }
 @keyframes testPassCelebrate {
   0% { transform: scale(0.92); }
-  50% { transform: scale(1.05); }
+  50% { transform: scale(1.06); }
   100% { transform: scale(1); }
 }
 .rs.no, .er {
@@ -2997,12 +3060,13 @@ html[data-theme="dark"] .ws-card:hover {
 }
 @keyframes testErrShake {
   0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-3px); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
 }
 
-/* 12. Accessibility: Respect Reduced Motion */
+/* 13. Accessibility: Motion Sensitivity */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -7437,6 +7501,26 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
   }, 1000);
 
 })();
+
+
+// Futuristic Interactive Card Spotlight Tracker (0% CPU idle)
+(function() {
+  let ticking = false;
+  document.addEventListener('pointermove', function(e) {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function() {
+      const card = e.target.closest('.c, .pk, .ci, .ws-card, .ws-stat-card, .ws-chart-card, .course-card, .dh-section-card, .j');
+      if (card) {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', Math.round(e.clientX - rect.left) + 'px');
+        card.style.setProperty('--my', Math.round(e.clientY - rect.top) + 'px');
+      }
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+
 </script>
 </body>
 </html>
