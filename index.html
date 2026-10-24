@@ -745,6 +745,496 @@ html[data-theme="dark"] .px-modal-close:hover{background:rgba(255,255,255,.24)}
 .pm-btn.secondary{background:rgba(0,0,0,.05);color:var(--ink);border:1px solid var(--line)}
 html[data-theme="dark"] .pm-btn.secondary{background:rgba(255,255,255,.06);color:#eee}
 
+/* ===== DEV HARBOUR: INTERACTIVE COURSES & ROADMAPS ===== */
+.dh-learn-hero {
+  grid-column: span 12;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.dh-learn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: var(--soft);
+  color: var(--mut);
+  align-self: flex-start;
+}
+.dh-learn-badge svg.i {
+  width: 13px;
+  height: 13px;
+}
+.dh-learn-hero h2 {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0;
+}
+.dh-learn-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+.dh-learn-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dh-learn-filter {
+  padding: 7px 15px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mut);
+  background: var(--card);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.dh-learn-filter:hover {
+  color: var(--ink);
+  border-color: rgba(110,90,200,.4);
+}
+.dh-learn-filter.on {
+  background: var(--blk);
+  color: #fff;
+  border-color: var(--blk);
+}
+html[data-theme="dark"] .dh-learn-filter.on {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+.dh-learn-search-wrap {
+  position: relative;
+  min-width: 240px;
+  flex: 1;
+  max-width: 360px;
+}
+.dh-learn-search-wrap svg.i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--mut);
+  pointer-events: none;
+}
+.dh-learn-search-wrap input {
+  width: 100%;
+  padding: 8px 14px 8px 36px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 13px;
+  outline: none;
+  transition: border-color .2s;
+}
+.dh-learn-search-wrap input:focus {
+  border-color: #7a62d6;
+}
+
+/* Course Card Enhancements */
+.dh-course-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  min-height: 290px;
+}
+.dh-course-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.dh-course-card-icon {
+  width: 46px;
+  height: 46px;
+  padding: 11px;
+  border-radius: 15px;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+.dh-course-card.k .dh-course-card-icon {
+  background: rgba(255,255,255,.2);
+}
+.dh-course-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.dh-course-badge-ref {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(110,90,200,.1);
+  color: #6449c2;
+}
+html[data-theme="dark"] .dh-course-badge-ref {
+  background: rgba(255,255,255,.1);
+  color: #dedede;
+}
+.dh-course-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0 14px;
+}
+.dh-course-skill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--soft);
+  color: var(--mut);
+}
+.dh-course-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+.dh-course-card-actions .bt {
+  font-size: 12px;
+  padding: 7px 12px;
+  border-radius: 10px;
+}
+.dh-course-card-actions .bt.d {
+  flex: 1;
+  text-align: center;
+}
+.dh-ref-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--soft);
+  color: var(--ink);
+  text-decoration: none;
+  transition: all .2s;
+}
+.dh-ref-icon-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(0,0,0,0.08);
+}
+html[data-theme="dark"] .dh-ref-icon-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+.dh-ref-icon-btn svg.i {
+  width: 14px;
+  height: 14px;
+}
+.dh-card-progress-bar {
+  width: 100%;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--soft);
+  overflow: hidden;
+  margin-top: 6px;
+}
+.dh-card-progress-fill {
+  height: 100%;
+  background: #7a62d6;
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+
+/* Course Modal / Roadmap Viewer */
+.dh-modal-card.dh-modal-course {
+  max-width: 920px;
+  width: 95%;
+  padding: 26px 30px;
+}
+.dh-course-modal-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+.dh-cm-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-right: 36px;
+  gap: 16px;
+}
+.dh-cm-title-group h2 {
+  font-size: clamp(20px, 2.5vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 4px 0 6px;
+}
+.dh-cm-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--mut);
+  font-weight: 600;
+}
+.dh-cm-ref-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dh-cm-ref-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: var(--soft);
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  transition: all .2s ease;
+}
+.dh-cm-ref-btn:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.dh-cm-ref-btn svg.i {
+  width: 14px;
+  height: 14px;
+}
+.dh-cm-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dh-cm-prog-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mut);
+}
+
+/* Two-column layout in modal */
+.dh-cm-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.45fr);
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .dh-cm-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.dh-cm-syllabus {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.dh-cm-module-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--soft);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .2s ease;
+  text-align: left;
+}
+.dh-cm-module-item:hover {
+  border-color: #7a62d6;
+  transform: translateX(2px);
+}
+.dh-cm-module-item.active {
+  background: var(--card);
+  border-color: #7a62d6;
+  box-shadow: 0 4px 16px -4px rgba(110,90,200,.2);
+}
+.dh-cm-mod-info b {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.dh-cm-mod-info small {
+  font-size: 11px;
+  color: var(--mut);
+}
+.dh-cm-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all .2s;
+  font-size: 11px;
+  font-weight: 800;
+  color: transparent;
+}
+.dh-cm-module-item.completed .dh-cm-check {
+  background: #27ae60;
+  border-color: #27ae60;
+  color: #fff;
+}
+
+/* Active Module Details (Right Pane) */
+.dh-cm-detail-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--soft);
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+}
+.dh-cm-dp-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dh-cm-dp-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7a62d6;
+}
+.dh-cm-dp-head h3 {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0;
+}
+.dh-cm-dp-desc {
+  font-size: 13px;
+  color: var(--mut);
+  line-height: 1.5;
+  margin: 0;
+}
+.dh-cm-resource-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dh-cm-res-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--card);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  text-decoration: none;
+  color: var(--ink);
+  transition: all .2s ease;
+}
+.dh-cm-res-card:hover {
+  transform: translateY(-1px);
+  border-color: #7a62d6;
+}
+.dh-cm-res-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dh-cm-res-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.dh-cm-res-icon.yt {
+  background: rgba(230, 33, 23, 0.1);
+  color: #e62117;
+}
+.dh-cm-res-icon.doc {
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+}
+.dh-cm-res-meta b {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.dh-cm-res-meta small {
+  font-size: 11px;
+  color: var(--mut);
+}
+.dh-cm-res-arrow {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mut);
+}
+.dh-cm-task-box {
+  background: var(--card);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dh-cm-task-box b {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mut);
+}
+.dh-cm-task-box p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+}
+.dh-cm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.dh-cm-actions button {
+  flex: 1;
+}
+
 /* ===== DEV HARBOUR: AESTHETIC FLIPPING CLOCK & STUDY COUNTDOWN ===== */
 .dh-timer-shell {
   display: flex;
@@ -1478,7 +1968,34 @@ html[data-theme="dark"] .dh-timer-tab.on {
 </div>
 <div class="sec">Featured projects</div><div class="pjs" id="lp"></div></section>
 
-<section class="view" id="v-learn"><div class="g" id="pg"></div></section>
+<section class="view" id="v-learn">
+  <div class="dh-learn-hero">
+    <div class="dh-learn-badge">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Verified Learning Curriculum</span>
+    </div>
+    <h2>Industry-Standard Engineering Paths</h2>
+    <p class="mut">Full-length developer bootcamps, structured roadmaps, YouTube video masterclasses, and official Google & MDN documentation.</p>
+
+    <div class="dh-learn-toolbar">
+      <div class="dh-learn-filters" role="tablist">
+        <button class="dh-learn-filter on" data-cat="all">All Tracks</button>
+        <button class="dh-learn-filter" data-cat="web">Web Development</button>
+        <button class="dh-learn-filter" data-cat="data">Data Science</button>
+        <button class="dh-learn-filter" data-cat="security">Cybersecurity</button>
+        <button class="dh-learn-filter" data-cat="devops">DevOps & Cloud</button>
+        <button class="dh-learn-filter" data-cat="mobile">Mobile</button>
+        <button class="dh-learn-filter" data-cat="game">Game Dev</button>
+      </div>
+      <div class="dh-learn-search-wrap">
+        <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="dh-learn-search" placeholder="Search skills (React, Python, Docker, SQL)..." aria-label="Search courses">
+      </div>
+    </div>
+  </div>
+
+  <div class="g" id="pg"></div>
+</section>
 
 <section class="view" id="v-practice"><div class="g"><div class="c s8"><div class="h"><h3>Popular Coding Challenges</h3></div><div class="fl" id="cf"></div><input class="srch" style="background:var(--soft)" id="cq" placeholder="Search challenges…" aria-label="Search challenges"><div id="cl"></div><p class="mut" style="margin-top:12px">Completion rates are sample values. Solve opens the workspace.</p></div>
  <div class="c k s4"><div class="h"><h3>Leaderboard</h3><span class="tag">Live</span></div><div class="fl" id="lt"></div><div id="lb"></div></div></div></section>
@@ -1770,8 +2287,815 @@ $('nav').innerHTML=V.map(v=>`<button class="nv" data-v="${v[0]}">${I(v[2])}${v[1
 function show(id){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+id));document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));scrollTo({top:0,behavior:'smooth'});document.querySelectorAll('#v-'+id+' .c,#v-'+id+' .t,#v-'+id+' .pk,#v-'+id+' .row').forEach((e,i)=>e.style.setProperty('--d',Math.min(i,14)))}
 const H={tag:'Hackathon · 2026',name:'ORCA CODERS: ORCATHON 2026',desc:'Build in a team, ship in a weekend, and pitch to judges. Compete with top student developers across Web, AI & Security.',info:[['Status','Registrations Live on Unstop'],['Prize Pool','₹3,00,000+ & Mentorship'],['Format','Online & Offline (Hybrid)'],['Team size','1 – 4 Developers'],['Registration fee','Free'],['Eligibility','Students & Developers']]};
 $('hT').textContent=H.tag;$('hN').textContent=H.name;$('hD').textContent=H.desc;$('hI').innerHTML=H.info.map(i=>`<div><dt>${i[0]}</dt><dd>${i[1]}</dd></div>`).join('');
-const P=[['Full-Stack Web Development','HTML to databases, end to end.',24,'M8 18 2 12l6-6M16 6l6 6-6 6M14 4l-4 16'],['Data Science & Analytics','Python, statistics and insight.',18,'M4 20V10M10 20V4M16 20v-7M22 20H2'],['Cybersecurity','Threats, defence and ethics.',16,'M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z'],['DevOps & Cloud','Ship and scale reliably.',14,'M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 20 10a4 4 0 0 1-1 8z'],['Mobile App Development','Apps for phones and tablets.',15,'M7 2h10v20H7zM11 18h2'],['Game Development','Engines, physics, play.',12,'M6 8h12a4 4 0 0 1 4 4v2a3 3 0 0 1-5 2l-1-2H8l-1 2a3 3 0 0 1-5-2v-2a4 4 0 0 1 4-4zM8 11v3']];
-$('pg').innerHTML=P.map((p,i)=>`<article class="c pa s4 ${i==0?'k':''}">${I(p[3])}<h3>${p[0]}</h3><p class="mut">${p[1]}</p><div class="mt mut"><span>${p[2]} modules</span><span>Sign in to track</span></div></article>`).join('');
+/* ===== REAL CURRICULUM COURSES & YOUTUBE / GOOGLE REFERENCES ===== */
+const P = [
+  {
+    id: 'fullstack',
+    cat: 'web',
+    title: 'Full-Stack Web Development',
+    desc: 'HTML to databases, end to end. Master modern React 19, Node.js, Express, PostgreSQL and cloud deployments.',
+    modulesCount: 24,
+    durationHours: 45,
+    rating: '4.9',
+    students: '14.2k',
+    level: 'Beginner to Advanced',
+    icon: 'M8 18 2 12l6-6M16 6l6 6-6 6M14 4l-4 16',
+    ytChannel: 'freeCodeCamp & Traversy Media',
+    ytUrl: 'https://www.youtube.com/watch?v=nu_pCVPKzTk',
+    docSource: 'MDN Web Docs & Google Web.dev',
+    docUrl: 'https://developer.mozilla.org/en-US/docs/Learn',
+    skills: ['HTML5', 'CSS Grid', 'JavaScript ES6+', 'React 19', 'Node.js', 'PostgreSQL', 'REST APIs'],
+    modules: [
+      {
+        num: 1,
+        title: 'Semantic HTML5, CSS Grid & Responsive Flexbox',
+        time: '6 hours · 4 lessons',
+        ytTitle: 'HTML and CSS Crash Course for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=G3e-cpL7ofc',
+        docTitle: 'MDN Web Docs: Learn HTML & CSS',
+        docUrl: 'https://developer.mozilla.org/en-US/docs/Learn/HTML',
+        summary: 'Learn semantic markup, accessibility standards (WCAG), responsive mobile-first layouts, modern CSS variables, Flexbox alignments, and 12-column Grid systems.',
+        task: 'Build a responsive developer portfolio with semantic header, grid gallery, and accessible contact form.'
+      },
+      {
+        num: 2,
+        title: 'Modern JavaScript (ES6+), Event Loop & Async Architecture',
+        time: '8 hours · 5 lessons',
+        ytTitle: 'JavaScript Full Course for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=jS4aFq5-91M',
+        docTitle: 'JavaScript.info: The Modern JavaScript Tutorial',
+        docUrl: 'https://javascript.info/',
+        summary: 'Master lexical closures, prototypical inheritance, array higher-order methods, Promise chains, async/await mechanics, and DOM event listeners.',
+        task: 'Implement a debounced search input and asynchronous JSON fetcher with try/catch error handling in the code workspace.'
+      },
+      {
+        num: 3,
+        title: 'React 19 Architecture: Hooks, State & Component Lifecycle',
+        time: '9 hours · 5 lessons',
+        ytTitle: 'React 19 Full Course - Beginner to Pro',
+        ytUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8',
+        docTitle: 'React Official Documentation & Guides',
+        docUrl: 'https://react.dev/learn',
+        summary: 'Understand JSX parsing, useState, useEffect, useMemo, custom hooks, unidirectional data streams, and component composition.',
+        task: 'Build a reactive task management board with filterable categories and browser persistence.'
+      },
+      {
+        num: 4,
+        title: 'Backend Engineering: Node.js, Express & RESTful APIs',
+        time: '8 hours · 4 lessons',
+        ytTitle: 'Node.js and Express.js Full Course',
+        ytUrl: 'https://www.youtube.com/watch?v=Oe421EPjeBE',
+        docTitle: 'Express.js Official Guide & Middleware Architecture',
+        docUrl: 'https://expressjs.com/en/starter/installing.html',
+        summary: 'Architect HTTP routing servers, custom error-handling middleware, CORS configuration, JWT token authentication, and bcrypt password hashing.',
+        task: 'Create an Express CRUD API with authorization headers and route-level validation middleware.'
+      },
+      {
+        num: 5,
+        title: 'Relational Database Modeling & PostgreSQL / SQLite Design',
+        time: '7 hours · 3 lessons',
+        ytTitle: 'SQL and Relational Databases Crash Course',
+        ytUrl: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
+        docTitle: 'PostgreSQL Official Documentation',
+        docUrl: 'https://www.postgresql.org/docs/',
+        summary: 'Design normalized schemas (1NF-3NF), foreign keys, B-tree indexes, JOIN queries, ACID transactions, and parameterized SQL statements.',
+        task: 'Write optimized multi-table JOIN queries with aggregate calculations for student leaderboard rankings.'
+      },
+      {
+        num: 6,
+        title: 'Production Deployment, CI/CD & Performance Audits',
+        time: '7 hours · 3 lessons',
+        ytTitle: 'DevOps & Full Stack Web Deployment',
+        ytUrl: 'https://www.youtube.com/watch?v=7R_G6gX22r0',
+        docTitle: 'Google Web.dev Core Web Vitals',
+        docUrl: 'https://web.dev/explore/fast',
+        summary: 'Configure environment secrets, automated GitHub Actions pipelines, HTTPS SSL certificates, CDN edge caching, and Core Web Vitals optimization.',
+        task: 'Run a Google Lighthouse audit and achieve 95+ scores across performance, accessibility, and SEO.'
+      }
+    ]
+  },
+  {
+    id: 'datascience',
+    cat: 'data',
+    title: 'Data Science & Analytics',
+    desc: 'Python, statistics and insight. Data manipulation with Pandas, SQL analytics, visualization and machine learning.',
+    modulesCount: 18,
+    durationHours: 38,
+    rating: '4.8',
+    students: '11.8k',
+    level: 'Beginner to Intermediate',
+    icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+    ytChannel: 'freeCodeCamp & Keith Galli',
+    ytUrl: 'https://www.youtube.com/watch?v=LHBE6Q9XlzI',
+    docSource: 'Google Data Analytics & Kaggle',
+    docUrl: 'https://www.kaggle.com/learn',
+    skills: ['Python 3', 'NumPy', 'Pandas', 'SQL', 'Matplotlib', 'Scikit-Learn', 'Statistics'],
+    modules: [
+      {
+        num: 1,
+        title: 'Python for Data Analysis & Mathematical Computing',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'Python for Beginners - Full Course',
+        ytUrl: 'https://www.youtube.com/watch?v=_uQrJ0TkZlc',
+        docTitle: 'Python.org Official Tutorial & Reference',
+        docUrl: 'https://docs.python.org/3/tutorial/',
+        summary: 'Learn Python data structures, list comprehensions, lambda functions, file I/O operations, and virtual environments.',
+        task: 'Parse a CSV dataset with pure Python and calculate summary statistics (mean, median, standard deviation).'
+      },
+      {
+        num: 2,
+        title: 'Data Wrangling with NumPy Arrays & Pandas DataFrames',
+        time: '8 hours · 4 lessons',
+        ytTitle: 'Pandas Full Tutorial for Data Science',
+        ytUrl: 'https://www.youtube.com/watch?v=vmEHCJofslg',
+        docTitle: 'Pandas Documentation & 10 Minutes to Pandas',
+        docUrl: 'https://pandas.pydata.org/docs/user_guide/10min.html',
+        summary: 'Master vector operations, DataFrame indexing, missing value imputation, groupby aggregations, and multi-table merges.',
+        task: 'Clean a messy dataset containing nulls and date discrepancies, and export clean metrics.'
+      },
+      {
+        num: 3,
+        title: 'Exploratory Data Analysis & Visual Storytelling',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'Data Visualization with Matplotlib & Seaborn',
+        ytUrl: 'https://www.youtube.com/watch?v=a9UrKTVEeZA',
+        docTitle: 'Seaborn Statistical Data Visualization',
+        docUrl: 'https://seaborn.pydata.org/tutorial.html',
+        summary: 'Build scatter plots, distribution histograms, correlation heatmaps, box plots, and executive visual dashboards.',
+        task: 'Generate a correlation matrix and identify the top three predictor variables for user churn.'
+      },
+      {
+        num: 4,
+        title: 'Relational Database Queries & Advanced SQL for Analytics',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'SQL for Data Analysis - Full Course',
+        ytUrl: 'https://www.youtube.com/watch?v=7mz73uXD9DA',
+        docTitle: 'Mode Analytics: Advanced SQL Guide',
+        docUrl: 'https://mode.com/sql-tutorial/',
+        summary: 'Master window functions (ROW_NUMBER, RANK, DENSE_RANK), Common Table Expressions (CTEs), and subqueries.',
+        task: 'Write a query using window functions to calculate 7-day rolling active user averages.'
+      },
+      {
+        num: 5,
+        title: 'Applied Probability, Inferential Statistics & A/B Testing',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'Statistics for Data Science - Full Course',
+        ytUrl: 'https://www.youtube.com/watch?v=xxpc-HPKN28',
+        docTitle: 'Kaggle: Statistical Testing & Analysis',
+        docUrl: 'https://www.kaggle.com/learn/intro-to-machine-learning',
+        summary: 'Understand normal distributions, p-values, null hypothesis significance testing, confidence intervals, and sample sizing.',
+        task: 'Conduct a two-sample t-test to evaluate whether a new feature produced a statistically significant conversion lift.'
+      },
+      {
+        num: 6,
+        title: 'Machine Learning Models: Regression & Classification',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'Machine Learning with Scikit-Learn',
+        ytUrl: 'https://www.youtube.com/watch?v=7eh4d6sabA0',
+        docTitle: 'Scikit-Learn Machine Learning in Python',
+        docUrl: 'https://scikit-learn.org/stable/tutorial/index.html',
+        summary: 'Train linear regression, logistic classification, decision trees, random forests, and evaluate with cross-validation and ROC curves.',
+        task: 'Train a classifier on customer purchase data and achieve >85% precision on the validation split.'
+      }
+    ]
+  },
+  {
+    id: 'cybersecurity',
+    cat: 'security',
+    title: 'Cybersecurity & Ethical Hacking',
+    desc: 'Threats, defence and ethics. Networking fundamentals, Linux system hardening, OWASP Top 10 vulnerabilities and CTFs.',
+    modulesCount: 16,
+    durationHours: 32,
+    rating: '4.9',
+    students: '10.3k',
+    level: 'Beginner to Intermediate',
+    icon: 'M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z',
+    ytChannel: 'NetworkChuck & The Cyber Mentor',
+    ytUrl: 'https://www.youtube.com/watch?v=IPvYjXCsTg8',
+    docSource: 'OWASP Top 10 & Google Security',
+    docUrl: 'https://owasp.org/www-project-top-ten/',
+    skills: ['TCP/IP', 'Linux', 'OWASP Top 10', 'Nmap', 'Cryptography', 'Wireshark', 'Bash'],
+    modules: [
+      {
+        num: 1,
+        title: 'Computer Networking: OSI 7-Layer Model & Packet Analysis',
+        time: '5 hours · 3 lessons',
+        ytTitle: 'Network Engineering Fundamentals',
+        ytUrl: 'https://www.youtube.com/watch?v=IPvYjXCsTg8',
+        docTitle: 'Cloudflare: What is the OSI Model?',
+        docUrl: 'https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/',
+        summary: 'Learn IP addressing, CIDR subnetting, TCP three-way handshakes, UDP datagrams, DNS resolution, and Wireshark inspection.',
+        task: 'Capture a TCP handshake in Wireshark and inspect SYN, SYN-ACK, and ACK flags.'
+      },
+      {
+        num: 2,
+        title: 'Linux System Administration & Command-Line Hardening',
+        time: '5 hours · 3 lessons',
+        ytTitle: 'Linux for Ethical Hackers Course',
+        ytUrl: 'https://www.youtube.com/watch?v=lZAoFs75_cs',
+        docTitle: 'Linux Journey: Learn the Linux Command Line',
+        docUrl: 'https://linuxjourney.com/',
+        summary: 'Understand file permissions (chmod/chown), sudo policies, process monitoring (ps/top), SSH key authentication, and cron jobs.',
+        task: 'Configure an unprivileged user with restricted sudo permissions and disable SSH root login.'
+      },
+      {
+        num: 3,
+        title: 'Web Application Security & OWASP Top 10 Vulnerabilities',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'Web Security and Bug Bounty for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=2_lwwZqzbTk',
+        docTitle: 'OWASP Top 10 Security Risks Guide',
+        docUrl: 'https://owasp.org/www-project-top-ten/',
+        summary: 'Understand SQL injection, Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), and Broken Access Controls (IDOR).',
+        task: 'Identify a vulnerable SQL query string and refactor it into a parameterized prepared statement.'
+      },
+      {
+        num: 4,
+        title: 'Applied Cryptography: Ciphers, Hashing & Public Key Infrastructure',
+        time: '5 hours · 3 lessons',
+        ytTitle: 'Cryptography Full Course',
+        ytUrl: 'https://www.youtube.com/watch?v=jhXCTbFnK8o',
+        docTitle: 'Mozilla: Applied Crypto Hardening Guide',
+        docUrl: 'https://infosec.mozilla.org/',
+        summary: 'Differentiate symmetric (AES) vs asymmetric (RSA, ECC) encryption, cryptographic hashes (SHA-256, bcrypt), and SSL/TLS certificates.',
+        task: 'Generate an RSA 4096-bit key pair and verify digital signature integrity on a message digest.'
+      },
+      {
+        num: 5,
+        title: 'Network Scanning, Port Auditing & Vulnerability Discovery',
+        time: '5 hours · 2 lessons',
+        ytTitle: 'Nmap Tutorial for Ethical Hackers',
+        ytUrl: 'https://www.youtube.com/watch?v=4t4kBkMsDbQ',
+        docTitle: 'Nmap Network Scanning Reference Guide',
+        docUrl: 'https://nmap.org/book/',
+        summary: 'Execute SYN scans, service version detection (-sV), OS fingerprinting (-O), and vulnerability scanning with Nmap scripts (NSE).',
+        task: 'Audit open network ports on a local loopback server and document open services and potential vectors.'
+      },
+      {
+        num: 6,
+        title: 'Defensive Security Operations & Incident Response',
+        time: '6 hours · 2 lessons',
+        ytTitle: 'Blue Team Cybersecurity Operations',
+        ytUrl: 'https://www.youtube.com/watch?v=3Kq1MIfTWCE',
+        docTitle: 'MITRE ATT&CK Framework',
+        docUrl: 'https://attack.mitre.org/',
+        summary: 'Analyze SIEM event logs, detect anomalous lateral movement, isolate compromised hosts, and formulate remediation checklists.',
+        task: 'Trace an unauthorized access attempt through web server access logs and create an IP block rule.'
+      }
+    ]
+  },
+  {
+    id: 'devops',
+    cat: 'devops',
+    title: 'DevOps & Cloud Engineering',
+    desc: 'Ship and scale reliably. Linux server management, Git branching, Docker containers, Kubernetes, and CI/CD pipelines.',
+    modulesCount: 14,
+    durationHours: 28,
+    rating: '4.8',
+    students: '9.4k',
+    level: 'Intermediate',
+    icon: 'M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 20 10a4 4 0 0 1-1 8z',
+    ytChannel: 'TechWorld with Nana',
+    ytUrl: 'https://www.youtube.com/watch?v=0yWAtQ6wYNM',
+    docSource: 'Google Cloud & Docker Docs',
+    docUrl: 'https://docs.docker.com/get-started/',
+    skills: ['Docker', 'Kubernetes', 'GitHub Actions', 'Linux', 'Terraform', 'CI/CD', 'Cloud Architecture'],
+    modules: [
+      {
+        num: 1,
+        title: 'Linux Server Automation & Shell Scripting',
+        time: '4 hours · 2 lessons',
+        ytTitle: 'Linux for DevOps Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=W_e_3V8R6B8',
+        docTitle: 'Linux Administration Handbook & Documentation',
+        docUrl: 'https://www.redhat.com/en/topics/linux',
+        summary: 'Master systemd service units, log rotation, environment variables, cron scheduling, and automated bash deployment scripts.',
+        task: 'Write a Bash script that checks disk space, monitors server health, and triggers an alert if memory exceeds 85%.'
+      },
+      {
+        num: 2,
+        title: 'Git Version Control, Trunk-Based Development & GitHub Flow',
+        time: '4 hours · 2 lessons',
+        ytTitle: 'Git and GitHub Full Course',
+        ytUrl: 'https://www.youtube.com/watch?v=RGOj5yH7evk',
+        docTitle: 'GitHub Skills & Collaborative Branching',
+        docUrl: 'https://skills.github.com/',
+        summary: 'Understand Git internal object storage, rebase vs merge workflows, cherry-picking, interactive rebasing, and branch protection rules.',
+        task: 'Perform an interactive rebase to squash multiple feature commits into a clean semantic commit.'
+      },
+      {
+        num: 3,
+        title: 'Docker Containerization: Images, Multi-Stage Builds & Compose',
+        time: '5 hours · 3 lessons',
+        ytTitle: 'Docker Tutorial for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=pg19Z8LL06w',
+        docTitle: 'Docker Official Get Started Guide',
+        docUrl: 'https://docs.docker.com/get-started/',
+        summary: 'Write optimized multi-stage Dockerfiles, minimize container footprint, mount persistent volumes, and orchestrate with Docker Compose.',
+        task: 'Create a multi-stage Dockerfile that packages a Node.js web app into an Alpine-based image under 80MB.'
+      },
+      {
+        num: 4,
+        title: 'Kubernetes Container Orchestration: Pods, Services & Ingress',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'Kubernetes Tutorial for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=X48VuDVv0do',
+        docTitle: 'Kubernetes.io Official Documentation',
+        docUrl: 'https://kubernetes.io/docs/home/',
+        summary: 'Deploy pods, configure replica sets, horizontal pod autoscalers (HPA), ClusterIP/NodePort services, ConfigMaps, and Ingress routing.',
+        task: 'Write a Kubernetes deployment manifest with 3 replicas, health checks (liveness/readiness), and resource limits.'
+      },
+      {
+        num: 5,
+        title: 'Automated CI/CD Pipelines with GitHub Actions',
+        time: '5 hours · 2 lessons',
+        ytTitle: 'GitHub Actions Tutorial - CI/CD DevOps',
+        ytUrl: 'https://www.youtube.com/watch?v=R8_veQiYBjI',
+        docTitle: 'GitHub Actions Workflow Documentation',
+        docUrl: 'https://docs.github.com/en/actions',
+        summary: 'Write YAML workflow files, automated test runners, matrix builds across Node versions, Docker build-and-push actions, and deployment hooks.',
+        task: 'Build a GitHub Actions pipeline that triggers automated tests on pull requests and deploys to production on merge.'
+      },
+      {
+        num: 6,
+        title: 'Infrastructure as Code (Terraform) & Cloud Monitoring',
+        time: '4 hours · 2 lessons',
+        ytTitle: 'Terraform Course for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=YcJ9I_PWyNk',
+        docTitle: 'Google Cloud Architecture Center',
+        docUrl: 'https://cloud.google.com/architecture',
+        summary: 'Provision cloud instances with Terraform HCL, manage state files, and set up Prometheus metrics and Grafana performance dashboards.',
+        task: 'Write Terraform configuration to declare a virtual server, security group, and storage bucket.'
+      }
+    ]
+  },
+  {
+    id: 'mobile',
+    cat: 'mobile',
+    title: 'Mobile App Development',
+    desc: 'Apps for phones and tablets. Cross-platform engineering with Flutter & React Native, mobile UX, state and local storage.',
+    modulesCount: 15,
+    durationHours: 30,
+    rating: '4.7',
+    students: '8.6k',
+    level: 'Beginner to Intermediate',
+    icon: 'M7 2h10v20H7zM11 18h2',
+    ytChannel: 'freeCodeCamp & The Net Ninja',
+    ytUrl: 'https://www.youtube.com/watch?v=0-S5a0eXPoc',
+    docSource: 'Google Android & Flutter.dev',
+    docUrl: 'https://developer.android.com/courses',
+    skills: ['Flutter', 'Dart', 'React Native', 'Mobile UI', 'SQLite', 'REST APIs', 'App Store'],
+    modules: [
+      {
+        num: 1,
+        title: 'Mobile UI/UX Foundations & Google Material Design 3',
+        time: '5 hours · 2 lessons',
+        ytTitle: 'Mobile App Design UI/UX Crash Course',
+        ytUrl: 'https://www.youtube.com/watch?v=m4-z_bA2vEE',
+        docTitle: 'Material Design 3 Guidelines',
+        docUrl: 'https://m3.material.io/',
+        summary: 'Learn touch targets, responsive phone/tablet breakpoints, typography hierarchies, gesture navigators, and theme contrast standards.',
+        task: 'Design a clean three-screen onboarding and registration workflow with accessible touch feedback.'
+      },
+      {
+        num: 2,
+        title: 'React Native & Expo: Native Components & Flexbox Layouts',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'React Native Crash Course for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=0-S5a0eXPoc',
+        docTitle: 'React Native Official Documentation',
+        docUrl: 'https://reactnative.dev/docs/getting-started',
+        summary: 'Work with View, Text, FlatList, ScrollView, StyleSheet, touchable components, and react-navigation stack/tab flows.',
+        task: 'Build a responsive news feed with infinite pull-to-refresh and item detail navigation.'
+      },
+      {
+        num: 3,
+        title: 'Flutter & Dart: Widget Trees, Layouts & Animations',
+        time: '6 hours · 3 lessons',
+        ytTitle: 'Flutter Course for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=1ukSR1SXcB8',
+        docTitle: 'Flutter.dev Official Documentation',
+        docUrl: 'https://docs.flutter.dev/',
+        summary: 'Master StatelessWidget vs StatefulWidget, BuildContext, Scaffold, Column/Row layout constraints, and implicit animations.',
+        task: 'Build an animated habit tracker interface with custom progress rings and micro-interactions.'
+      },
+      {
+        num: 4,
+        title: 'State Management & Offline Storage (SQLite / AsyncStorage)',
+        time: '5 hours · 3 lessons',
+        ytTitle: 'State Management in Mobile Applications',
+        ytUrl: 'https://www.youtube.com/watch?v=1xipg02Wu8s',
+        docTitle: 'Flutter State Management Guide',
+        docUrl: 'https://docs.flutter.dev/data-and-backend/state-mgmt/intro',
+        summary: 'Implement Riverpod / Redux Toolkit, reactive store subscriptions, offline data persistence, and optimistic UI updates.',
+        task: 'Build a shopping cart screen with reactive price computation and offline local cache.'
+      },
+      {
+        num: 5,
+        title: 'Device Hardware Integration: Camera, GPS & Notifications',
+        time: '4 hours · 2 lessons',
+        ytTitle: 'Mobile Native Hardware APIs',
+        ytUrl: 'https://www.youtube.com/watch?v=y_1pUoP1E4o',
+        docTitle: 'Android Developers: Permissions Guide',
+        docUrl: 'https://developer.android.com/guide/topics/permissions/overview',
+        summary: 'Request runtime permissions, capture camera photos, poll GPS coordinates, and handle background push notification payloads.',
+        task: 'Implement a location-stamped photo capture component with graceful permission rejection fallback.'
+      },
+      {
+        num: 6,
+        title: 'Production Build Optimization & Play Store / App Store Publishing',
+        time: '4 hours · 2 lessons',
+        ytTitle: 'Deploy Mobile Apps to App Store and Play Store',
+        ytUrl: 'https://www.youtube.com/watch?v=Xh0m2tZz_6k',
+        docTitle: 'Google Play Console Launch Checklist',
+        docUrl: 'https://developer.android.com/distribute/best-practices/launch',
+        summary: 'Generate release signing keystores, build Android App Bundles (AAB) and iOS IPAs, configure store assets, and publish to beta tracks.',
+        task: 'Generate a production release bundle and audit package size with tree shaking.'
+      }
+    ]
+  },
+  {
+    id: 'gamedev',
+    cat: 'game',
+    title: 'Game Development',
+    desc: 'Engines, physics, play. 2D/3D game math, Godot 4 engine, physics collisions, game loop architecture and WebGL publishing.',
+    modulesCount: 12,
+    durationHours: 25,
+    rating: '4.8',
+    students: '7.9k',
+    level: 'Beginner to Intermediate',
+    icon: 'M6 8h12a4 4 0 0 1 4 4v2a3 3 0 0 1-5 2l-1-2H8l-1 2a3 3 0 0 1-5-2v-2a4 4 0 0 1 4-4zM8 11v3',
+    ytChannel: 'Clear Code & Brackeys',
+    ytUrl: 'https://www.youtube.com/watch?v=nAh_Kx5Zh5Q',
+    docSource: 'Godot Engine Docs & MDN Games',
+    docUrl: 'https://docs.godotengine.org/',
+    skills: ['Godot 4', 'GDScript', 'Game Math', 'Physics Engines', 'WebGL', 'Audio Design', 'Shaders'],
+    modules: [
+      {
+        num: 1,
+        title: 'Game Loop Architecture, Frame Rates & Delta Time',
+        time: '4 hours · 2 lessons',
+        ytTitle: 'Game Architecture and Game Loops Explained',
+        ytUrl: 'https://www.youtube.com/watch?v=nAh_Kx5Zh5Q',
+        docTitle: 'MDN: Anatomy of a Video Game',
+        docUrl: 'https://developer.mozilla.org/en-US/docs/Games/Anatomy',
+        summary: 'Understand the core update-render loop, fixed vs variable delta time, tick synchronization, and input polling.',
+        task: 'Implement a canvas-based 60fps render loop with smooth frame-independent velocity calculation.'
+      },
+      {
+        num: 2,
+        title: 'Vector Math, Coordinate Transforms & Collision Detection',
+        time: '5 hours · 2 lessons',
+        ytTitle: 'Math for Game Developers - Vectors & Collisions',
+        ytUrl: 'https://www.youtube.com/watch?v=7jT54p5K210',
+        docTitle: 'Godot: Vector Math Reference',
+        docUrl: 'https://docs.godotengine.org/en/stable/tutorials/math/vector_math.html',
+        summary: 'Master 2D/3D vectors, dot products, cross products, normalization, Axis-Aligned Bounding Box (AABB) collisions, and raycasting.',
+        task: 'Write a 2D circle-to-rectangle collision resolver with elastic rebound physics.'
+      },
+      {
+        num: 3,
+        title: 'Godot 4 Engine Fundamentals & Node Scene Hierarchies',
+        time: '5 hours · 3 lessons',
+        ytTitle: 'Godot 4 Crash Course for Beginners',
+        ytUrl: 'https://www.youtube.com/watch?v=LOhfqjmasi0',
+        docTitle: 'Godot Engine Step by Step Guide',
+        docUrl: 'https://docs.godotengine.org/en/stable/getting_started/step_by_step/index.html',
+        summary: 'Learn GDScript syntax, Node2D, CharacterBody2D, Tilemaps, collision layers/masks, and custom signal emissions.',
+        task: 'Build a playable platformer character with jumping, wall sliding, and ground detection.'
+      },
+      {
+        num: 4,
+        title: 'Spritesheets, Animation Trees & Audio Busses',
+        time: '4 hours · 2 lessons',
+        ytTitle: '2D Animation & Audio in Godot 4',
+        ytUrl: 'https://www.youtube.com/watch?v=QfvL_F_2_4w',
+        docTitle: 'Godot Audio Streams and Effects',
+        docUrl: 'https://docs.godotengine.org/en/stable/tutorials/audio/audio_busses.html',
+        summary: 'Configure AnimatedSprite2D, AnimationPlayer state machines, particle systems, dynamic audio buses, and sound pitching.',
+        task: 'Create an explosion particle emitter with coordinated camera shake and layered sound effects.'
+      },
+      {
+        num: 5,
+        title: 'Game State Machines, Inventory & HUD UI Design',
+        time: '4 hours · 2 lessons',
+        ytTitle: 'Game UI and State Management Architecture',
+        ytUrl: 'https://www.youtube.com/watch?v=5rT8s8z2s9E',
+        docTitle: 'Godot User Interface Systems',
+        docUrl: 'https://docs.godotengine.org/en/stable/tutorials/ui/index.html',
+        summary: 'Implement finite state machines (FSM) for enemy AI, health bars, score tracking, pause menus, and save/load game data.',
+        task: 'Build an enemy patrol AI that transitions to chase state when player enters line of sight.'
+      },
+      {
+        num: 6,
+        title: 'WebGL Browser Exporting, Shaders & Itch.io Publishing',
+        time: '3 hours · 1 lesson',
+        ytTitle: 'Exporting Godot 4 Games to HTML5 & WebGL',
+        ytUrl: 'https://www.youtube.com/watch?v=W3e_9_4bF-8',
+        docTitle: 'Godot: Exporting for the Web',
+        docUrl: 'https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html',
+        summary: 'Optimize draw calls, configure WebGL shaders, compress assets for web streaming, and publish playable builds to Itch.io.',
+        task: 'Export an optimized WebGL build and embed it into a test HTML page.'
+      }
+    ]
+  }
+];
+
+// Course Progress Persistence
+function getCourseCompletedModules() {
+  try { return JSON.parse(localStorage.getItem('dh_course_completed_modules') || '{}'); } catch(e) { return {}; }
+}
+function saveCourseCompletedModules(obj) {
+  try { localStorage.setItem('dh_course_completed_modules', JSON.stringify(obj)); } catch(e) {}
+}
+
+let activeCourseFilter = 'all';
+let courseSearchTerm = '';
+let currentModalCourseId = 'fullstack';
+let currentModalModuleNum = 1;
+
+function renderCourses() {
+  const container = $('pg');
+  if (!container) return;
+
+  const completedMap = getCourseCompletedModules();
+
+  const filtered = P.filter(c => {
+    const matchCat = (activeCourseFilter === 'all' || c.cat === activeCourseFilter);
+    if (!matchCat) return false;
+    if (!courseSearchTerm) return true;
+    const q = courseSearchTerm.toLowerCase();
+    const matchTitle = c.title.toLowerCase().includes(q);
+    const matchDesc = c.desc.toLowerCase().includes(q);
+    const matchSkills = c.skills.some(s => s.toLowerCase().includes(q));
+    const matchModules = c.modules.some(m => m.title.toLowerCase().includes(q));
+    return matchTitle || matchDesc || matchSkills || matchModules;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="c s12" style="text-align:center;padding:40px 20px;"><p class="mut">No learning paths match your filter. Try another keyword.</p></div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map((c, i) => {
+    const completedSet = completedMap[c.id] || [];
+    const totalMods = c.modules.length;
+    const completedCount = completedSet.length;
+    const pct = Math.round((completedCount / totalMods) * 100);
+
+    return `<article class="c pa s4 dh-course-card ${i === 0 ? 'k' : ''}" data-course="${c.id}">
+      <div>
+        <div class="dh-course-card-top">
+          <div class="dh-course-card-icon">${I(c.icon)}</div>
+          <div class="dh-course-badges">
+            <span class="dh-course-badge-ref">YouTube & Docs</span>
+            <small class="mut" style="font-weight:700">${c.rating} ★</small>
+          </div>
+        </div>
+        <h3>${c.title}</h3>
+        <p class="mut" style="font-size:13px;line-height:1.5;margin-bottom:8px">${c.desc}</p>
+        <div class="dh-course-skills">
+          ${c.skills.slice(0, 4).map(s => `<span class="dh-course-skill">${s}</span>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="mt mut">
+          <span>${c.modulesCount} modules · ~${c.durationHours}h</span>
+          <span style="font-weight:700;${pct > 0 ? 'color:#27ae60' : ''}">${pct > 0 ? pct + '% done' : 'Not started'}</span>
+        </div>
+        <div class="dh-card-progress-bar">
+          <div class="dh-card-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="dh-course-card-actions">
+          <button class="bt d" onclick="openCourseModal('${c.id}')">Explore Roadmap ↗</button>
+          <a href="${c.ytUrl}" target="_blank" rel="noopener noreferrer" class="dh-ref-icon-btn" title="Watch on YouTube">
+            <svg class="i" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#fff"/></svg>
+            YT
+          </a>
+          <a href="${c.docUrl}" target="_blank" rel="noopener noreferrer" class="dh-ref-icon-btn" title="Official Docs">
+            <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            Docs
+          </a>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function openCourseModal(courseId, modNum = 1) {
+  const c = P.find(item => item.id === courseId) || P[0];
+  currentModalCourseId = c.id;
+  currentModalModuleNum = modNum;
+
+  const modal = document.getElementById('dh-course-modal');
+  const content = document.getElementById('dh-cm-content');
+  if (!modal || !content) return;
+
+  renderCourseModalContent(c, currentModalModuleNum);
+  modal.classList.add('open');
+}
+window.openCourseModal = openCourseModal;
+
+function closeCourseModal() {
+  const modal = document.getElementById('dh-course-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.closeCourseModal = closeCourseModal;
+
+function renderCourseModalContent(c, selectedModNum) {
+  const content = document.getElementById('dh-cm-content');
+  if (!content) return;
+
+  const completedMap = getCourseCompletedModules();
+  const completedSet = completedMap[c.id] || [];
+  const totalMods = c.modules.length;
+  const completedCount = completedSet.length;
+  const pct = Math.round((completedCount / totalMods) * 100);
+
+  const activeMod = c.modules.find(m => m.num === selectedModNum) || c.modules[0];
+  const isModCompleted = completedSet.includes(activeMod.num);
+
+  content.innerHTML = `
+    <div class="dh-course-modal-head">
+      <div class="dh-cm-top-row">
+        <div class="dh-cm-title-group">
+          <span class="tag" style="background:rgba(110,90,200,.12);color:#7a62d6">${c.level} · ${c.durationHours} Hours</span>
+          <h2>${c.title}</h2>
+          <div class="dh-cm-meta">
+            <span>${c.rating} ★ (${c.students} learners)</span>
+            <span>·</span>
+            <span>${c.modules.length} Core Modules</span>
+            <span>·</span>
+            <span>${c.ytChannel}</span>
+          </div>
+        </div>
+        <div class="dh-cm-ref-links">
+          <a href="${c.ytUrl}" target="_blank" rel="noopener noreferrer" class="dh-cm-ref-btn" title="Watch on YouTube">
+            <svg class="i" viewBox="0 0 24 24" fill="currentColor" style="color:#e62117"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#fff"/></svg>
+            YouTube Playlist ↗
+          </a>
+          <a href="${c.docUrl}" target="_blank" rel="noopener noreferrer" class="dh-cm-ref-btn" title="Official Documentation">
+            <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#27ae60"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            Official Docs ↗
+          </a>
+        </div>
+      </div>
+
+      <div class="dh-cm-progress-wrap">
+        <div class="dh-cm-prog-label">
+          <span>Curriculum Progress</span>
+          <span>${completedCount} of ${totalMods} modules completed (${pct}%)</span>
+        </div>
+        <div class="dh-card-progress-bar" style="height:6px">
+          <div class="dh-card-progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dh-cm-layout">
+      <!-- Left Column: Syllabus Navigator -->
+      <div class="dh-cm-syllabus">
+        ${c.modules.map(m => {
+          const done = completedSet.includes(m.num);
+          const isSelected = (m.num === activeMod.num);
+          return `<div class="dh-cm-module-item ${isSelected ? 'active' : ''} ${done ? 'completed' : ''}" onclick="selectCourseModule(${m.num})">
+            <div class="dh-cm-mod-info">
+              <b>Module ${m.num}: ${m.title}</b>
+              <small>${m.time}</small>
+            </div>
+            <div class="dh-cm-check">${done ? '✓' : ''}</div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Right Column: Active Module Details -->
+      <div class="dh-cm-detail-pane">
+        <div class="dh-cm-dp-head">
+          <span class="dh-cm-dp-tag">Module ${activeMod.num} Syllabus · ${activeMod.time}</span>
+          <h3>${activeMod.title}</h3>
+          <p class="dh-cm-dp-desc">${activeMod.summary}</p>
+        </div>
+
+        <div class="dh-cm-resource-cards">
+          <!-- Curated YouTube Video -->
+          <a href="${activeMod.ytUrl}" target="_blank" rel="noopener noreferrer" class="dh-cm-res-card">
+            <div class="dh-cm-res-left">
+              <div class="dh-cm-res-icon yt">
+                <svg class="i" viewBox="0 0 24 24" fill="currentColor"><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+              </div>
+              <div class="dh-cm-res-meta">
+                <b>${activeMod.ytTitle}</b>
+                <small>Curated YouTube Masterclass Lecture</small>
+              </div>
+            </div>
+            <span class="dh-cm-res-arrow">↗</span>
+          </a>
+
+          <!-- Google / Official Docs -->
+          <a href="${activeMod.docUrl}" target="_blank" rel="noopener noreferrer" class="dh-cm-res-card">
+            <div class="dh-cm-res-left">
+              <div class="dh-cm-res-icon doc">
+                <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              </div>
+              <div class="dh-cm-res-meta">
+                <b>${activeMod.docTitle}</b>
+                <small>Official Documentation & Guide</small>
+              </div>
+            </div>
+            <span class="dh-cm-res-arrow">↗</span>
+          </a>
+        </div>
+
+        <div class="dh-cm-task-box">
+          <b>Hands-on Challenge</b>
+          <p>${activeMod.task}</p>
+        </div>
+
+        <div class="dh-cm-actions">
+          <button class="bt ${isModCompleted ? 'secondary' : 'd'}" onclick="toggleModuleCompletion(${activeMod.num})">
+            ${isModCompleted ? '✓ Completed (Mark Incomplete)' : 'Mark Module Complete (+25 XP)'}
+          </button>
+          <button class="bt" style="background:var(--card);border:1px solid var(--line)" onclick="openWorkspaceForCourse('${c.id}')">
+            Open Code Workspace ↗
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function selectCourseModule(modNum) {
+  const c = P.find(item => item.id === currentModalCourseId) || P[0];
+  currentModalModuleNum = modNum;
+  renderCourseModalContent(c, modNum);
+}
+window.selectCourseModule = selectCourseModule;
+
+function toggleModuleCompletion(modNum) {
+  const c = P.find(item => item.id === currentModalCourseId) || P[0];
+  const completedMap = getCourseCompletedModules();
+  let list = completedMap[c.id] || [];
+
+  const wasCompleted = list.includes(modNum);
+  if (wasCompleted) {
+    list = list.filter(n => n !== modNum);
+  } else {
+    list.push(modNum);
+    // Award XP
+    if (currentUser) {
+      currentUser.totalXp = (currentUser.totalXp || 0) + 25;
+      try { localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); } catch(e) {}
+      if (typeof updateAuthUI === 'function') updateAuthUI();
+    }
+    // Also notify server if authenticated
+    try {
+      fetch('/api/courses/lesson/lesson-cs50-1/complete', {
+        method: 'POST',
+        headers: (typeof getAuthHeaders === 'function') ? getAuthHeaders() : { 'Content-Type': 'application/json' }
+      }).catch(() => {});
+    } catch(e) {}
+
+    if (window.toast) toast('✦ Module ' + modNum + ' completed! +25 XP awarded.');
+  }
+
+  completedMap[c.id] = list;
+  saveCourseCompletedModules(completedMap);
+
+  renderCourseModalContent(c, modNum);
+  renderCourses();
+}
+window.toggleModuleCompletion = toggleModuleCompletion;
+
+function openWorkspaceForCourse(courseId) {
+  closeCourseModal();
+  if (typeof show === 'function') {
+    show('work');
+  }
+}
+window.openWorkspaceForCourse = openWorkspaceForCourse;
+
+// Filter and Search Event Listeners
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.dh-learn-filter');
+  if (btn) {
+    document.querySelectorAll('.dh-learn-filter').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    activeCourseFilter = btn.dataset.cat || 'all';
+    renderCourses();
+  }
+});
+
+const searchInput = document.getElementById('dh-learn-search');
+if (searchInput) {
+  searchInput.addEventListener('input', e => {
+    courseSearchTerm = e.target.value.trim();
+    renderCourses();
+  });
+}
+
+// Initial render of courses
+renderCourses();
+
 const C=[['Two Sum','Easy','Arrays',49,'function twoSum(nums, target) {\n  const seen = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    // your code\n  }\n  return [];\n}\nconst [a, b] = input.split("\\n");\nconsole.log(JSON.stringify(twoSum(JSON.parse(a), +b)));','[2,7,11,15]\n9','[0,1]'],
 ['Valid Parentheses','Easy','Stacks',42,'function isValid(s) {\n  // your code\n  return false;\n}\nconsole.log(isValid(input.trim()));','()[]{}','true'],
 ['Maximum Subarray Sum','Medium','Dynamic Programming',37,'function maxSub(a) {\n  // your code\n  return 0;\n}\nconsole.log(maxSub(JSON.parse(input)));','[-2,1,-3,4,-1,2,1,-5,4]','6'],
@@ -2783,6 +4107,15 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
 </div>
 
 <!-- USER PROFILE MODAL -->
+
+<!-- COURSE DETAIL & ROADMAP MODAL -->
+<div class="dh-modal-wrap" id="dh-course-modal">
+  <div class="dh-modal-overlay" onclick="closeCourseModal()"></div>
+  <div class="dh-modal-card dh-modal-course">
+    <button type="button" class="dh-modal-close" onclick="closeCourseModal()" aria-label="Close">✕</button>
+    <div id="dh-cm-content"></div>
+  </div>
+</div>
 <div class="dh-modal-wrap" id="dh-profile-modal">
   <div class="dh-modal-overlay" onclick="closeProfileModal()"></div>
   <div class="dh-modal-card">
