@@ -6670,101 +6670,110 @@ show('home');
 const intro=$('intro'),xt=$('xt'),xw=$('xw');$('xk').src=$('xi').src;document.body.style.overflow='hidden';
 $('hz').addEventListener('pointermove',e=>{if(intro.classList.contains('out'))return;const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;xt.style.transform=`rotateY(${x*22}deg) rotateX(${-y*12}deg)`});$('hz').addEventListener('pointerleave',()=>{if(intro.classList.contains('out'))return;xt.style.transform=''});
 const nc=$('nc'),cx=nc.getContext('2d');
-function plasmaOverdrive(x,y){const dpr=Math.min(devicePixelRatio||1,2),W=innerWidth,H=innerHeight;nc.width=W*dpr;nc.height=H*dpr;nc.style.width=W+"px";nc.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0);
+function gravitySingularity(x,y){const dpr=Math.min(devicePixelRatio||1,2),W=innerWidth,H=innerHeight;nc.width=W*dpr;nc.height=H*dpr;nc.style.width=W+"px";nc.style.height=H+"px";cx.setTransform(dpr,0,0,dpr,0,0);
  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
  const isDark=document.documentElement.dataset.theme==="dark",isMercury=document.documentElement.dataset.theme==="mercury";
  if(xt){
-   xt.style.transition="transform .08s ease";
-   xt.style.transform="scale(0.96)";
+   xt.style.transition="transform .11s cubic-bezier(.2,0,0,1)";
+   xt.style.transform="scale(0.92) translateZ(-50px)";
    setTimeout(()=>{
-     xt.style.transition="transform .6s cubic-bezier(.16,1,.3,1), opacity .5s";
-     xt.style.transform="scale(1.14) translateY(-2%)";
-   },80);
+     xt.style.transition="transform .65s cubic-bezier(.16,1,.3,1), opacity .5s";
+     xt.style.transform="scale(1.18) translateY(-2%)";
+   },110);
  }
- const R=Math.hypot(Math.max(x,W-x),Math.max(y,H-y))+40,DUR=850,T0=performance.now();
- const branches=[];
- const trunkCount=11;
- for(let t=0;t<trunkCount;t++){
-   const baseAngle=(t/trunkCount)*6.28318+(Math.random()-0.5)*0.35;
-   const trunkLen=R*(0.85+Math.random()*0.25);
-   const segments=14,step=trunkLen/segments;
-   const points=[{x:x,y:y,d:0}];
-   let curAngle=baseAngle;
-   for(let s=1;s<=segments;s++){
-     curAngle+=(Math.random()-0.5)*0.35;
-     const dist=s*step,jitter=(Math.random()-0.5)*20;
-     const px=x+Math.cos(curAngle)*dist+Math.cos(curAngle+1.5708)*jitter;
-     const py=y+Math.sin(curAngle)*dist+Math.sin(curAngle+1.5708)*jitter;
-     points.push({x:px,y:py,d:dist});
-     if(s>2&&s<segments-2&&Math.random()>0.55){
-       const subAngle=curAngle+(Math.random()>0.5?0.65:-0.65);
-       const subLen=step*3.5;
-       const subPoints=[{x:px,y:py,d:dist}];
-       for(let ss=1;ss<=3;ss++){
-         const subDist=ss*(subLen/3),subJitter=(Math.random()-0.5)*12;
-         const spx=px+Math.cos(subAngle)*subDist+Math.cos(subAngle+1.5708)*subJitter;
-         const spy=py+Math.sin(subAngle)*subDist+Math.sin(subAngle+1.5708)*subJitter;
-         subPoints.push({x:spx,y:spy,d:dist+subDist});
-       }
-       branches.push(subPoints);
-     }
-   }
-   branches.push(points);
+ const R=Math.hypot(Math.max(x,W-x),Math.max(y,H-y))+40,DUR=880,T0=performance.now();
+ const particleCount=36;
+ const particles=[];
+ for(let i=0;i<particleCount;i++){
+   const a=Math.random()*6.28318,sp=3.5+Math.random()*7.0,orb=14+Math.random()*32;
+   particles.push({a:a,orb:orb,sp:sp,tangent:(Math.random()>0.5?1:-1)*(0.05+Math.random()*0.08),sz:1.5+Math.random()*2.4});
  }
  (function frame(now){
    const t=now-T0;
    if(t>DUR){cx.clearRect(0,0,W,H);return;}
    cx.clearRect(0,0,W,H);
    const pNorm=t/DUR;
-   const reachR=Math.pow(pNorm,0.72)*R;
+   const waveR=Math.pow(pNorm,0.74)*R;
    const alpha=Math.max(0,1-pNorm*1.15);
    if(alpha<=0.01)return;
    
-   // 1. Electric Plasma Filaments (Laser Branching Lightning)
-   for(let i=0;i<branches.length;i++){
-     const pts=branches[i];
-     if(pts[0].d>reachR)continue;
-     cx.beginPath();
-     cx.moveTo(pts[0].x,pts[0].y);
-     let lastPt=pts[0];
-     for(let k=1;k<pts.length;k++){
-       if(pts[k].d>reachR){
-         const prev=pts[k-1];
-         const segP=(reachR-prev.d)/(pts[k].d-prev.d);
-         const ix=prev.x+(pts[k].x-prev.x)*segP,iy=prev.y+(pts[k].y-prev.y)*segP;
-         cx.lineTo(ix,iy);
-         lastPt={x:ix,y:iy};
-         break;
-       }
-       cx.lineTo(pts[k].x,pts[k].y);
-       lastPt=pts[k];
-     }
-     cx.lineWidth=1.8;
-     cx.strokeStyle=isDark?"rgba(160,225,255,"+(alpha*0.85)+")":isMercury?"rgba(200,210,225,"+(alpha*0.85)+")":"rgba(135,115,245,"+(alpha*0.9)+")";
-     cx.stroke();
-     cx.lineWidth=0.75;
-     cx.strokeStyle="rgba(255,255,255,"+(alpha*0.98)+")";
+   // 1. Singularity Event Horizon & Einstein Lens Rings (t: 0 - 240ms)
+   if(t<240){
+     const sp=t/240,sa=(1-sp)*(1-sp),sRad=16+sp*48;
+     cx.save();
+     cx.translate(x,y);
+     cx.rotate(t*0.03);
+     
+     // Event horizon boundary
+     cx.beginPath();cx.arc(0,0,sRad,0,6.28318);
+     cx.lineWidth=1.6;
+     cx.strokeStyle=isDark?"rgba(160,225,255,"+(sa*0.95)+")":"rgba(145,120,245,"+(sa*0.95)+")";
      cx.stroke();
      
-     // Firing Synapse Spark at the leading electrical tip
-     if(pNorm<0.85&&lastPt){
-       const spk=2.4+(1-pNorm)*2.0;
+     // 4 Curved Spacetime Geodesic Arcs
+     for(let k=0;k<4;k++){
+       const arcAng=k*1.57079;
        cx.beginPath();
-       cx.moveTo(lastPt.x-spk,lastPt.y);
-       cx.lineTo(lastPt.x,lastPt.y-spk*0.4);
-       cx.lineTo(lastPt.x+spk,lastPt.y);
-       cx.lineTo(lastPt.x,lastPt.y+spk*0.4);
-       cx.closePath();
-       cx.fillStyle="rgba(255,255,255,"+(alpha*0.95)+")";
-       cx.fill();
+       cx.arc(Math.cos(arcAng)*sRad*0.6,Math.sin(arcAng)*sRad*0.6,sRad*0.7,arcAng-0.8,arcAng+0.8);
+       cx.lineWidth=1.0;
+       cx.strokeStyle="rgba(255,255,255,"+(sa*0.8)+")";
+       cx.stroke();
      }
+     
+     // Dark matter singularity core
+     cx.beginPath();cx.arc(0,0,Math.max(2,sRad*0.35),0,6.28318);
+     cx.fillStyle=isDark?"#000000":"#1b172a";
+     cx.fill();
+     cx.restore();
    }
    
-   // 2. High-Speed Razor-Thin Pulse Wavefront Ring
-   cx.beginPath();cx.arc(x,y,reachR,0,6.28318);
-   cx.lineWidth=1.4;
-   cx.strokeStyle=isDark?"rgba(255,255,255,"+(alpha*0.9)+")":"rgba(140,120,230,"+(alpha*0.85)+")";
+   // 2. Expanding Chromatic Aberration Event Horizon (Split-Spectrum Line)
+   // Violet/Magenta split spectrum edge
+   cx.beginPath();cx.arc(x-2,y-1,waveR,0,6.28318);
+   cx.lineWidth=1.2;
+   cx.strokeStyle=isDark?"rgba(195,140,255,"+(alpha*0.75)+")":"rgba(175,110,255,"+(alpha*0.8)+")";
    cx.stroke();
+   
+   // Cyan/Blue split spectrum edge
+   cx.beginPath();cx.arc(x+2,y+1,waveR,0,6.28318);
+   cx.lineWidth=1.2;
+   cx.strokeStyle=isDark?"rgba(130,225,255,"+(alpha*0.75)+")":"rgba(100,215,255,"+(alpha*0.8)+")";
+   cx.stroke();
+   
+   // Pure white laser core event horizon line
+   cx.beginPath();cx.arc(x,y,waveR,0,6.28318);
+   cx.lineWidth=1.5;
+   cx.strokeStyle="rgba(255,255,255,"+(alpha*0.96)+")";
+   cx.stroke();
+   
+   // Secondary sub-horizon contour ripple
+   if(waveR>45){
+     cx.beginPath();cx.arc(x,y,waveR*0.82,0,6.28318);
+     cx.lineWidth=0.9;
+     cx.strokeStyle=isDark?"rgba(160,210,255,"+(alpha*0.45)+")":"rgba(150,130,230,"+(alpha*0.4)+")";
+     cx.stroke();
+   }
+   
+   // 3. Tangential Geodesic Orbital Particles
+   for(let i=0;i<particles.length;i++){
+     const p=particles[i];
+     p.a+=p.tangent*(1-pNorm*0.5);
+     p.orb+=p.sp*(1+Math.pow(pNorm,1.4)*4.5);
+     const px=x+Math.cos(p.a)*p.orb,py=y+Math.sin(p.a)*p.orb;
+     
+     cx.beginPath();
+     cx.arc(px,py,p.sz*(1-pNorm*0.4),0,6.28318);
+     cx.fillStyle=isDark?"rgba(220,245,255,"+alpha+")":"rgba(145,125,235,"+alpha+")";
+     cx.fill();
+     
+     // Micro tangential orbit tail
+     const tx=x+Math.cos(p.a-p.tangent*3)*(p.orb-12),ty=y+Math.sin(p.a-p.tangent*3)*(p.orb-12);
+     cx.beginPath();
+     cx.moveTo(tx,ty);cx.lineTo(px,py);
+     cx.lineWidth=0.8;
+     cx.strokeStyle="rgba(255,255,255,"+(alpha*0.6)+")";
+     cx.stroke();
+   }
    
    requestAnimationFrame(frame);
  })(T0);
@@ -6777,14 +6786,14 @@ const go=(x,y,v,fast)=>{
     const cy=(y==null||isNaN(y))?innerHeight/2:y;
     intro.style.setProperty("--x",cx+"px");
     intro.style.setProperty("--y",cy+"px");
-    plasmaOverdrive(cx,cy);
+    gravitySingularity(cx,cy);
   }
   intro.classList.add("out");
   if(v)show(v);
   setTimeout(()=>{
     document.body.style.overflow="";
     intro.remove();
-  },fast?350:850);
+  },fast?350:880);
 };
 window.go=go;
 const hz=$('hz');
