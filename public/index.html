@@ -745,6 +745,668 @@ html[data-theme="dark"] .px-modal-close:hover{background:rgba(255,255,255,.24)}
 .pm-btn.secondary{background:rgba(0,0,0,.05);color:var(--ink);border:1px solid var(--line)}
 html[data-theme="dark"] .pm-btn.secondary{background:rgba(255,255,255,.06);color:#eee}
 
+/* ===== DEV HARBOUR: AESTHETIC FLIPPING CLOCK & STUDY COUNTDOWN ===== */
+.dh-timer-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+.dh-timer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 0 4px;
+}
+.dh-timer-title-group h2 {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 6px 0 4px;
+}
+.dh-timer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: var(--soft);
+  color: var(--mut);
+}
+.dh-timer-badge svg.i {
+  width: 13px;
+  height: 13px;
+}
+.dh-timer-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--card);
+  padding: 5px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 18px -6px rgba(0,0,0,0.06);
+}
+.dh-timer-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mut);
+  transition: all .25s ease;
+  cursor: pointer;
+  border: none;
+}
+.dh-timer-tab:hover {
+  color: var(--ink);
+}
+.dh-timer-tab.on {
+  background: var(--blk);
+  color: #fff;
+  box-shadow: 0 4px 14px -4px rgba(0,0,0,0.3);
+}
+html[data-theme="dark"] .dh-timer-tab.on {
+  background: #fff;
+  color: #000;
+}
+
+/* Timer Stage: The Canvas Frame */
+.dh-timer-stage {
+  --stage-bg: #141720;
+  --card-bg: #202634;
+  --num-color: #ffffff;
+  --crease-color: rgba(0,0,0,0.4);
+  --border-color: rgba(255,255,255,0.12);
+  --accent-color: #a8b4c8;
+  --glow-color: rgba(168,180,200,0.15);
+  
+  position: relative;
+  background: var(--stage-bg);
+  border-radius: 36px;
+  padding: clamp(36px, 6vw, 68px) clamp(20px, 4vw, 48px) 36px;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 30px 70px -30px rgba(0,0,0,0.45);
+  transition: background .4s cubic-bezier(.22,.8,.2,1), border-color .4s ease;
+}
+
+/* Clock Color Themes: White (Default), Black, Lavender, Light Green */
+.dh-timer-stage[data-theme="white"],
+.dh-timer-stage[data-theme="chalk"] {
+  --stage-bg: #f4f5f9;
+  --card-bg: #ffffff;
+  --num-color: #111116; /* Pure dark black text */
+  --crease-color: rgba(0,0,0,0.14);
+  --border-color: rgba(0,0,0,0.09);
+  --accent-color: #111116;
+  --glow-color: rgba(0,0,0,0.04);
+}
+.dh-timer-stage[data-theme="black"],
+.dh-timer-stage[data-theme="obsidian"],
+.dh-timer-stage[data-theme="mercury"] {
+  --stage-bg: #070709;
+  --card-bg: #14151b;
+  --num-color: #f0f0f4; /* Crisp white text */
+  --crease-color: rgba(0,0,0,0.7);
+  --border-color: rgba(255,255,255,0.08);
+  --accent-color: #ffffff;
+  --glow-color: rgba(255,255,255,0.06);
+}
+.dh-timer-stage[data-theme="lavender"] {
+  --stage-bg: #f3effd;
+  --card-bg: #dcd1fa;
+  --num-color: #111116; /* Black text for light lavender */
+  --crease-color: rgba(0,0,0,0.18);
+  --border-color: rgba(130,95,230,0.25);
+  --accent-color: #653ecc;
+  --glow-color: rgba(101,62,204,0.15);
+}
+.dh-timer-stage[data-theme="lightgreen"],
+.dh-timer-stage[data-theme="matcha"] {
+  --stage-bg: #edf5ef;
+  --card-bg: #c0dac2;
+  --num-color: #111116; /* Black text for light green */
+  --crease-color: rgba(0,0,0,0.18);
+  --border-color: rgba(60,110,65,0.25);
+  --accent-color: #2e6633;
+  --glow-color: rgba(46,102,51,0.15);
+}
+
+/* High Contrast Controls for Light Themes */
+.dh-timer-stage[data-theme="white"] .dh-tb-pill,
+.dh-timer-stage[data-theme="lavender"] .dh-tb-pill,
+.dh-timer-stage[data-theme="lightgreen"] .dh-tb-pill,
+.dh-timer-stage[data-theme="chalk"] .dh-tb-pill {
+  background: rgba(0,0,0,0.06);
+  border-color: rgba(0,0,0,0.12);
+  color: #111116;
+}
+.dh-timer-stage[data-theme="white"] .dh-tb-icon-btn,
+.dh-timer-stage[data-theme="lavender"] .dh-tb-icon-btn,
+.dh-timer-stage[data-theme="lightgreen"] .dh-tb-icon-btn,
+.dh-timer-stage[data-theme="chalk"] .dh-tb-icon-btn {
+  background: rgba(0,0,0,0.06);
+  border-color: rgba(0,0,0,0.12);
+  color: #111116;
+}
+.dh-timer-stage[data-theme="white"] .dh-preset-btn,
+.dh-timer-stage[data-theme="lavender"] .dh-preset-btn,
+.dh-timer-stage[data-theme="lightgreen"] .dh-preset-btn,
+.dh-timer-stage[data-theme="chalk"] .dh-preset-btn {
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.12);
+  color: #111116;
+}
+.dh-timer-stage[data-theme="white"] .dh-btn-action,
+.dh-timer-stage[data-theme="lavender"] .dh-btn-action,
+.dh-timer-stage[data-theme="lightgreen"] .dh-btn-action,
+.dh-timer-stage[data-theme="chalk"] .dh-btn-action {
+  background: rgba(0,0,0,0.06);
+  border-color: rgba(0,0,0,0.12);
+  color: #111116;
+}
+.dh-timer-stage[data-theme="white"] .dh-btn-action.primary,
+.dh-timer-stage[data-theme="lavender"] .dh-btn-action.primary,
+.dh-timer-stage[data-theme="lightgreen"] .dh-btn-action.primary,
+.dh-timer-stage[data-theme="chalk"] .dh-btn-action.primary {
+  background: #111116;
+  color: #ffffff;
+  border-color: #111116;
+}
+
+/* Preset groups (Sprints vs Breaks) */
+.dh-preset-row-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--num-color);
+  opacity: 0.65;
+  margin-bottom: 2px;
+  text-align: center;
+}
+.dh-preset-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Stopwatch Laps Contrast per Theme */
+.dh-timer-stage[data-theme="white"] .dh-laps-container,
+.dh-timer-stage[data-theme="lavender"] .dh-laps-container,
+.dh-timer-stage[data-theme="lightgreen"] .dh-laps-container {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+.dh-timer-stage[data-theme="black"] .dh-laps-container {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.dh-timer-stage[data-theme="white"] .dh-lap-row,
+.dh-timer-stage[data-theme="lavender"] .dh-lap-row,
+.dh-timer-stage[data-theme="lightgreen"] .dh-lap-row {
+  color: #111116;
+  border-bottom-color: rgba(0, 0, 0, 0.07);
+}
+.dh-timer-stage[data-theme="black"] .dh-lap-row {
+  color: #f0f0f4;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Stopwatch Laps */
+.dh-laps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 140px;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.04);
+  border: 1px solid var(--border-color);
+}
+.dh-lap-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--num-color);
+  padding: 4px 6px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.dh-lap-row:last-child {
+  border-bottom: none;
+}
+.dh-lap-num {
+  font-size: 11px;
+  opacity: 0.65;
+  text-transform: uppercase;
+}
+
+.dh-stage-glow {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 320px;
+  background: var(--glow-color);
+  filter: blur(80px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Flip Container & Cards */
+.dh-flip-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 2.5vw, 28px);
+  position: relative;
+  z-index: 2;
+  margin: auto 0;
+}
+.dh-flip-card-unit {
+  position: relative;
+  width: clamp(130px, 20vw, 240px);
+  height: clamp(165px, 25vw, 285px);
+  perspective: 1200px;
+  border-radius: clamp(20px, 3vw, 32px);
+  box-shadow: 0 20px 45px -15px rgba(0,0,0,0.3);
+  user-select: none;
+}
+.dh-card-ampm {
+  position: absolute;
+  top: clamp(14px, 2vw, 22px);
+  left: clamp(14px, 2.2vw, 24px);
+  font-size: clamp(13px, 1.8vw, 19px);
+  font-weight: 800;
+  color: var(--num-color);
+  opacity: 0.82;
+  letter-spacing: 0.06em;
+  z-index: 12;
+  user-select: none;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+.dh-flip-half {
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  background: var(--card-bg);
+  color: var(--num-color);
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1px var(--border-color);
+}
+.dh-flip-upper {
+  top: 0;
+  height: 50%;
+  align-items: flex-end;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  border-bottom: 1px solid var(--crease-color);
+}
+.dh-flip-lower {
+  bottom: 0;
+  height: 50%;
+  align-items: flex-start;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+  border-top: 1px solid var(--crease-color);
+}
+.dh-flip-num {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(80px, 14vw, 158px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  user-select: none;
+}
+.dh-flip-upper .dh-flip-num {
+  transform: translateY(50%);
+}
+.dh-flip-lower .dh-flip-num {
+  transform: translateY(-50%);
+}
+
+/* Flap Leaf for 3D down-folding */
+.dh-flip-leaf {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 50%;
+  transform-style: preserve-3d;
+  transform-origin: bottom center;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  z-index: 5;
+  pointer-events: none;
+}
+.dh-leaf-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  background: var(--card-bg);
+  color: var(--num-color);
+  box-shadow: inset 0 0 0 1px var(--border-color);
+}
+.dh-leaf-front {
+  align-items: flex-end;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  border-bottom: 1px solid var(--crease-color);
+}
+.dh-leaf-front .dh-flip-num {
+  transform: translateY(50%);
+}
+.dh-leaf-back {
+  transform: rotateX(180deg);
+  align-items: flex-start;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+  border-top: 1px solid var(--crease-color);
+}
+.dh-leaf-back .dh-flip-num {
+  transform: translateY(-50%);
+}
+.dh-flip-crease {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--crease-color);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes dhFlipLeafDown {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(-180deg); }
+}
+.dh-flip-leaf.animating {
+  animation: dhFlipLeafDown 0.52s cubic-bezier(0.38, 0, 0.62, 1) forwards;
+}
+
+/* Divider dots between cards */
+.dh-flip-divider {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  opacity: 0.35;
+}
+.dh-flip-divider span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--num-color);
+}
+
+/* Study Mode Controls */
+.dh-study-controls {
+  position: relative;
+  z-index: 3;
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  max-width: 580px;
+}
+.dh-preset-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.dh-preset-btn {
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 12.5px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.08);
+  color: var(--num-color);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.dh-preset-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+.dh-preset-btn.on {
+  background: var(--accent-color);
+  color: #fff;
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 14px -4px rgba(0,0,0,0.3);
+}
+.dh-timer-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.dh-btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 99px;
+  font-size: 13.5px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.08);
+  color: var(--num-color);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.dh-btn-action:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+.dh-btn-action.primary {
+  background: var(--num-color);
+  color: var(--stage-bg);
+  border-color: var(--num-color);
+  box-shadow: 0 8px 20px -8px rgba(0,0,0,0.4);
+}
+.dh-btn-action svg.i {
+  width: 15px;
+  height: 15px;
+}
+.dh-study-stats {
+  display: flex;
+  gap: 28px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+.dh-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dh-stat-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--num-color);
+}
+.dh-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--num-color);
+  opacity: 0.65;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Bottom Floating Toolbar */
+.dh-stage-toolbar {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: clamp(24px, 4vw, 42px);
+  padding: 0 6px;
+}
+.dh-home-indicator {
+  width: 54px;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--num-color);
+  opacity: 0.35;
+  margin: 0 auto 0 0;
+}
+.dh-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+.dh-tb-pill {
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--num-color);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.dh-tb-pill:hover {
+  background: rgba(255,255,255,0.22);
+}
+.dh-tb-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.08);
+  color: var(--num-color);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.dh-tb-icon-btn:hover {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+.dh-tb-icon-btn svg.i {
+  width: 18px;
+  height: 18px;
+}
+
+/* Palette Popover & Swatch Grid */
+.dh-palette-wrap {
+  position: relative;
+}
+.dh-palette-popover {
+  position: absolute;
+  bottom: 50px;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 50;
+  width: 170px;
+}
+.dh-palette-popover.open {
+  display: flex;
+  animation: in .25s ease;
+}
+.dh-palette-header {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--num-color);
+  opacity: 0.7;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dh-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.dh-swatch-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.dh-swatch-dot:hover {
+  transform: scale(1.15);
+}
+.dh-swatch-dot.on {
+  border-color: var(--num-color) !important;
+  box-shadow: 0 0 0 2px var(--stage-bg);
+}
+
+/* Fullscreen Mode (Zen Study Station) */
+.dh-timer-stage.is-fullscreen,
+.dh-timer-stage.dh-zen-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100svh !important;
+  border-radius: 0 !important;
+  z-index: 99999 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 5vh 5vw 4vh !important;
+}
+.dh-timer-stage.is-fullscreen .dh-flip-card-unit,
+.dh-timer-stage.dh-zen-fullscreen .dh-flip-card-unit {
+  width: clamp(170px, 30vw, 360px);
+  height: clamp(210px, 36vw, 420px);
+  border-radius: clamp(24px, 4vw, 42px);
+}
+.dh-timer-stage.is-fullscreen .dh-flip-num,
+.dh-timer-stage.dh-zen-fullscreen .dh-flip-num {
+  font-size: clamp(110px, 20vw, 240px);
+}
+
 </style>
 </head>
 <body>
@@ -821,6 +1483,192 @@ html[data-theme="dark"] .pm-btn.secondary{background:rgba(255,255,255,.06);color
 <section class="view" id="v-practice"><div class="g"><div class="c s8"><div class="h"><h3>Popular Coding Challenges</h3></div><div class="fl" id="cf"></div><input class="srch" style="background:var(--soft)" id="cq" placeholder="Search challenges…" aria-label="Search challenges"><div id="cl"></div><p class="mut" style="margin-top:12px">Completion rates are sample values. Solve opens the workspace.</p></div>
  <div class="c k s4"><div class="h"><h3>Leaderboard</h3><span class="tag">Live</span></div><div class="fl" id="lt"></div><div id="lb"></div></div></div></section>
 
+<!-- TIMER / FLIPPING CLOCK & STUDY COUNTDOWN -->
+<section class="view" id="v-timer">
+  <div class="dh-timer-shell">
+    <div class="dh-timer-top">
+      <div class="dh-timer-title-group">
+        <div class="dh-timer-badge">
+          <svg class="i" viewBox="0 0 24 24"><path d="M12 6v6l4 2m6-2a10 10 0 1 1-20 0 10 10 0 0 1 20 0z"/></svg>
+          <span>Focus Station</span>
+        </div>
+        <h2>Flip Clock & Study Countdown</h2>
+        <p class="mut">Minimalist aesthetic flip clock engineered for deep work and Pomodoro sprints.</p>
+      </div>
+
+      <div class="dh-timer-tabs" role="tablist">
+        <button class="dh-timer-tab on" id="dh-mode-clock-btn" type="button" role="tab" aria-selected="true">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Live Clock</span>
+        </button>
+        <button class="dh-timer-tab" id="dh-mode-countdown-btn" type="button" role="tab" aria-selected="false">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 10"/><path d="M16 2v4M8 2v4"/></svg>
+          <span>Countdown</span>
+        </button>
+        <button class="dh-timer-tab" id="dh-mode-stopwatch-btn" type="button" role="tab" aria-selected="false">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M12 2v3M10 2h4"/></svg>
+          <span>Stopwatch</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Flip Display Card Stage (Default Theme: White) -->
+    <div class="dh-timer-stage" id="dh-timer-stage" data-theme="white">
+      <div class="dh-stage-glow"></div>
+
+      <!-- Live Clock / Timer Cards Wrapper -->
+      <div class="dh-flip-container">
+        <!-- First Card: Hours (Clock) or Minutes (Countdown/Stopwatch) -->
+        <div class="dh-flip-card-unit" id="dh-card-left" data-value="12">
+          <span class="dh-card-ampm" id="dh-card-ampm">PM</span>
+          <div class="dh-flip-half dh-flip-upper">
+            <span class="dh-flip-num" id="dh-num-left-top">12</span>
+          </div>
+          <div class="dh-flip-half dh-flip-lower">
+            <span class="dh-flip-num" id="dh-num-left-bot">12</span>
+          </div>
+          <div class="dh-flip-leaf" id="dh-leaf-left">
+            <div class="dh-leaf-face dh-leaf-front">
+              <span class="dh-flip-num" id="dh-leaf-left-front">12</span>
+            </div>
+            <div class="dh-leaf-face dh-leaf-back">
+              <span class="dh-flip-num" id="dh-leaf-left-back">12</span>
+            </div>
+          </div>
+          <div class="dh-flip-crease"></div>
+        </div>
+
+        <!-- Second Card: Minutes (Clock) or Seconds (Countdown/Stopwatch) -->
+        <div class="dh-flip-card-unit" id="dh-card-right" data-value="00">
+          <div class="dh-flip-half dh-flip-upper">
+            <span class="dh-flip-num" id="dh-num-right-top">00</span>
+          </div>
+          <div class="dh-flip-half dh-flip-lower">
+            <span class="dh-flip-num" id="dh-num-right-bot">00</span>
+          </div>
+          <div class="dh-flip-leaf" id="dh-leaf-right">
+            <div class="dh-leaf-face dh-leaf-front">
+              <span class="dh-flip-num" id="dh-leaf-right-front">00</span>
+            </div>
+            <div class="dh-leaf-face dh-leaf-back">
+              <span class="dh-flip-num" id="dh-leaf-right-back">00</span>
+            </div>
+          </div>
+          <div class="dh-flip-crease"></div>
+        </div>
+      </div>
+
+      <!-- Countdown Mode Controls (Visible in Countdown Mode) -->
+      <div class="dh-study-controls" id="dh-study-controls" style="display:none">
+        <div class="dh-preset-section">
+          <div class="dh-preset-row-label">Study Sprints</div>
+          <div class="dh-preset-pills">
+            <button class="dh-preset-btn on" data-minutes="25" data-mode="focus">25m Pomodoro</button>
+            <button class="dh-preset-btn" data-minutes="50" data-mode="focus">50m Flow</button>
+            <button class="dh-preset-btn" data-minutes="60" data-mode="focus">60m Sprint</button>
+          </div>
+        </div>
+
+        <div class="dh-preset-section">
+          <div class="dh-preset-row-label">Recharge Breaks</div>
+          <div class="dh-preset-pills">
+            <button class="dh-preset-btn" data-minutes="5" data-mode="break">5 min break</button>
+            <button class="dh-preset-btn" data-minutes="15" data-mode="break">15 min break</button>
+            <button class="dh-preset-btn" data-minutes="30" data-mode="break">30 min break</button>
+            <button class="dh-preset-btn" id="dh-preset-custom-btn" data-mode="custom">Custom Min</button>
+          </div>
+        </div>
+
+        <div class="dh-timer-actions">
+          <button class="dh-btn-action primary" id="dh-timer-toggle-btn" title="Start / Pause">
+            <svg class="i" id="dh-toggle-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span id="dh-toggle-text">Start Focus</span>
+          </button>
+          <button class="dh-btn-action" id="dh-timer-reset-btn" title="Reset Timer">
+            <svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span>Reset</span>
+          </button>
+          <button class="dh-btn-action" id="dh-timer-sound-btn" title="Chime Sound Toggle">
+            <svg class="i" id="dh-sound-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+            <span id="dh-sound-text">Chime On</span>
+          </button>
+        </div>
+
+        <div class="dh-study-stats">
+          <div class="dh-stat-item">
+            <span class="dh-stat-val" id="dh-stat-sessions">0</span>
+            <span class="dh-stat-label">Sprints Today</span>
+          </div>
+          <div class="dh-stat-item">
+            <span class="dh-stat-val" id="dh-stat-minutes">0m</span>
+            <span class="dh-stat-label">Focused Time</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stopwatch Mode Controls (Visible in Stopwatch Mode) -->
+      <div class="dh-study-controls" id="dh-stopwatch-controls" style="display:none">
+        <div class="dh-timer-actions">
+          <button class="dh-btn-action primary" id="dh-sw-toggle-btn" title="Start / Pause">
+            <svg class="i" id="dh-sw-toggle-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span id="dh-sw-toggle-text">Start</span>
+          </button>
+          <button class="dh-btn-action" id="dh-sw-lap-btn" title="Record Lap">
+            <svg class="i" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            <span>Lap</span>
+          </button>
+          <button class="dh-btn-action" id="dh-sw-reset-btn" title="Reset Stopwatch">
+            <svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span>Reset</span>
+          </button>
+        </div>
+
+        <div class="dh-laps-container" id="dh-stopwatch-laps" style="display:none"></div>
+      </div>
+
+      <!-- Bottom Floating Toolbar -->
+      <div class="dh-stage-toolbar">
+        <div class="dh-home-indicator"></div>
+
+        <div class="dh-toolbar-right">
+          <!-- 12h / 24h Toggle Pill -->
+          <button class="dh-tb-pill" id="dh-toggle-format-btn" title="Toggle 12h / 24h Format">
+            <span id="dh-format-label">24h</span>
+          </button>
+
+          <!-- Palette Swatches Trigger -->
+          <div class="dh-palette-wrap">
+            <button class="dh-tb-icon-btn" id="dh-palette-trigger" title="Clock Colors" aria-label="Clock Color Themes">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10c0 2.5-1.5 4-3.5 4h-2a2 2 0 0 0-2 2c0 .5.2 1 .2 1.5A3.5 3.5 0 0 1 13.2 22"/><circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="12" cy="7.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="10.5" r="1.5" fill="currentColor"/></svg>
+            </button>
+
+            <!-- Color Palette Dropdown: 4 Themes Only (White Default, Black, Lavender, Light Green) -->
+            <div class="dh-palette-popover" id="dh-palette-popover">
+              <div class="dh-palette-header">Clock Theme</div>
+              <div class="dh-swatch-grid">
+                <button class="dh-swatch-dot on" data-clock-theme="white" title="White (Default Light)" style="background:#ffffff; border: 1.5px solid #c9cdd8;"></button>
+                <button class="dh-swatch-dot" data-clock-theme="black" title="Black (Obsidian)" style="background:#090a0d; border: 1.5px solid #282c3c;"></button>
+                <button class="dh-swatch-dot" data-clock-theme="lavender" title="Lavender" style="background:#c5b8ee; border: 1.5px solid #9c8ad4;"></button>
+                <button class="dh-swatch-dot" data-clock-theme="lightgreen" title="Light Green" style="background:#a4bca4; border: 1.5px solid #749675;"></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Mode Switcher Icon (Cycles Clock -> Countdown -> Stopwatch) -->
+          <button class="dh-tb-icon-btn" id="dh-tb-mode-toggle" title="Switch Mode">
+            <svg class="i" id="dh-tb-mode-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </button>
+
+          <!-- Fullscreen Button -->
+          <button class="dh-tb-icon-btn" id="dh-fullscreen-btn" title="Toggle Fullscreen Zen Mode">
+            <svg class="i" id="dh-fs-icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="view" id="v-projects"><div class="fl" id="pf"></div><div class="g" id="pj"></div><p class="mut" style="margin:14px 6px">Curated developer builds. Test live previews, inspect repos, and track submission criteria.</p></section>
 
 <section class="view" id="v-hack"><div class="g"><div class="c k hb s8"><span class="tag" style="align-self:flex-start;position:relative" id="hT"></span><h2 id="hN" style="margin-top:14px"></h2><p id="hD"></p></div>
@@ -830,8 +1678,74 @@ html[data-theme="dark"] .pm-btn.secondary{background:rgba(255,255,255,.06);color
  <div class="c k s4 io"><label for="inp">INPUT</label><textarea id="inp"></textarea><label>CONSOLE / OUTPUT</label><pre id="out">Press Run Code.</pre><div class="rs" id="res"></div></div></div>
  <p class="mut" style="margin:14px 6px">JavaScript runs for real in a sandboxed frame in your browser. Python and others need a server-side runner.</p></section>
 
-<section class="view" id="v-comm"><div class="g"><div class="c k s6" style="min-height:260px;display:flex;flex-direction:column;justify-content:flex-end"><h3 style="font-size:32px;font-weight:300;letter-spacing:-.03em">Build <b style="font-weight:800">Something Real.</b></h3><p class="mut" style="margin-top:8px">Mentorship and learning groups, when you’re ready.</p></div>
- <div class="c s3"><h3>Projects</h3><p class="mut">Ship with others.</p></div><div class="c s3"><h3>Discussions</h3><p class="mut">Ask, answer, learn.</p></div><div class="c s3"><h3>Profiles</h3><p class="mut">Show your work.</p></div><div class="c s3"><h3>Collaborate</h3><p class="mut">Find teammates.</p></div><div class="c s6"><h3>Ready to start your developer journey?</h3><p class="mut">Learn new skills, solve real problems, and build projects that matter.</p><div class="btns"><button class="bt d" data-v="learn">Get Started for Free</button><button class="bt" style="background:var(--soft)" data-v="learn">Explore Courses</button></div></div></div></section>
+<section class="view" id="v-comm">
+  <div class="g">
+    <div class="c k s8" style="min-height:280px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <span class="tag" style="align-self:flex-start;position:relative">Orca Coders Community</span>
+        <h3 style="font-size:clamp(26px, 3.5vw, 36px);font-weight:300;letter-spacing:-.03em;margin-top:14px">
+          Build With The Best. <b style="font-weight:800">Never Code Alone.</b>
+        </h3>
+        <p class="mut" style="margin-top:10px;font-size:15px;line-height:1.6;max-width:540px">
+          Join the official Orca Coders & Dev Harbour developer WhatsApp group. Connect with top student developers, form hackathon teams, get real-time code reviews, share project launches, and access exclusive tech opportunities.
+        </p>
+      </div>
+      <div class="btns" style="margin-top:22px">
+        <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" class="bt d" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:700">
+          <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z" fill="currentColor"/></svg>
+          Join WhatsApp Group ↗
+        </a>
+        <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" class="bt" style="background:var(--soft);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:600">
+          Orca Coders Hub ↗
+        </a>
+      </div>
+    </div>
+
+    <div class="c s4" style="display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div class="h"><h3>Direct Access</h3></div>
+        <p class="mut" style="font-size:14px;line-height:1.5">Direct link to our active student hub for questions, project feedback, and event updates.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600"><span style="color:var(--ink)">✦</span> Hackathon Squads & Teammates</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600"><span style="color:var(--ink)">✦</span> Live Code & Architecture Reviews</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600"><span style="color:var(--ink)">✦</span> Internship & Project Referrals</div>
+        </div>
+      </div>
+      <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" class="bt d" style="margin-top:20px;text-align:center;text-decoration:none">
+        Open in WhatsApp ↗
+      </a>
+    </div>
+
+    <div class="c s3">
+      <h3>Projects</h3>
+      <p class="mut">Ship and showcase builds with fellow developers.</p>
+      <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;margin-top:12px;display:inline-block">Join Discussions ↗</a>
+    </div>
+    <div class="c s3">
+      <h3>Study Rooms</h3>
+      <p class="mut">Pomodoro sprints and virtual study sessions.</p>
+      <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;margin-top:12px;display:inline-block">Enter Study Group ↗</a>
+    </div>
+    <div class="c s3">
+      <h3>Hackathons</h3>
+      <p class="mut">Build winning projects for ORCATHON 2026.</p>
+      <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;margin-top:12px;display:inline-block">Find Teammates ↗</a>
+    </div>
+    <div class="c s3">
+      <h3>Mentorship</h3>
+      <p class="mut">Guidance and advice from experienced engineers.</p>
+      <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;margin-top:12px;display:inline-block">Ask Mentors ↗</a>
+    </div>
+    <div class="c s6">
+      <h3>Ready to collaborate with student developers?</h3>
+      <p class="mut">Join the Orca Coders community WhatsApp group or explore courses to level up your engineering skills.</p>
+      <div class="btns">
+        <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" class="bt d" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">Join WhatsApp ↗</a>
+        <button class="bt" style="background:var(--soft)" data-v="learn">Explore Courses</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="view" id="v-settings"><div class="g">
  <div class="c s6"><div class="h"><h3>Appearance</h3><span class="tag">Theme</span></div>
@@ -851,7 +1765,7 @@ const $=id=>document.getElementById(id),toast=m=>{const t=$('toast');t.textConte
 const I=d=>`<svg class="i" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
 document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t)toast(t.dataset.t);const v=e.target.closest('[data-v]');if(v&&v.dataset.v&&!v.classList.contains('pill'))show(v.dataset.v)});
 /* data */
-const V=[['home','Dashboard','M3 11l9-8 9 8M5 10v10h14V10'],['learn','Learn','M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-6'],['practice','Practice','M8 18 2 12l6-6M16 6l6 6-6 6'],['projects','Projects','M3 7h7l2 2h9v10H3z'],['hack','Hackathons','M7 4h10v5a5 5 0 0 1-10 0zM12 14v5M8 20h8'],['work','Workspace','M3 4h18v13H3zM8 21h8M12 17v4'],['comm','Community','M16 20v-2a4 4 0 0 0-8 0v2M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6']];
+const V=[['home','Dashboard','M3 11l9-8 9 8M5 10v10h14V10'],['learn','Learn','M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-6'],['practice','Practice','M8 18 2 12l6-6M16 6l6 6-6 6'],['timer','Timer','M12 6v6l4 2m6-2a10 10 0 1 1-20 0 10 10 0 0 1 20 0z'],['projects','Projects','M3 7h7l2 2h9v10H3z'],['hack','Hackathons','M7 4h10v5a5 5 0 0 1-10 0zM12 14v5M8 20h8'],['work','Workspace','M3 4h18v13H3zM8 21h8M12 17v4'],['comm','Community','M16 20v-2a4 4 0 0 0-8 0v2M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6']];
 $('nav').innerHTML=V.map(v=>`<button class="nv" data-v="${v[0]}">${I(v[2])}${v[1]}</button>`).join('');
 function show(id){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+id));document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));scrollTo({top:0,behavior:'smooth'});document.querySelectorAll('#v-'+id+' .c,#v-'+id+' .t,#v-'+id+' .pk,#v-'+id+' .row').forEach((e,i)=>e.style.setProperty('--d',Math.min(i,14)))}
 const H={tag:'Hackathon · 2026',name:'ORCA CODERS: ORCATHON 2026',desc:'Build in a team, ship in a weekend, and pitch to judges. Compete with top student developers across Web, AI & Security.',info:[['Status','Registrations Live on Unstop'],['Prize Pool','₹3,00,000+ & Mentorship'],['Format','Online & Offline (Hybrid)'],['Team size','1 – 4 Developers'],['Registration fee','Free'],['Eligibility','Students & Developers']]};
@@ -949,7 +1863,7 @@ try {
 let serverVotes = {};
 let currentUser = null;
 
-// Built-in Local Database Engine (Fallback when backend is not running or on static GitHub Pages)
+// Built-in Local Database Engine (Unified offline & static fallback)
 const LocalDB = {
   getUsers() {
     try { return JSON.parse(localStorage.getItem('dh_users_db') || '[]'); } catch(e) { return []; }
@@ -959,18 +1873,29 @@ const LocalDB = {
   },
   signup({ fullName, username, email, password, location, bio }) {
     const users = this.getUsers();
-    const cleanUser = username.trim().toLowerCase();
-    const cleanEmail = email.trim().toLowerCase();
-    if (users.find(u => u.username && u.username.toLowerCase() === cleanUser)) {
-      throw new Error('This username is already taken. Please choose another.');
+    const cleanUser = (username || '').replace(/^@+/, '').trim();
+    const lowerUser = cleanUser.toLowerCase();
+    const cleanEmail = (email || '').trim().toLowerCase();
+
+    const existingIdx = users.findIndex(u => 
+      (u.username && u.username.toLowerCase() === lowerUser) || 
+      (u.email && u.email.toLowerCase() === cleanEmail)
+    );
+
+    if (existingIdx !== -1) {
+      // Update existing record so sign-in will match new password
+      users[existingIdx].password = password;
+      users[existingIdx].fullName = fullName.trim() || users[existingIdx].fullName;
+      users[existingIdx].location = (location || users[existingIdx].location || 'Navi Mumbai, India').trim();
+      users[existingIdx].bio = (bio || users[existingIdx].bio || '').trim();
+      this.saveUsers(users);
+      return users[existingIdx];
     }
-    if (users.find(u => u.email && u.email.toLowerCase() === cleanEmail)) {
-      throw new Error('An account with this email address already exists.');
-    }
+
     const newUser = {
       id: 'usr-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       fullName: fullName.trim(),
-      username: username.trim(),
+      username: cleanUser,
       email: cleanEmail,
       password: password,
       location: (location || 'Navi Mumbai, India').trim(),
@@ -987,8 +1912,15 @@ const LocalDB = {
   },
   login(loginVal, password) {
     const users = this.getUsers();
-    const target = loginVal.trim().toLowerCase();
-    const user = users.find(u => (u.username.toLowerCase() === target || u.email.toLowerCase() === target) && u.password === password);
+    const raw = (loginVal || '').trim().toLowerCase();
+    const target = raw.startsWith('@') ? raw.slice(1).trim() : raw;
+
+    const user = users.find(u => {
+      const uName = (u.username || '').toLowerCase();
+      const uEmail = (u.email || '').toLowerCase();
+      return (uName === target || uEmail === target || uName === raw) && u.password === password;
+    });
+
     if (!user) throw new Error('Invalid username/email or password.');
     return user;
   },
@@ -1076,24 +2008,35 @@ function switchAuthTab(tab) {
   const suBtn = document.getElementById('tab-btn-signup');
   const liBtn = document.getElementById('tab-btn-login');
   if (tab === 'signup') {
-    suForm.style.display = 'block';
-    liForm.style.display = 'none';
-    suBtn.classList.add('active');
-    liBtn.classList.remove('active');
+    if (suForm) suForm.style.display = 'block';
+    if (liForm) liForm.style.display = 'none';
+    if (suBtn) suBtn.classList.add('active');
+    if (liBtn) liBtn.classList.remove('active');
   } else {
-    suForm.style.display = 'none';
-    liForm.style.display = 'block';
-    suBtn.classList.remove('active');
-    liBtn.classList.add('active');
-  }
-};
+    if (suForm) suForm.style.display = 'none';
+    if (liForm) liForm.style.display = 'block';
+    if (suBtn) suBtn.classList.remove('active');
+    if (liBtn) liBtn.classList.add('active');
 
+    // Auto-fill username in login form from last signup/session
+    const lastUser = localStorage.getItem('dh_last_username');
+    const liUserInput = document.getElementById('li-user');
+    if (lastUser && liUserInput && !liUserInput.value) {
+      liUserInput.value = lastUser;
+    }
+    const liPassInput = document.getElementById('li-pass');
+    if (liPassInput && !liPassInput.value) {
+      setTimeout(() => liPassInput.focus(), 80);
+    }
+  }
+}
 window.switchAuthTab = switchAuthTab;
 
 function handleSignup(e) {
   e.preventDefault();
   const name = document.getElementById('su-name').value.trim();
-  const user = document.getElementById('su-user').value.trim();
+  const rawUser = document.getElementById('su-user').value.trim();
+  const user = rawUser.replace(/^@+/, '').trim();
   const email = document.getElementById('su-email').value.trim();
   const pass = document.getElementById('su-pass').value;
   const loc = document.getElementById('su-loc').value.trim() || 'Navi Mumbai, India';
@@ -1102,97 +2045,123 @@ function handleSignup(e) {
   msg.className = 'dh-status-msg';
   msg.textContent = 'Creating your account…';
 
+  // Always dual-save to LocalDB so credentials persist across refreshes, offline & static hosting
+  let localUser = null;
+  try {
+    localUser = LocalDB.signup({ fullName: name, username: user, email, password: pass, location: loc, bio });
+    localStorage.setItem('dh_last_username', user);
+  } catch(err) {}
+
   fetch('/api/auth/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ fullName: name, username: user, email, password: pass, location: loc, bio })
   })
-    .then(r => {
-      if (r.status === 404) throw new Error('STATIC_HOST_FALLBACK');
-      return r.json().then(data => ({ ok: r.ok, data }));
+    .then(async (r) => {
+      if (r.status === 404 || r.status === 405) throw new Error('STATIC_HOST_FALLBACK');
+      const data = await r.json().catch(() => ({}));
+      return { ok: r.ok, status: r.status, data };
     })
     .then(({ ok, data }) => {
       if (!ok) {
-        msg.className = 'dh-status-msg error';
-        msg.textContent = data.error || 'Failed to create account.';
-        return;
+        if (data.error && !localUser) {
+          msg.className = 'dh-status-msg error';
+          msg.textContent = data.error || 'Failed to create account.';
+          return;
+        }
       }
-      localStorage.setItem('dh_token', data.token);
-      currentUser = data.user;
+      const token = data.token || (localUser ? 'local-token-' + localUser.id : 'local-token-dev');
+      const userObj = data.user || localUser;
+      localStorage.setItem('dh_token', token);
+      currentUser = userObj;
       localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+      localStorage.setItem('dh_last_username', userObj.username || user);
       updateAuthUI();
       closeAuthModal();
       toast(`✦ Welcome to Dev Harbour, @${currentUser.username}!`);
     })
-    .catch(err => {
-      // Local Database Fallback (when on GitHub Pages or static host)
-      try {
-        const newUser = LocalDB.signup({ fullName: name, username: user, email, password: pass, location: loc, bio });
-        currentUser = newUser;
-        localStorage.setItem('dh_token', 'local-token-' + newUser.id);
-        localStorage.setItem('dh_current_user', JSON.stringify(newUser));
+    .catch(() => {
+      // Local Database Fallback (GitHub Pages or backend offline)
+      if (localUser) {
+        currentUser = localUser;
+        localStorage.setItem('dh_token', 'local-token-' + localUser.id);
+        localStorage.setItem('dh_current_user', JSON.stringify(localUser));
+        localStorage.setItem('dh_last_username', localUser.username || user);
         updateAuthUI();
         closeAuthModal();
         if (syncChannel) {
-          syncChannel.postMessage({ type: 'user_joined', message: `${newUser.username} from ${newUser.location} joined Dev Harbour!` });
+          syncChannel.postMessage({ type: 'user_joined', message: `${localUser.username} joined Dev Harbour!` });
         }
         toast(`✦ Welcome to Dev Harbour, @${currentUser.username}!`);
-      } catch(localErr) {
+      } else {
         msg.className = 'dh-status-msg error';
-        msg.textContent = localErr.message || 'Error creating account.';
+        msg.textContent = 'Error creating account. Please try again.';
       }
     });
-};
-
+}
 window.handleSignup = handleSignup;
 
 function handleLogin(e) {
   e.preventDefault();
-  const loginVal = document.getElementById('li-user').value.trim();
+  const rawLogin = document.getElementById('li-user').value.trim();
+  const isEmail = rawLogin.includes('@') && rawLogin.includes('.');
+  const loginVal = (!isEmail && rawLogin.startsWith('@')) ? rawLogin.slice(1).trim() : rawLogin;
   const pass = document.getElementById('li-pass').value;
   const msg = document.getElementById('li-msg');
   msg.className = 'dh-status-msg';
   msg.textContent = 'Signing in…';
+
+  const loginWithLocal = () => {
+    try {
+      const user = LocalDB.login(loginVal, pass);
+      currentUser = user;
+      localStorage.setItem('dh_token', 'local-token-' + user.id);
+      localStorage.setItem('dh_current_user', JSON.stringify(user));
+      localStorage.setItem('dh_last_username', user.username || loginVal);
+      updateAuthUI();
+      closeAuthModal();
+      toast(`✦ Welcome back, @${currentUser.username}!`);
+      return true;
+    } catch(err) {
+      return false;
+    }
+  };
 
   fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ login: loginVal, password: pass })
   })
-    .then(r => {
-      if (r.status === 404) throw new Error('STATIC_HOST_FALLBACK');
-      return r.json().then(data => ({ ok: r.ok, data }));
+    .then(async (r) => {
+      if (r.status === 404 || r.status === 405) throw new Error('STATIC_HOST_FALLBACK');
+      const data = await r.json().catch(() => ({}));
+      return { ok: r.ok, status: r.status, data };
     })
     .then(({ ok, data }) => {
-      if (!ok) {
-        msg.className = 'dh-status-msg error';
-        msg.textContent = data.error || 'Invalid username or password.';
-        return;
-      }
-      localStorage.setItem('dh_token', data.token);
-      currentUser = data.user;
-      localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
-      updateAuthUI();
-      closeAuthModal();
-      toast(`✦ Welcome back, @${currentUser.username}!`);
-    })
-    .catch(err => {
-      // Local Database Fallback
-      try {
-        const user = LocalDB.login(loginVal, pass);
-        currentUser = user;
-        localStorage.setItem('dh_token', 'local-token-' + user.id);
-        localStorage.setItem('dh_current_user', JSON.stringify(user));
+      if (ok && data.user) {
+        localStorage.setItem('dh_token', data.token);
+        currentUser = data.user;
+        localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+        localStorage.setItem('dh_last_username', currentUser.username || loginVal);
+        try {
+          LocalDB.signup({ fullName: currentUser.fullName, username: currentUser.username, email: currentUser.email, password: pass });
+        } catch(e) {}
         updateAuthUI();
         closeAuthModal();
         toast(`✦ Welcome back, @${currentUser.username}!`);
-      } catch(localErr) {
+      } else {
+        // Fallback to local DB if backend user check failed
+        if (loginWithLocal()) return;
         msg.className = 'dh-status-msg error';
-        msg.textContent = localErr.message || 'Invalid username or password.';
+        msg.textContent = (data && data.error) ? data.error : 'Invalid username or password.';
       }
+    })
+    .catch(() => {
+      if (loginWithLocal()) return;
+      msg.className = 'dh-status-msg error';
+      msg.textContent = 'Invalid username or password.';
     });
-};
-
+}
 window.handleLogin = handleLogin;
 
 function openProfileModal() {
@@ -1218,15 +2187,13 @@ function openProfileModal() {
   document.getElementById('pe-msg').textContent = '';
 
   m.classList.add('open');
-};
-
+}
 window.openProfileModal = openProfileModal;
 
 function closeProfileModal() {
   const m = document.getElementById('dh-profile-modal');
   if (m) m.classList.remove('open');
-};
-
+}
 window.closeProfileModal = closeProfileModal;
 
 function handleSaveProfile(e) {
@@ -1246,7 +2213,7 @@ function handleSaveProfile(e) {
     body: JSON.stringify({ fullName: name, location: loc, bio, githubUrl: github, portfolioUrl: port })
   })
     .then(r => {
-      if (r.status === 404) throw new Error('STATIC_HOST_FALLBACK');
+      if (r.status === 404 || r.status === 405) throw new Error('STATIC_HOST_FALLBACK');
       return r.json().then(data => ({ ok: r.ok, data }));
     })
     .then(({ ok, data }) => {
@@ -1266,7 +2233,6 @@ function handleSaveProfile(e) {
       toast('Profile updated!');
     })
     .catch(() => {
-      // Local DB save
       if (currentUser && currentUser.id) {
         const updated = LocalDB.updateProfile(currentUser.id, { fullName: name, location: loc, bio, githubUrl: github, portfolioUrl: port });
         if (updated) currentUser = updated;
@@ -1284,8 +2250,7 @@ function handleSaveProfile(e) {
         msg.textContent = 'Error saving profile.';
       }
     });
-};
-
+}
 window.handleSaveProfile = handleSaveProfile;
 
 function handleLogout() {
@@ -1296,29 +2261,41 @@ function handleLogout() {
   updateAuthUI();
   closeProfileModal();
   toast('Signed out.');
-};
+}
 window.handleLogout = handleLogout;
 
 function checkAuthSession() {
+  try {
+    const localUser = JSON.parse(localStorage.getItem('dh_current_user') || 'null');
+    if (localUser) {
+      currentUser = localUser;
+      updateAuthUI();
+    }
+  } catch(e) {}
+
   const token = localStorage.getItem('dh_token');
   if (!token) {
     updateAuthUI();
     return;
   }
-  // Try backend first
+  if (token.startsWith('local-token-')) {
+    updateAuthUI();
+    return;
+  }
+
   fetch('/api/auth/me', { headers: getAuthHeaders() })
     .then(r => {
-      if (!r.ok) throw new Error('Backend not available or invalid session');
+      if (!r.ok) throw new Error('Session invalid');
       return r.json();
     })
     .then(data => {
       if (data && data.user) {
         currentUser = data.user;
+        localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
         updateAuthUI();
       }
     })
     .catch(() => {
-      // Fallback to local database session
       try {
         const localUser = JSON.parse(localStorage.getItem('dh_current_user') || 'null');
         if (localUser) {
@@ -1560,7 +2537,7 @@ addEventListener('message',m=>{if(!fr||m.source!==fr.contentWindow)return;clearT
  if(!d.e){const r=$('res'),ok=t.trim()==C[cur][6];r.className='rs '+(ok?'ok':'no');r.textContent=ok?'✓ Test passed':'✕ Expected: '+C[cur][6]}});
 load(0,false);
 /* search */
-const idx=[...P.map(p=>[p[0],'Learning path','learn']),...C.map((c,i)=>[c[0],'Challenge','practice']),...J.map(j=>[j[0],'Project','projects']),[H.name,'Hackathon','hack'],['Settings — Light / Dark mode','Settings','settings']];
+const idx=[...P.map(p=>[p[0],'Learning path','learn']),...C.map((c,i)=>[c[0],'Challenge','practice']),['Study Timer & Flip Clock','Timer','timer'],...J.map(j=>[j[0],'Project','projects']),[H.name,'Hackathon','hack'],['Settings — Light / Dark mode','Settings','settings']];
 const sr=$('sr');$('sb').onclick=()=>{sr.classList.add('open');$('si').focus();rs2()};
 function rs2(){const q=$('si').value.toLowerCase(),l=idx.filter(x=>x[0].toLowerCase().includes(q)).slice(0,7);$('sres').innerHTML=l.length?l.map(x=>`<a href="#" data-v="${x[2]}" onclick="return false"><span>${x[0]}</span><small>${x[1]}</small></a>`).join(''):'<p class="mut" style="padding:12px">No results.</p>'}
 $('si').oninput=rs2;sr.onclick=e=>{if(e.target===sr||e.target.closest('a'))sr.classList.remove('open')};
@@ -1850,5 +2827,531 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
   </div>
 </div>
 
+<script>
+// ==========================================
+// DEV HARBOUR AESTHETIC FLIP CLOCK, COUNTDOWN & STOPWATCH ENGINE
+// ==========================================
+(function() {
+  const stage = document.getElementById('dh-timer-stage');
+  if (!stage) return;
+
+  const cardLeft = document.getElementById('dh-card-left');
+  const cardRight = document.getElementById('dh-card-right');
+  const ampmEl = document.getElementById('dh-card-ampm');
+
+  // Mode tab buttons
+  const modeClockBtn = document.getElementById('dh-mode-clock-btn');
+  const modeCountdownBtn = document.getElementById('dh-mode-countdown-btn');
+  const modeStopwatchBtn = document.getElementById('dh-mode-stopwatch-btn');
+  const tbModeToggle = document.getElementById('dh-tb-mode-toggle');
+  const tbModeIcon = document.getElementById('dh-tb-mode-icon');
+
+  // Control sections
+  const studyControls = document.getElementById('dh-study-controls');
+  const stopwatchControls = document.getElementById('dh-stopwatch-controls');
+
+  // Format & Palette
+  const toggleFormatBtn = document.getElementById('dh-toggle-format-btn');
+  const formatLabel = document.getElementById('dh-format-label');
+  const paletteTrigger = document.getElementById('dh-palette-trigger');
+  const palettePopover = document.getElementById('dh-palette-popover');
+  const fullscreenBtn = document.getElementById('dh-fullscreen-btn');
+
+  // Countdown timer controls
+  const timerToggleBtn = document.getElementById('dh-timer-toggle-btn');
+  const timerToggleText = document.getElementById('dh-toggle-text');
+  const timerToggleIcon = document.getElementById('dh-toggle-icon');
+  const timerResetBtn = document.getElementById('dh-timer-reset-btn');
+  const timerSoundBtn = document.getElementById('dh-timer-sound-btn');
+  const soundText = document.getElementById('dh-sound-text');
+  const soundIcon = document.getElementById('dh-sound-icon');
+  const statSessions = document.getElementById('dh-stat-sessions');
+  const statMinutes = document.getElementById('dh-stat-minutes');
+  const presetCustomBtn = document.getElementById('dh-preset-custom-btn');
+
+  // Stopwatch controls
+  const swToggleBtn = document.getElementById('dh-sw-toggle-btn');
+  const swToggleText = document.getElementById('dh-sw-toggle-text');
+  const swToggleIcon = document.getElementById('dh-sw-toggle-icon');
+  const swLapBtn = document.getElementById('dh-sw-lap-btn');
+  const swResetBtn = document.getElementById('dh-sw-reset-btn');
+  const swLapsContainer = document.getElementById('dh-stopwatch-laps');
+
+  // Strictly allowed clock themes (White is Default)
+  const ALLOWED_THEMES = ['white', 'black', 'lavender', 'lightgreen'];
+  let savedTheme = '';
+  try { savedTheme = localStorage.getItem('dh_clock_theme'); } catch(e) {}
+  let currentTheme = (ALLOWED_THEMES.includes(savedTheme)) ? savedTheme : 'white';
+
+  let mode = 'clock'; // 'clock' | 'countdown' | 'stopwatch'
+  let is24h = (localStorage.getItem('dh_clock_format') === '24h');
+  let soundEnabled = (localStorage.getItem('dh_study_sound') !== 'false');
+
+  // Countdown state
+  let studyDurationSeconds = 25 * 60; // 25 min default
+  let studyRemainingSeconds = studyDurationSeconds;
+  let studyTimerInterval = null;
+  let isStudyRunning = false;
+  let currentPresetType = 'focus'; // 'focus' | 'break'
+  let completedSessions = parseInt(localStorage.getItem('dh_study_sessions') || '0', 10);
+  let totalFocusedMinutes = parseInt(localStorage.getItem('dh_study_minutes') || '0', 10);
+
+  // Stopwatch state
+  let swElapsedSeconds = 0;
+  let swTimerInterval = null;
+  let isSwRunning = false;
+  let swLaps = [];
+
+  // Theme application
+  function applyTheme(th) {
+    if (!ALLOWED_THEMES.includes(th)) th = 'white';
+    currentTheme = th;
+    stage.setAttribute('data-theme', th);
+    try { localStorage.setItem('dh_clock_theme', th); } catch(e) {}
+    document.querySelectorAll('.dh-swatch-dot').forEach(dot => {
+      dot.classList.toggle('on', dot.dataset.clockTheme === th);
+    });
+  }
+
+  // 3D Flip Card Animator
+  function flipUnit(unitEl, newVal) {
+    if (!unitEl) return;
+    const currentVal = unitEl.dataset.value;
+    if (currentVal === newVal) return;
+
+    const upperNum = unitEl.querySelector('.dh-flip-upper .dh-flip-num');
+    const lowerNum = unitEl.querySelector('.dh-flip-lower .dh-flip-num');
+    const leaf = unitEl.querySelector('.dh-flip-leaf');
+    const leafFront = unitEl.querySelector('.dh-leaf-front .dh-flip-num');
+    const leafBack = unitEl.querySelector('.dh-leaf-back .dh-flip-num');
+
+    if (!currentVal) {
+      unitEl.dataset.value = newVal;
+      if (upperNum) upperNum.textContent = newVal;
+      if (lowerNum) lowerNum.textContent = newVal;
+      if (leafFront) leafFront.textContent = newVal;
+      if (leafBack) leafBack.textContent = newVal;
+      return;
+    }
+
+    if (upperNum) upperNum.textContent = newVal;
+    if (leafBack) leafBack.textContent = newVal;
+    if (leafFront) leafFront.textContent = currentVal;
+    if (lowerNum) lowerNum.textContent = currentVal;
+
+    if (leaf) {
+      leaf.classList.remove('animating');
+      void leaf.offsetWidth;
+      leaf.classList.add('animating');
+
+      let cleaned = false;
+      const finish = () => {
+        if (cleaned) return;
+        cleaned = true;
+        leaf.removeEventListener('animationend', finish);
+        leaf.classList.remove('animating');
+        if (lowerNum) lowerNum.textContent = newVal;
+        if (leafFront) leafFront.textContent = newVal;
+        unitEl.dataset.value = newVal;
+      };
+
+      leaf.addEventListener('animationend', finish, { once: true });
+      setTimeout(finish, 540);
+    } else {
+      if (lowerNum) lowerNum.textContent = newVal;
+      unitEl.dataset.value = newVal;
+    }
+  }
+
+  // Live Clock Display
+  function updateClockDisplay() {
+    if (mode !== 'clock') return;
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    let ampm = '';
+    if (is24h) {
+      ampm = '';
+      if (ampmEl) ampmEl.style.display = 'none';
+      if (formatLabel) formatLabel.textContent = '12h';
+    } else {
+      ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      if (ampmEl) {
+        ampmEl.style.display = 'block';
+        ampmEl.textContent = ampm;
+      }
+      if (formatLabel) formatLabel.textContent = '24h';
+    }
+
+    const hStr = is24h ? String(hours).padStart(2, '0') : String(hours);
+    const mStr = String(minutes).padStart(2, '0');
+
+    flipUnit(cardLeft, hStr);
+    flipUnit(cardRight, mStr);
+  }
+
+  // Countdown Display
+  function updateCountdownDisplay() {
+    if (mode !== 'countdown') return;
+    const mins = Math.floor(studyRemainingSeconds / 60);
+    const secs = studyRemainingSeconds % 60;
+
+    const mStr = String(mins).padStart(2, '0');
+    const sStr = String(secs).padStart(2, '0');
+
+    if (ampmEl) {
+      ampmEl.style.display = 'block';
+      ampmEl.textContent = (currentPresetType === 'break') ? 'BREAK' : 'FOCUS';
+    }
+
+    flipUnit(cardLeft, mStr);
+    flipUnit(cardRight, sStr);
+  }
+
+  // Stopwatch Display
+  function updateStopwatchDisplay() {
+    if (mode !== 'stopwatch') return;
+    const mins = Math.floor(swElapsedSeconds / 60);
+    const secs = swElapsedSeconds % 60;
+
+    const mStr = String(mins).padStart(2, '0');
+    const sStr = String(secs).padStart(2, '0');
+
+    if (ampmEl) {
+      ampmEl.style.display = 'block';
+      ampmEl.textContent = swLaps.length > 0 ? ('LAP ' + swLaps.length) : 'TIMER';
+    }
+
+    flipUnit(cardLeft, mStr);
+    flipUnit(cardRight, sStr);
+  }
+
+  // Harmonized Zen Synthesizer Chime
+  function playZenChime() {
+    if (!soundEnabled) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const freqs = [528, 792, 1056];
+      freqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.22 / (idx + 1), ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 3.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 3.5);
+      });
+    } catch(e) {}
+  }
+
+  // Countdown Controls
+  function toggleCountdownTimer() {
+    if (isStudyRunning) {
+      clearInterval(studyTimerInterval);
+      isStudyRunning = false;
+      if (timerToggleText) timerToggleText.textContent = 'Resume';
+      if (timerToggleIcon) timerToggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    } else {
+      if (studyRemainingSeconds <= 0) studyRemainingSeconds = studyDurationSeconds;
+      isStudyRunning = true;
+      if (timerToggleText) timerToggleText.textContent = 'Pause';
+      if (timerToggleIcon) timerToggleIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+
+      studyTimerInterval = setInterval(() => {
+        if (studyRemainingSeconds > 0) {
+          studyRemainingSeconds--;
+          updateCountdownDisplay();
+        } else {
+          clearInterval(studyTimerInterval);
+          isStudyRunning = false;
+          if (timerToggleText) timerToggleText.textContent = currentPresetType === 'break' ? 'Start Break' : 'Start Focus';
+          if (timerToggleIcon) timerToggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+
+          playZenChime();
+          if (currentPresetType === 'focus') {
+            completedSessions++;
+            totalFocusedMinutes += Math.round(studyDurationSeconds / 60);
+            try {
+              localStorage.setItem('dh_study_sessions', String(completedSessions));
+              localStorage.setItem('dh_study_minutes', String(totalFocusedMinutes));
+            } catch(e) {}
+            updateStatsUI();
+            if (window.toast) window.toast('Focus session completed! Great job on your study streak.');
+          } else {
+            if (window.toast) window.toast('Break finished! Ready to get back into flow?');
+          }
+        }
+      }, 1000);
+    }
+  }
+
+  function resetCountdownTimer() {
+    clearInterval(studyTimerInterval);
+    isStudyRunning = false;
+    studyRemainingSeconds = studyDurationSeconds;
+    if (timerToggleText) timerToggleText.textContent = currentPresetType === 'break' ? 'Start Break' : 'Start Focus';
+    if (timerToggleIcon) timerToggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    updateCountdownDisplay();
+  }
+
+  function updateStatsUI() {
+    if (statSessions) statSessions.textContent = completedSessions;
+    if (statMinutes) statMinutes.textContent = totalFocusedMinutes + 'm';
+  }
+
+  // Stopwatch Controls
+  function toggleStopwatch() {
+    if (isSwRunning) {
+      clearInterval(swTimerInterval);
+      isSwRunning = false;
+      if (swToggleText) swToggleText.textContent = 'Resume';
+      if (swToggleIcon) swToggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    } else {
+      isSwRunning = true;
+      if (swToggleText) swToggleText.textContent = 'Pause';
+      if (swToggleIcon) swToggleIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+
+      swTimerInterval = setInterval(() => {
+        swElapsedSeconds++;
+        updateStopwatchDisplay();
+      }, 1000);
+    }
+  }
+
+  function resetStopwatch() {
+    clearInterval(swTimerInterval);
+    isSwRunning = false;
+    swElapsedSeconds = 0;
+    swLaps = [];
+    if (swToggleText) swToggleText.textContent = 'Start';
+    if (swToggleIcon) swToggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    if (swLapsContainer) {
+      swLapsContainer.innerHTML = '';
+      swLapsContainer.style.display = 'none';
+    }
+    updateStopwatchDisplay();
+  }
+
+  function recordStopwatchLap() {
+    if (swElapsedSeconds === 0 && !isSwRunning) return;
+    const lapIdx = swLaps.length + 1;
+    const mins = Math.floor(swElapsedSeconds / 60);
+    const secs = swElapsedSeconds % 60;
+    const timeFormatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    swLaps.unshift({ lap: lapIdx, time: timeFormatted });
+
+    if (swLapsContainer) {
+      swLapsContainer.style.display = 'flex';
+      swLapsContainer.innerHTML = swLaps.map(l => `
+        <div class="dh-lap-row">
+          <span class="dh-lap-num">Lap ${l.lap}</span>
+          <span>${l.time}</span>
+        </div>
+      `).join('');
+    }
+    if (ampmEl) ampmEl.textContent = 'LAP ' + lapIdx;
+  }
+
+  // Switch Mode
+  function setMode(newMode) {
+    mode = newMode;
+    const isClock = (mode === 'clock');
+    const isCountdown = (mode === 'countdown');
+    const isStopwatch = (mode === 'stopwatch');
+
+    if (modeClockBtn) {
+      modeClockBtn.classList.toggle('on', isClock);
+      modeClockBtn.setAttribute('aria-selected', String(isClock));
+    }
+    if (modeCountdownBtn) {
+      modeCountdownBtn.classList.toggle('on', isCountdown);
+      modeCountdownBtn.setAttribute('aria-selected', String(isCountdown));
+    }
+    if (modeStopwatchBtn) {
+      modeStopwatchBtn.classList.toggle('on', isStopwatch);
+      modeStopwatchBtn.setAttribute('aria-selected', String(isStopwatch));
+    }
+
+    if (studyControls) studyControls.style.display = isCountdown ? 'flex' : 'none';
+    if (stopwatchControls) stopwatchControls.style.display = isStopwatch ? 'flex' : 'none';
+
+    if (tbModeIcon) {
+      if (isClock) {
+        tbModeIcon.innerHTML = '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>';
+      } else if (isCountdown) {
+        tbModeIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+      } else {
+        tbModeIcon.innerHTML = '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M12 2v3M10 2h4"/>';
+      }
+    }
+    if (tbModeToggle) {
+      tbModeToggle.title = isClock ? 'Switch to Countdown' : (isCountdown ? 'Switch to Stopwatch' : 'Switch to Clock');
+    }
+
+    if (cardLeft) cardLeft.dataset.value = '';
+    if (cardRight) cardRight.dataset.value = '';
+
+    if (isClock) {
+      updateClockDisplay();
+    } else if (isCountdown) {
+      updateCountdownDisplay();
+    } else {
+      updateStopwatchDisplay();
+    }
+  }
+
+  // Event Listeners
+  if (modeClockBtn) modeClockBtn.onclick = () => setMode('clock');
+  if (modeCountdownBtn) modeCountdownBtn.onclick = () => setMode('countdown');
+  if (modeStopwatchBtn) modeStopwatchBtn.onclick = () => setMode('stopwatch');
+
+  if (tbModeToggle) {
+    tbModeToggle.onclick = () => {
+      if (mode === 'clock') setMode('countdown');
+      else if (mode === 'countdown') setMode('stopwatch');
+      else setMode('clock');
+    };
+  }
+
+  // 12h / 24h format toggle
+  if (toggleFormatBtn) {
+    toggleFormatBtn.onclick = () => {
+      is24h = !is24h;
+      try { localStorage.setItem('dh_clock_format', is24h ? '24h' : '12h'); } catch(e) {}
+      if (mode === 'clock') {
+        if (cardLeft) cardLeft.dataset.value = '';
+        updateClockDisplay();
+      }
+    };
+  }
+
+  // Palette Popover toggle
+  if (paletteTrigger && palettePopover) {
+    paletteTrigger.onclick = (e) => {
+      e.stopPropagation();
+      palettePopover.classList.toggle('open');
+    };
+    document.addEventListener('click', (e) => {
+      if (!palettePopover.contains(e.target) && e.target !== paletteTrigger) {
+        palettePopover.classList.remove('open');
+      }
+    });
+  }
+
+  // Palette Swatches
+  document.querySelectorAll('.dh-swatch-dot').forEach(dot => {
+    dot.onclick = (e) => {
+      e.stopPropagation();
+      const th = dot.dataset.clockTheme;
+      if (th) applyTheme(th);
+    };
+  });
+
+  // Fullscreen Mode
+  if (fullscreenBtn) {
+    fullscreenBtn.onclick = () => {
+      if (!document.fullscreenElement && !stage.classList.contains('is-fullscreen') && !stage.classList.contains('dh-zen-fullscreen')) {
+        if (stage.requestFullscreen) {
+          stage.requestFullscreen().catch(() => stage.classList.add('dh-zen-fullscreen'));
+        } else {
+          stage.classList.add('dh-zen-fullscreen');
+        }
+        stage.classList.add('is-fullscreen');
+      } else {
+        if (document.exitFullscreen && document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
+        stage.classList.remove('is-fullscreen');
+        stage.classList.remove('dh-zen-fullscreen');
+      }
+    };
+
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        stage.classList.remove('is-fullscreen');
+        stage.classList.remove('dh-zen-fullscreen');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && (stage.classList.contains('is-fullscreen') || stage.classList.contains('dh-zen-fullscreen'))) {
+        stage.classList.remove('is-fullscreen');
+        stage.classList.remove('dh-zen-fullscreen');
+      }
+    });
+  }
+
+  // Countdown Controls Action buttons
+  if (timerToggleBtn) timerToggleBtn.onclick = toggleCountdownTimer;
+  if (timerResetBtn) timerResetBtn.onclick = resetCountdownTimer;
+
+  // Stopwatch buttons
+  if (swToggleBtn) swToggleBtn.onclick = toggleStopwatch;
+  if (swResetBtn) swResetBtn.onclick = resetStopwatch;
+  if (swLapBtn) swLapBtn.onclick = recordStopwatchLap;
+
+  if (timerSoundBtn) {
+    timerSoundBtn.onclick = () => {
+      soundEnabled = !soundEnabled;
+      try { localStorage.setItem('dh_study_sound', String(soundEnabled)); } catch(e) {}
+      if (soundText) soundText.textContent = soundEnabled ? 'Chime On' : 'Chime Off';
+      if (soundIcon) {
+        soundIcon.innerHTML = soundEnabled
+          ? '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>'
+          : '<path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+      }
+    };
+  }
+
+  // Countdown Presets (Sprints & Breaks)
+  document.querySelectorAll('.dh-preset-btn[data-minutes]').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.dh-preset-btn').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      const mins = parseInt(btn.dataset.minutes, 10) || 25;
+      currentPresetType = btn.dataset.mode || (mins <= 5 ? 'break' : 'focus');
+      studyDurationSeconds = mins * 60;
+      resetCountdownTimer();
+    };
+  });
+
+  // Custom Break/Study button
+  if (presetCustomBtn) {
+    presetCustomBtn.onclick = () => {
+      const input = prompt('Enter custom timer duration in minutes (1 - 180):', '10');
+      const mins = parseInt(input, 10);
+      if (!isNaN(mins) && mins >= 1 && mins <= 180) {
+        document.querySelectorAll('.dh-preset-btn').forEach(b => b.classList.remove('on'));
+        presetCustomBtn.classList.add('on');
+        currentPresetType = (mins <= 15) ? 'break' : 'focus';
+        studyDurationSeconds = mins * 60;
+        resetCountdownTimer();
+      }
+    };
+  }
+
+  // Initialize
+  applyTheme(currentTheme);
+  updateStatsUI();
+  updateClockDisplay();
+
+  // Heartbeat loop for Live Clock
+  setInterval(() => {
+    if (mode === 'clock') {
+      updateClockDisplay();
+    }
+  }, 1000);
+
+})();
+</script>
 </body>
 </html>
