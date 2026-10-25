@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HJSFWLF5VT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HJSFWLF5VT');
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#faf8ff">
@@ -3711,6 +3720,7 @@ function show(id){
   document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+id));
   document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));
   scrollTo({top:0,behavior:'smooth'});
+  if(typeof gtag==='function'){try{gtag('event','page_view',{page_title:id.charAt(0).toUpperCase()+id.slice(1)+' — DevHarbour',page_path:'/'+id})}catch(e){}}
   const viewEl = document.getElementById('v-'+id);
   if (viewEl) {
     viewEl.querySelectorAll('.c, .t, .pk, .row, .ws-card, .ws-stat-card, .ws-chart-card, .course-card, .dh-timer-stage, .j, .card, .ws-roller-capsule, .dh-section-card').forEach((e,i)=>{
