@@ -420,26 +420,427 @@ html[data-theme="mercury"] .spb{background:linear-gradient(90deg,#2c2c2f,#9a9aa2
 
 
 
-/* ===== ABOUT: founder cards ===== */
-.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-@media(max-width:900px){.fg{grid-template-columns:1fr}}
-.fc{position:relative;display:flex;flex-direction:column;gap:12px;padding:26px;border-radius:28px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line),0 24px 50px -34px rgba(20,16,40,.45);overflow:hidden;transition:transform .6s var(--e),opacity .9s var(--e)}
-.fc:before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(135deg,rgba(255,255,255,.85),transparent 38%,transparent 62%,var(--sv));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.75;pointer-events:none}
-.fc:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.16) 50%,transparent 60%) 130% 0/260% 100% no-repeat;transition:background-position 1.2s var(--e)}
-.fc:hover{transform:translateY(-6px)}.fc:hover:after{background-position:-30% 0}
-.fh{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
-.fh .xlg{font-size:13px;letter-spacing:.1em}.fh .xli{width:34px;height:34px}
-.fh small{font-weight:800;font-size:12px;letter-spacing:.2em;color:var(--mut)}
-.fav{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;margin-top:6px;font-family:'Michroma',var(--font);font-size:18px;color:#1f1c2c;background:radial-gradient(circle at 32% 28%,#fff,#aaa6bd 55%,#5a5275);box-shadow:0 14px 24px -12px rgba(30,24,56,.5),inset 0 0 0 1px rgba(255,255,255,.5)}
-.fc h3{font-size:clamp(21px,2vw,27px);font-weight:800;letter-spacing:.01em;text-transform:uppercase;line-height:1.1}
-.fro{align-self:flex-start;font-weight:800;font-size:12.5px;padding:6px 13px;border-radius:99px;box-shadow:inset 0 0 0 1.5px var(--ink)}
-.fc p{color:var(--mut);font-weight:500;font-size:14.5px;line-height:1.65;flex:1}
-.fk{display:flex;flex-direction:column;gap:6px;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
-.fk a{display:flex;align-items:center;gap:12px;padding:9px 10px;margin:0 -10px;border-radius:14px;transition:background .35s var(--e),transform .35s var(--e)}
-.fk a:hover{background:var(--soft);transform:translateX(4px)}
-.fk svg{width:18px;height:18px;flex:none}.fk b{font-weight:800;font-size:14px}
+/* ===== ABOUT: founder cards (Light Lavender + Liquid Mercury Architecture) ===== */
+:root {
+  --lav-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(247, 244, 253, 0.92) 42%, rgba(239, 233, 251, 0.88) 72%, rgba(226, 218, 246, 0.82) 100%);
+  --lav-border: rgba(186, 170, 226, 0.36);
+  --lav-border-hover: rgba(155, 130, 220, 0.65);
+  --lav-glow: rgba(190, 170, 245, 0.28);
+  --lav-pill-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(241, 235, 252, 0.92) 50%, rgba(228, 218, 248, 0.88) 100%);
+  --lav-pill-border: rgba(196, 180, 238, 0.65);
+  --lav-pill-text: #2d2444;
+  --lav-chip-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(244, 239, 253, 0.85) 100%);
+  --lav-chip-border: rgba(210, 196, 245, 0.6);
+  --lav-meniscus: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.98) 22%, #baa8e5 50%, rgba(255, 255, 255, 0.98) 78%, transparent);
+}
 
+html[data-theme="dark"] {
+  --lav-surface: linear-gradient(135deg, rgba(30, 26, 42, 0.95) 0%, rgba(20, 17, 30, 0.92) 45%, rgba(14, 11, 22, 0.96) 100%);
+  --lav-border: rgba(180, 160, 240, 0.22);
+  --lav-border-hover: rgba(196, 181, 253, 0.55);
+  --lav-glow: rgba(167, 139, 250, 0.25);
+  --lav-pill-bg: linear-gradient(135deg, rgba(46, 38, 64, 0.9) 0%, rgba(28, 22, 40, 0.88) 50%, rgba(20, 16, 30, 0.94) 100%);
+  --lav-pill-border: rgba(196, 181, 253, 0.32);
+  --lav-pill-text: #ede9fe;
+  --lav-chip-bg: linear-gradient(135deg, rgba(42, 35, 58, 0.85) 0%, rgba(26, 22, 38, 0.8) 100%);
+  --lav-chip-border: rgba(196, 181, 253, 0.2);
+  --lav-meniscus: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6) 22%, #a78bfa 50%, rgba(255, 255, 255, 0.6) 78%, transparent);
+}
 
+html[data-theme="mercury"] {
+  --lav-surface: linear-gradient(135deg, #f3f0f8 0%, #ded7ed 42%, #f7f5fb 70%, #cac0e2 100%);
+  --lav-border: rgba(160, 140, 210, 0.32);
+  --lav-border-hover: rgba(140, 115, 205, 0.55);
+  --lav-glow: rgba(180, 155, 235, 0.22);
+  --lav-pill-bg: linear-gradient(135deg, #ffffff, #eae3f7);
+  --lav-pill-border: rgba(180, 160, 230, 0.5);
+  --lav-pill-text: #2c2242;
+  --lav-chip-bg: linear-gradient(135deg, #ffffff 0%, #ebe4f8 100%);
+  --lav-chip-border: rgba(190, 170, 235, 0.5);
+  --lav-meniscus: linear-gradient(90deg, transparent, #ffffff 22%, #bcaee0 50%, #ffffff 78%, transparent);
+}
+
+.fg {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  height: 290px;
+}
+
+/* Ambient cursor aura travelling across cards */
+.fg-cursor-aura {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle at center, var(--lav-glow) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+  filter: blur(30px);
+}
+
+.fc {
+  position: relative;
+  flex: 1; /* Equal & short by default */
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  padding: 22px 24px;
+  border-radius: 24px;
+  background: var(--lav-surface);
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1.5px 2px 0 rgba(160, 140, 210, 0.18),
+    0 0 0 1px var(--lav-border),
+    0 14px 34px -18px rgba(55, 40, 95, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  /* Smooth horizontal expansion, opacity transition & flat lift */
+  transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, filter 0.4s ease, transform 0.3s ease, box-shadow 0.35s ease;
+  will-change: flex, opacity, transform;
+}
+
+/* Specular Lavender-Mercury Meniscus Line on top edge */
+.fc::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 6%;
+  right: 6%;
+  height: 1.5px;
+  background: var(--lav-meniscus);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Dynamic Mercury Liquid Sheen Sweep across the card on hover */
+.fc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 32%, rgba(255, 255, 255, 0.5) 48%, rgba(225, 208, 255, 0.55) 52%, rgba(255, 255, 255, 0.4) 58%, transparent 72%) no-repeat;
+  background-size: 260% 260%;
+  background-position: 160% 0;
+  transition: background-position 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 2;
+}
+.fc:hover::after {
+  background-position: -60% 0;
+}
+
+/* ON HOVER: Hovered card expands horizontally & becomes fully prominent */
+.fc:hover {
+  flex: 4;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: translateY(-3px);
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px 0 rgba(160, 140, 210, 0.25),
+    0 0 0 1.5px var(--lav-border-hover),
+    0 24px 48px -18px rgba(65, 45, 115, 0.22),
+    0 0 35px -6px var(--lav-glow);
+}
+
+/* ON HOVER: The other two cards shrink small and become TRANSPARENT as requested */
+.fg:hover .fc:not(:hover) {
+  flex: 0.42;
+  opacity: 0.20; /* Gets transparent */
+  filter: blur(0.8px);
+  transform: scale(0.98);
+}
+.fg:hover .fc:not(:hover) .fk {
+  opacity: 0;
+  pointer-events: none;
+}
+.fg:hover .fc:not(:hover) .fc-expand-hint {
+  opacity: 0;
+}
+
+/* Left Column (Identity & Contacts) */
+.fc-identity {
+  position: relative;
+  z-index: 4;
+  flex: 0 0 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.fh {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 2px;
+}
+.fh .xlg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+}
+
+/* Dev Harbour logo: strictly NO ROTATION */
+.fh .xli {
+  width: 28px;
+  height: 28px;
+  transform: none !important;
+  transition: none !important;
+}
+.fc:hover .fh .xli {
+  transform: none !important;
+}
+
+.fh small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--lav-pill-text);
+  background: var(--lav-pill-bg);
+  border: 1px solid var(--lav-pill-border);
+  padding: 2px 8px;
+  border-radius: 99px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.fc h3 {
+  font-size: clamp(19px, 1.7vw, 22px);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  line-height: 1.15;
+  margin: 3px 0 2px;
+}
+
+/* Light Lavender + Mercury Role Capsule */
+.fro {
+  align-self: flex-start;
+  font-weight: 800;
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: var(--lav-pill-bg);
+  border: 1px solid var(--lav-pill-border);
+  color: var(--lav-pill-text);
+  box-shadow: 
+    0 2px 6px -2px rgba(100, 80, 160, 0.15),
+    0 0 0 1px rgba(200, 185, 240, 0.3),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
+  transition: transform 0.25s ease;
+}
+
+/* Expand hint when collapsed */
+.fc-expand-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--mut);
+  letter-spacing: 0.04em;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px dashed var(--lav-border);
+  margin-top: 4px;
+  transition: opacity 0.2s ease;
+}
+html[data-theme="dark"] .fc-expand-hint {
+  background: rgba(255, 255, 255, 0.04);
+}
+.fc:hover .fc-expand-hint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Contacts */
+.fk {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  transition: opacity 0.25s ease;
+}
+.fk a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 8px;
+  margin: 0 -8px;
+  border-radius: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 12.5px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.fk a svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: #7b6ba8;
+}
+html[data-theme="dark"] .fk a svg {
+  color: #c4b5fd;
+}
+.fk a:hover {
+  background: var(--soft);
+  transform: translateX(3px);
+}
+.fk b {
+  font-weight: 800;
+  font-size: 12.5px;
+}
+
+/* Right Details Panel: Full horizontal coverage, zero cutoffs */
+.fc-details {
+  position: relative;
+  z-index: 4;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+  opacity: 0;
+  transform: translateX(18px);
+  pointer-events: none;
+  overflow: visible;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fc:hover .fc-details {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  transition-delay: 0.1s;
+}
+
+.fc-details-head {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #7b6ba8;
+}
+html[data-theme="dark"] .fc-details-head {
+  color: #c4b5fd;
+}
+
+.fc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  width: 100%;
+}
+
+/* Light Lavender + Liquid Mercury Chips */
+.fc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--lav-chip-bg);
+  border: 1px solid var(--lav-chip-border);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    0 1.5px 5px rgba(80, 60, 130, 0.05),
+    0 0 0 1px rgba(190, 175, 235, 0.22);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+.fc-chip:hover {
+  transform: translateY(-1.5px);
+  background: #ffffff;
+  border-color: #a894df;
+  box-shadow: 0 4px 12px rgba(100, 80, 160, 0.14), 0 0 0 1px rgba(160, 140, 225, 0.5);
+}
+html[data-theme="dark"] .fc-chip:hover {
+  background: rgba(50, 42, 68, 0.95);
+  border-color: #c4b5fd;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(196, 181, 253, 0.4);
+}
+.fc-chip i {
+  font-style: normal;
+  font-size: 9.5px;
+  color: #8c7ab8;
+}
+html[data-theme="dark"] .fc-chip i {
+  color: #c4b5fd;
+}
+
+/* Responsive: Tablets & Mobile */
+@media(max-width: 900px) {
+  .fg {
+    flex-direction: column;
+    height: auto;
+  }
+  .fc {
+    flex: none !important;
+    height: auto;
+    flex-direction: column;
+    padding: 20px;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  .fg:hover .fc:not(:hover) {
+    flex: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+  .fc-identity {
+    flex: none;
+    width: 100%;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .fc-expand-hint {
+    display: none;
+  }
+  .fc-details {
+    min-width: 0;
+    padding-left: 0;
+    border-left: none;
+    padding-top: 12px;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    height: auto;
+  }
+}
 
 /* ===== FEATURED PROJECT CARDS ===== */
 .fxg{display:grid;grid-template-columns:1.25fr 1fr;gap:20px}.fx.big{grid-row:span 2}
@@ -3088,6 +3489,34 @@ html[data-theme="dark"] .ws-mercury-orb {
   }
 }
 
+
+/* Dev Harbour Certificate View Styles */
+.dh-cert-claim-wrap{max-width:760px;margin:30px auto;padding:0 20px;text-align:center}
+.dh-cert-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;background:rgba(124,92,255,0.08);border:1px solid rgba(124,92,255,0.2);font-size:11px;font-weight:700;color:#6e56cf;letter-spacing:0.12em;margin-bottom:14px}
+.dh-cert-orb{width:8px;height:8px;border-radius:50%;background:#6e56cf;box-shadow:0 0 10px #6e56cf;animation:pu 2s infinite}
+.dh-cert-title{font-size:clamp(32px,5vw,46px);font-weight:800;letter-spacing:-0.03em;color:var(--ink);margin-bottom:10px}
+.dh-cert-sub{font-size:16px;color:var(--mut);line-height:1.6;margin-bottom:28px}
+.dh-cert-card{background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:36px;text-align:left;box-shadow:0 12px 36px rgba(0,0,0,0.05);position:relative;overflow:hidden}
+.dh-cert-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+.dh-event-tag{font-size:12px;font-weight:800;letter-spacing:0.1em;color:var(--ink);background:rgba(0,0,0,0.04);padding:4px 12px;border-radius:6px;border:1px solid var(--line)}
+.dh-event-status{font-size:12px;font-weight:700;color:#10b981}
+.dh-cert-note{font-size:13px;color:var(--mut);margin-bottom:24px}
+.dh-cert-field{margin-bottom:18px}
+.dh-cert-field label{display:block;font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--mut);text-transform:uppercase;margin-bottom:6px}
+.dh-cert-field input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px;outline:none;transition:border-color .2s}
+.dh-cert-field input:focus{border-color:#6e56cf}
+.dh-cert-submit-btn{width:100%;padding:15px;border-radius:12px;background:#15112c;color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .2s,opacity .2s;margin-top:10px}
+.dh-cert-submit-btn:hover{opacity:.9;transform:translateY(-1px)}
+.dh-cert-msg{margin-top:14px;font-size:13px;font-weight:600;min-height:20px;text-align:center}
+.dh-cert-msg.err{color:#ef4444}
+.dh-cert-msg.ok{color:#10b981}
+.dh-cert-meta-preview{background:linear-gradient(135deg,rgba(110,86,207,0.05),rgba(255,255,255,0.8));border:1.5px solid #8e82ea;border-radius:20px;padding:30px;text-align:center}
+.dh-cert-cand-name{font-size:38px;font-weight:800;letter-spacing:0.04em;color:#110e24;margin:12px 0 6px}
+.dh-cert-cand-org{font-size:15px;color:#554f6b;font-weight:600;margin-bottom:10px}
+.dh-cert-event-name{font-size:13px;font-weight:700;color:#4f3ddb;letter-spacing:0.12em;text-transform:uppercase}
+.dh-cred-id-box{display:inline-flex;gap:8px;align-items:center;background:#15112c;color:#fff;padding:6px 16px;border-radius:99px;font-size:12px;margin:14px 0}
+.dh-cert-hold-notice{font-size:12px;color:var(--mut);margin-top:12px;font-style:italic}
+
 </style>
 </head>
 <body>
@@ -3124,11 +3553,131 @@ html[data-theme="dark"] .ws-mercury-orb {
 <div class="zm2"><div class="zv"><h3>Meet the Community</h3><p>Pair up on a bug, review each other’s projects, and contribute to open ideas. Nobody builds alone here.</p><div class="zst3" id="zav"></div><button class="zl" type="button" data-go="comm">Visit the community</button></div>
 <div class="zv" style="--i:1"><div class="zlb h"><span>Rank</span><span>Developer</span><span>Challenges</span><span>Score</span></div><div id="zlb"></div><p class="zn" style="margin-top:14px">Global student rankings updated in real time.</p></div></div></section>
 <!-- ABOUT / FOUNDERS -->
-<section class="zs" id="about"><h2 class="zh">The team behind the harbour.</h2><p class="zn zv" style="margin:-30px 0 40px;font-size:15px"><b>Three co-founders.</b> One mission: a free place for students, developers and vibe coders to learn, build and grow.</p><div class="fg">
-<article class="fc zv" style="--i:0"><div class="fh"><span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span><small>01</small></div><h3>Rujula Sharma</h3><span class="fro">Co-Founder & CEO</span><p>Vision, strategy, external partnerships, and overall direction.</p><div class="fk"><a href="tel:+919511874292"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.300a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2z"/></svg><b>+91 95118 74292</b></a><a href="https://www.linkedin.com/in/rujula-sharma-ba8a63427" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.980 3.500a2.500 2.500 0 1 1 0 5 2.500 2.500 0 0 1 0-5zM3 9.500h4V21H3zM9.500 9.500h3.800v1.600h.1c.5-1 1.800-2 3.800-2 4 0 4.800 2.600 4.800 6V21h-4v-5.200c0-1.300 0-2.800-1.800-2.800s-2 1.300-2 2.700V21h-4z"/></svg><b>LinkedIn</b></a></div></article>
-<article class="fc zv" style="--i:1"><div class="fh"><span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span><small>02</small></div><h3>Parth Gidde</h3><span class="fro">Co-Founder & Managing Director</span><p>Operations, team coordination, events, and execution.</p><div class="fk"><a href="tel:+918591250390"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.300a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2z"/></svg><b>+91 85912 50390</b></a><a href="https://www.linkedin.com/in/parth-0a8335412" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.980 3.500a2.500 2.500 0 1 1 0 5 2.500 2.500 0 0 1 0-5zM3 9.500h4V21H3zM9.500 9.500h3.800v1.600h.1c.5-1 1.800-2 3.800-2 4 0 4.800 2.600 4.800 6V21h-4v-5.200c0-1.300 0-2.800-1.800-2.800s-2 1.300-2 2.700V21h-4z"/></svg><b>LinkedIn</b></a></div></article>
-<article class="fc zv" style="--i:2"><div class="fh"><span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span><small>03</small></div><h3>Dhairya Sharma</h3><span class="fro">Co-Founder & Technical Head</span><p>Website, platform development, technical decisions, and product direction.</p><div class="fk"><a href="tel:+916377796464"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.300a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2z"/></svg><b>+91 63777 96464</b></a><a href="https://www.linkedin.com/in/dhairya-sharma-150874419" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.980 3.500a2.500 2.500 0 1 1 0 5 2.500 2.500 0 0 1 0-5zM3 9.500h4V21H3zM9.500 9.500h3.800v1.600h.1c.5-1 1.800-2 3.800-2 4 0 4.800 2.600 4.800 6V21h-4v-5.200c0-1.300 0-2.800-1.800-2.800s-2 1.300-2 2.700V21h-4z"/></svg><b>LinkedIn</b></a></div></article>
-</div></section>
+<section class="zs" id="about">
+  <h2 class="zh">The team behind the harbour.</h2>
+  <p class="zn zv" style="margin:-30px 0 40px;font-size:15px"><b>Three co-founders.</b> One mission: a free place for students, developers and vibe coders to learn, build and grow.</p>
+  <div class="fg">
+
+    <!-- 01 RUJULA SHARMA -->
+    <article class="fc zv" style="--i:0">
+      <div class="fc-identity">
+        <div>
+          <div class="fh">
+            <span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span>
+            <small>01</small>
+          </div>
+          <h3>RUJULA SHARMA</h3>
+          <span class="fro">Founder &amp; CEO @devharbour</span>
+        </div>
+        <div class="fc-expand-hint">✦ Hover to view credentials →</div>
+        <div class="fk">
+          <a href="tel:+919511874292">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.300a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2z"/></svg>
+            <b>+91 95118 74292</b>
+          </a>
+          <a href="https://www.linkedin.com/in/rujula-sharma-ba8a63427" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.980 3.500a2.500 2.500 0 1 1 0 5 2.500 2.500 0 0 1 0-5zM3 9.500h4V21H3zM9.500 9.500h3.800v1.600h.1c.5-1 1.800-2 3.800-2 4 0 4.800 2.600 4.800 6V21h-4v-5.200c0-1.300 0-2.800-1.800-2.800s-2 1.300-2 2.700V21h-4z"/></svg>
+            <b>LinkedIn</b>
+          </a>
+        </div>
+      </div>
+      <div class="fc-details">
+        <span class="fc-details-head">Verified Track Record &amp; Focus</span>
+        <div class="fc-chips">
+          <span class="fc-chip"><i>✦</i> Full-Stack Software Engineer</span>
+          <span class="fc-chip"><i>✦</i> B.Tech Graduate</span>
+          <span class="fc-chip"><i>✦</i> IIT Techfest Ambassador</span>
+          <span class="fc-chip"><i>✦</i> Hackathon Winner</span>
+          <span class="fc-chip"><i>✦</i> 20+ Certifications │ 20+ Projects</span>
+          <span class="fc-chip"><i>✦</i> Backend Engineer</span>
+          <span class="fc-chip"><i>✦</i> Ex-Associate Software Engineer</span>
+          <span class="fc-chip"><i>✦</i> Open-Source Contributor</span>
+          <span class="fc-chip"><i>✦</i> Hackathon Organiser</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 02 PARTH VIJAY GIDDE -->
+    <article class="fc zv" style="--i:1">
+      <div class="fc-identity">
+        <div>
+          <div class="fh">
+            <span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span>
+            <small>02</small>
+          </div>
+          <h3>PARTH VIJAY GIDDE</h3>
+          <span class="fro">Co-Founder @Dev Harbour │ Cybersecurity &amp; AI</span>
+        </div>
+        <div class="fc-expand-hint">✦ Hover to view credentials →</div>
+        <div class="fk">
+          <a href="tel:+918591250390">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.300a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2z"/></svg>
+            <b>+91 85912 50390</b>
+          </a>
+          <a href="https://www.linkedin.com/in/parth-0a8335412" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.980 3.500a2.500 2.500 0 1 1 0 5 2.500 2.500 0 0 1 0-5zM3 9.500h4V21H3zM9.500 9.500h3.800v1.600h.1c.5-1 1.800-2 3.800-2 4 0 4.800 2.600 4.800 6V21h-4v-5.200c0-1.300 0-2.800-1.800-2.800s-2 1.300-2 2.700V21h-4z"/></svg>
+            <b>LinkedIn</b>
+          </a>
+        </div>
+      </div>
+      <div class="fc-details">
+        <span class="fc-details-head">Verified Track Record &amp; Focus</span>
+        <div class="fc-chips">
+          <span class="fc-chip"><i>✦</i> National Hackathon Winner</span>
+          <span class="fc-chip"><i>✦</i> Rank 88 — Techfest, IIT Bombay</span>
+          <span class="fc-chip"><i>✦</i> Pursuing B.Tech — Cybersecurity &amp; Blockchain</span>
+          <span class="fc-chip"><i>✦</i> Backend Engineer</span>
+          <span class="fc-chip"><i>✦</i> Cybersecurity — Tripple One Solutions</span>
+          <span class="fc-chip"><i>✦</i> Marketing Experience — Goibibo</span>
+          <span class="fc-chip"><i>✦</i> 7+ Certifications</span>
+          <span class="fc-chip"><i>✦</i> Web Development Specialist</span>
+          <span class="fc-chip"><i>✦</i> Projects — Garaa, Mudra + 3 More</span>
+          <span class="fc-chip"><i>✦</i> Hackathon Host &amp; Organiser</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 03 DHAIRYA SHARMA -->
+    <article class="fc zv" style="--i:2">
+      <div class="fc-identity">
+        <div>
+          <div class="fh">
+            <span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span>
+            <small>03</small>
+          </div>
+          <h3>DHAIRYA SHARMA</h3>
+          <span class="fro">Founder, Chief Technology Officer @devharbour</span>
+        </div>
+        <div class="fc-expand-hint">✦ Hover to view credentials →</div>
+        <div class="fk">
+          <a href="tel:+916377796464">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.300a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2z"/></svg>
+            <b>+91 63777 96464</b>
+          </a>
+          <a href="https://www.linkedin.com/in/dhairya-sharma-150874419" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.980 3.500a2.500 2.500 0 1 1 0 5 2.500 2.500 0 0 1 0-5zM3 9.500h4V21H3zM9.500 9.500h3.800v1.600h.1c.5-1 1.800-2 3.800-2 4 0 4.800 2.600 4.800 6V21h-4v-5.200c0-1.300 0-2.800-1.800-2.800s-2 1.300-2 2.700V21h-4z"/></svg>
+            <b>LinkedIn</b>
+          </a>
+        </div>
+      </div>
+      <div class="fc-details">
+        <span class="fc-details-head">Verified Track Record &amp; Focus</span>
+        <div class="fc-chips">
+          <span class="fc-chip"><i>✦</i> Open-Source Contributor</span>
+          <span class="fc-chip"><i>✦</i> Dual Degree UG — Clinical Psychology &amp; Cybersecurity</span>
+          <span class="fc-chip"><i>✦</i> College Ambassador — IITB Techfest</span>
+          <span class="fc-chip"><i>✦</i> 11x Hackathon Winner (Solo)</span>
+          <span class="fc-chip"><i>✦</i> 15+ Projects Built</span>
+          <span class="fc-chip"><i>✦</i> WebDev │ Exploit Dev</span>
+          <span class="fc-chip"><i>✦</i> Python, C and C++ Programmer</span>
+          <span class="fc-chip"><i>✦</i> Bug Bounty Hunter</span>
+          <span class="fc-chip"><i>✦</i> Hackathon Organiser</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
 <!-- 7 FINAL CTA -->
 <section class="zs zcta" id="cta"><h2 class="zh">Your next big idea starts here.</h2><div class="zk zv"><button class="zb" type="button" data-go="work">Start Building</button><button class="zb o" type="button" data-go="hack">Explore Opportunities</button></div><p class="zn zv" style="--i:1">Free for students, developers and vibe coders.</p></section>
 <!-- 8 FOOTER -->
@@ -3707,6 +4256,70 @@ html[data-theme="dark"] .ws-mercury-orb {
   <div class="trow"><div><b>Dark mode</b><p class="mut">True-black background, no blue tint</p></div><button class="sw" id="swd" role="switch" aria-checked="false" aria-label="Dark mode"><i></i></button></div>
  </div>
 </div></section>
+
+<!-- CERTIFICATE CLAIM & VERIFICATION VIEW -->
+<section class="view" id="v-certificate">
+  <div class="dh-cert-claim-wrap">
+    <div class="dh-cert-badge">
+      <span class="dh-cert-orb"></span>
+      <span>DEV HARBOUR CREDENTIALS · VERIFIED REGISTRY</span>
+    </div>
+    <h2 class="dh-cert-title">Claim Your Certificate</h2>
+    <p class="dh-cert-sub">Your journey deserves recognition. Claim and verify your official Dev Harbour credential.</p>
+
+    <div class="dh-cert-card">
+      <div class="dh-cert-card-header">
+        <span class="dh-event-tag">ORCA CODERS: ORCATHON 2026</span>
+        <span class="dh-event-status">● Registrations Verified</span>
+      </div>
+      <p class="dh-cert-note">Please enter the official registration details used during the event.</p>
+
+      <form id="dh-claim-form" onsubmit="handleClaimSubmit(event)">
+        <div class="dh-cert-field">
+          <label for="claim-email">Registered Email Address</label>
+          <input type="email" id="claim-email" placeholder="e.g. yash.pandey347683@gmail.com" required autocomplete="email">
+        </div>
+
+        <div class="dh-cert-field">
+          <label for="claim-name">Participant Full Name</label>
+          <input type="text" id="claim-name" placeholder="e.g. Yash Pandey" required autocomplete="name">
+        </div>
+
+        <button type="submit" class="dh-cert-submit-btn" id="btn-claim-submit">
+          <span>Verify & Claim Credential</span>
+          <span class="dh-btn-arrow">→</span>
+        </button>
+
+        <div id="claim-status-msg" class="dh-cert-msg"></div>
+      </form>
+
+      <!-- OTP Step (revealed upon validation) -->
+      <div id="dh-otp-step" style="display:none;margin-top:24px;padding-top:20px;border-top:1px solid var(--line);">
+        <p class="dh-otp-prompt">A 6-digit verification code has been sent to your email.</p>
+        <div class="dh-cert-field" style="max-width:240px;margin:12px auto;">
+          <input type="text" id="claim-otp" maxlength="6" placeholder="• • • • • •" style="text-align:center;letter-spacing:6px;font-size:20px;font-weight:700;">
+        </div>
+        <button type="button" class="dh-cert-submit-btn" onclick="handleVerifyOtp()">Confirm OTP & Issue Certificate</button>
+      </div>
+
+      <!-- Verified Certificate Preview Stage -->
+      <div id="dh-cert-result-stage" style="display:none;margin-top:28px;">
+        <div class="dh-cert-meta-preview">
+          <span class="dh-cert-preview-badge">OFFICIAL CREDENTIAL RESERVED</span>
+          <h3 id="preview-cand-name" class="dh-cert-cand-name">YASH PANDEY</h3>
+          <p id="preview-cand-org" class="dh-cert-cand-org">Maharana Pratap Engineering College ,Kanpur (U.P )</p>
+          <p class="dh-cert-event-name">ORCA CODERS: ORCATHON 2026</p>
+          <div class="dh-cred-id-box">
+            <span>CREDENTIAL ID</span>
+            <strong id="preview-cred-id">#OH2K26-0427</strong>
+          </div>
+          <p class="dh-cert-hold-notice">Certificate template preview is currently undergoing official board review. Your verified record is reserved above.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 </main></div>
 
 <script>
@@ -6918,7 +7531,7 @@ $('zav').innerHTML=LB.map(u=>`<span class="zav" title="${u[0]}">${u[0][0].toUppe
 $('zlb').innerHTML=LB.map((u,i)=>`<div class="zlb"><b>${i+1}</b><span>${u[0]}</span><span>${u[1]}</span><span>${u[2].toLocaleString()} XP</span></div>`).join('');
 /* footer */
 $('zfl').src=document.querySelector('.xlg .xli').src;document.querySelectorAll('[data-logo]').forEach(i=>i.src=$('zfl').src);
-$('zfn').innerHTML=[['about','About'],['contact','Contact'],['github','GitHub'],['linkedin','LinkedIn'],['terms','Terms']].map(x=>x[0]=='about'?'<a href="#" data-sc="#about">About</a>':ph(x[0],x[1])).join('');
+$('zfn').innerHTML=[['about','About'],['certificate','Certificate'],['contact','Contact'],['github','GitHub'],['linkedin','LinkedIn'],['terms','Terms']].map(x=>x[0]=='about'?'<a href="#" data-sc="#about">About</a>':x[0]=='certificate'?'<a href="/certificate" data-go="certificate">Certificate</a>':ph(x[0],x[1])).join('');
 /* links that point nowhere stay inert; data-go / data-sc work */
 LD.addEventListener('click',e=>{const a=e.target.closest('a[href="#"],[data-go],[data-sc]');if(!a)return;e.preventDefault();if(a.dataset.sc)jump(a.dataset.sc);else if(a.dataset.go)enter(a.dataset.go,e.clientX,e.clientY)});
 LD.addEventListener('click',e=>{if(e.target.closest('#chTry')){e.stopPropagation();e.preventDefault();enter('work',e.clientX,e.clientY)}},true);
@@ -6967,8 +7580,46 @@ tb.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b){e.sto
 (function(){const I=document.getElementById('intro'),B=document.getElementById('spb'),L=document.getElementById('landing');
 if(I&&B)I.addEventListener('scroll',()=>{const m=I.scrollHeight-I.clientHeight;B.style.transform='scaleX('+(m>0?I.scrollTop/m:0)+')'},{passive:true});
 if(!L||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-L.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const c=e.target.closest('.fc,.fx,.lbx');if(!c)return;const r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;c.style.setProperty('--mx',x+'px');c.style.setProperty('--my',y+'px');if(!c.classList.contains('lbx'))c.style.transform='perspective(900px) rotateX('+((.5-y/r.height)*6)+'deg) rotateY('+((x/r.width-.5)*8)+'deg) translateY(-4px)'});
-L.addEventListener('pointerout',e=>{const c=e.target.closest('.fc,.fx');if(c&&!c.contains(e.relatedTarget))c.style.transform=''},true)})();
+L.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const c=e.target.closest('.fx,.lbx');if(!c)return;const r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;c.style.setProperty('--mx',x+'px');c.style.setProperty('--my',y+'px');if(!c.classList.contains('lbx'))c.style.transform='perspective(900px) rotateX('+((.5-y/r.height)*6)+'deg) rotateY('+((x/r.width-.5)*8)+'deg) translateY(-4px)'});
+L.addEventListener('pointerout',e=>{const c=e.target.closest('.fx');if(c&&!c.contains(e.relatedTarget))c.style.transform=''},true);
+(function(){
+  const fg=document.querySelector('.fg');
+  if(!fg||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  let aura=fg.querySelector('.fg-cursor-aura');
+  if(!aura){aura=document.createElement('div');aura.className='fg-cursor-aura';fg.appendChild(aura)}
+  fg.addEventListener('pointerenter',()=>{aura.style.opacity='1'});
+  fg.addEventListener('pointerleave',()=>{
+    aura.style.opacity='0';
+    fg.querySelectorAll('.fc').forEach(c=>{
+      c.style.removeProperty('--mx');
+      c.style.removeProperty('--my');
+    });
+  });
+  fg.addEventListener('pointermove',e=>{
+    if(e.pointerType&&e.pointerType!=='mouse')return;
+    const rect=fg.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    aura.style.left=x+'px';
+    aura.style.top=y+'px';
+    const card=e.target.closest('.fc');
+    if(card){
+      const cr=card.getBoundingClientRect();
+      const cx=e.clientX-cr.left;
+      const cy=e.clientY-cr.top;
+      card.style.setProperty('--mx',cx+'px');
+      card.style.setProperty('--my',cy+'px');
+      // Strictly FLAT: Zero 3D tilt/bend transforms!
+    }
+  });
+  fg.addEventListener('pointerout',e=>{
+    const card=e.target.closest('.fc');
+    if(card&&!card.contains(e.relatedTarget)){
+      card.style.removeProperty('--mx');
+      card.style.removeProperty('--my');
+    }
+  });
+})()})();
 </script>
 <script>
 (function(){const P=document.getElementById('lpod'),R=document.getElementById('lrows');if(!P||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
