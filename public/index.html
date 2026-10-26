@@ -4406,7 +4406,11 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
       <div class="dh-cert-action-bar">
         <button type="button" class="dh-cert-btn dh-cert-btn-primary" onclick="downloadCertificatePng()" id="btn-download-cert">
           <svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          <span>Download Certificate (PNG)</span>
+          <span>Download PNG</span>
+        </button>
+        <button type="button" class="dh-cert-btn dh-cert-btn-secondary" onclick="downloadCertificateSvgDirect()" id="btn-download-svg">
+          <svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          <span>Download SVG</span>
         </button>
         <button type="button" class="dh-cert-btn dh-cert-btn-secondary" onclick="window.print()">
           <svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
@@ -8460,7 +8464,7 @@ window.openCertificateFromHero = function() {
 
 let currentCertificate = null;
 
-function generateCertificateQrMatrix() {
+function generateCertificateQrElements(startX, startY, size) {
   const m = [
     [1,1,1,1,1,1,1,0,1,0,1,1,0,1,0,1,1,1,1,1,1,1],
     [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
@@ -8484,129 +8488,193 @@ function generateCertificateQrMatrix() {
     [1,0,0,0,0,0,1,0,1,1,0,0,1,0,0,1,1,0,0,1,1,0],
     [1,1,1,1,1,1,1,0,1,0,1,1,0,1,0,1,0,1,1,0,1,1]
   ];
-  let r = '';
-  for (let y = 0; y < 21; y++) {
-    for (let x = 0; x < 21; x++) {
-      if (m[y][x]) r += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="#180b33" />';
+  const cellSize = size / 21;
+  let out = '';
+  for (let r = 0; r < 21; r++) {
+    for (let c = 0; c < 21; c++) {
+      if (m[r][c]) {
+        out += '<rect x="' + (startX + c * cellSize).toFixed(2) + '" y="' + (startY + r * cellSize).toFixed(2) + '" width="' + (cellSize + 0.2).toFixed(2) + '" height="' + (cellSize + 0.2).toFixed(2) + '" fill="#14062f" />';
+      }
     }
   }
-  return '<svg width="96" height="96" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="display:block;border-radius:10px;background:#ffffff;padding:6px;border:1.5px solid rgba(120,95,200,0.4);box-shadow:0 4px 14px rgba(60,30,110,0.12);shape-rendering:crispEdges;">' + r + '</svg>';
+  return out;
+}
+
+function generateCertificateQrMatrix() {
+  return generateCertificateQrElements(916, 856, 88);
 }
 
 function renderCertificateSvg(cred) {
   const name = cred.recipient_name || 'Participant';
   const org = cred.recipient_organisation || 'Participant';
   const credId = cred.credential_id || 'DH-ORCA-2026-0001';
-  const qrSvg = generateCertificateQrMatrix();
-  const logoSrc = (document.querySelector('.xli') && document.querySelector('.xli').src) || '';
+  const qrRects = generateCertificateQrElements(916, 856, 88);
+  const logoEl = document.querySelector('.xli');
+  const logoSrc = (logoEl && logoEl.src) || '';
+  const sigSrc = (typeof window !== 'undefined' && window.__DH_SIGNATURE_DATA__) ? window.__DH_SIGNATURE_DATA__ : '/assets/signature-rujula.png';
 
-  return '<svg id="dh-cert-svg" viewBox="0 0 1920 1080" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">' +
-    '<foreignObject width="1920" height="1080">' +
-      '<div xmlns="http://www.w3.org/1999/xhtml" style="position:relative;width:1920px;height:1080px;background:linear-gradient(180deg,#fdfcff 0%,#f8f4ff 18%,#f1eaff 42%,#e7dcfb 68%,#d9cbf6 88%,#cdbbf2 100%);overflow:hidden;font-family:\'Plus Jakarta Sans\',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;">' +
-        '<div style="position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(130,105,215,0.045) 0px,rgba(130,105,215,0.045) 1.5px,transparent 1.5px,transparent 7px);pointer-events:none;z-index:1;"></div>' +
-        '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 20%,rgba(255,255,255,0.8) 0%,rgba(225,215,255,0.3) 50%,transparent 80%);pointer-events:none;z-index:1;"></div>' +
+  return '<svg id="dh-cert-svg" viewBox="0 0 1920 1080" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;max-height:85vh;margin:0 auto;box-shadow:0 18px 50px rgba(25,10,50,0.3);border-radius:8px;">' +
+    '<defs>' +
+      '<linearGradient id="dhBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">' +
+        '<stop offset="0%" stop-color="#ede4fa" />' +
+        '<stop offset="20%" stop-color="#e3d5f6" />' +
+        '<stop offset="50%" stop-color="#d6c3f0" />' +
+        '<stop offset="80%" stop-color="#c6b0ea" />' +
+        '<stop offset="100%" stop-color="#b69be2" />' +
+      '</linearGradient>' +
 
-        '<!-- Ornate Corners & Frame in Royal Lavender -->' +
-        '<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;pointer-events:none;z-index:3;">' +
-          '<rect x="44" y="44" width="1832" height="992" stroke="rgba(120,95,200,0.4)" stroke-width="1.8" rx="4"/>' +
-          '<rect x="52" y="52" width="1816" height="976" stroke="rgba(150,125,225,0.25)" stroke-width="1.2" rx="3"/>' +
-          '<line x1="200" y1="66" x2="1720" y2="66" stroke="rgba(100,75,185,0.65)" stroke-width="1.8"/>' +
-          '<line x1="200" y1="1014" x2="1720" y2="1014" stroke="rgba(100,75,185,0.65)" stroke-width="1.8"/>' +
-          '<line x1="66" y1="200" x2="66" y2="880" stroke="rgba(100,75,185,0.65)" stroke-width="1.8"/>' +
-          '<line x1="1854" y1="200" x2="1854" y2="880" stroke="rgba(100,75,185,0.65)" stroke-width="1.8"/>' +
-          '<g transform="translate(66,66)" stroke="rgba(90,65,170,0.85)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(90,65,170,0.85)"/><circle cx="32" cy="32" r="3" fill="rgba(90,65,170,0.6)"/>' +
-          '</g>' +
-          '<g transform="translate(1854,66) scale(-1, 1)" stroke="rgba(90,65,170,0.85)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(90,65,170,0.85)"/><circle cx="32" cy="32" r="3" fill="rgba(90,65,170,0.6)"/>' +
-          '</g>' +
-          '<g transform="translate(66,1014) scale(1, -1)" stroke="rgba(90,65,170,0.85)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(90,65,170,0.85)"/><circle cx="32" cy="32" r="3" fill="rgba(90,65,170,0.6)"/>' +
-          '</g>' +
-          '<g transform="translate(1854,1014) scale(-1, -1)" stroke="rgba(90,65,170,0.85)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(90,65,170,0.85)"/><circle cx="32" cy="32" r="3" fill="rgba(90,65,170,0.6)"/>' +
-          '</g>' +
-        '</svg>' +
+      '<pattern id="dhPinstripe" width="8" height="8" patternTransform="rotate(-45 0 0)" patternUnits="userSpaceOnUse">' +
+        '<line x1="0" y1="0" x2="0" y2="8" stroke="rgba(100, 75, 185, 0.055)" stroke-width="1.6" />' +
+      '</pattern>' +
 
-        '<!-- 1. TOP STAGE: DEVHARBOUR (NO GAP) & BIGGER 3D RIBBON -->' +
-        '<div style="position:absolute;top:48px;left:0;right:0;z-index:4;display:flex;flex-direction:column;align-items:center;">' +
-          '<div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;">' +
-            '<img src="' + logoSrc + '" style="width:52px;height:52px;border-radius:50%;box-shadow:0 4px 18px rgba(60,25,110,0.2);" />' +
-            '<span style="font-family:\'Cinzel\',serif;font-size:32px;font-weight:900;letter-spacing:0.05em;color:#170a36;text-transform:uppercase;">DEVHARBOUR</span>' +
-            '<span style="font-size:12px;font-weight:800;letter-spacing:0.12em;color:#4f2ca5;background:rgba(110,80,215,0.12);border:1px solid rgba(110,80,215,0.3);padding:3px 12px;border-radius:999px;">OFFICIAL REGISTRY</span>' +
-          '</div>' +
+      '<radialGradient id="dhSheen" cx="50%" cy="18%" r="65%">' +
+        '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.75" />' +
+        '<stop offset="45%" stop-color="#f2ebfc" stop-opacity="0.3" />' +
+        '<stop offset="100%" stop-color="#b69be2" stop-opacity="0" />' +
+      '</radialGradient>' +
 
-          '<!-- Arched 3D Ribbon -->' +
-          '<svg width="920" height="148" viewBox="0 0 920 148" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 14px 28px rgba(55,30,105,0.28));">' +
-            '<defs>' +
-              '<linearGradient id="dhRibbonGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8c78ec"/><stop offset="25%" stop-color="#6e57d6"/><stop offset="65%" stop-color="#543dbb"/><stop offset="100%" stop-color="#3c2593"/></linearGradient>' +
-              '<linearGradient id="dhTailGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#5a44b8"/><stop offset="100%" stop-color="#2a166e"/></linearGradient>' +
-              '<linearGradient id="dhFoldGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#14073d"/><stop offset="100%" stop-color="#301b7a"/></linearGradient>' +
-              '<linearGradient id="dhTrimGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#ded8fc"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>' +
-            '</defs>' +
-            '<path d="M 40,58 L 180,30 L 180,108 L 40,134 L 92,96 Z" fill="url(#dhTailGrad)"/>' +
-            '<path d="M 880,58 L 740,30 L 740,108 L 880,134 L 828,96 Z" fill="url(#dhTailGrad)"/>' +
-            '<polygon points="155,92 180,30 180,106" fill="url(#dhFoldGrad)"/>' +
-            '<polygon points="765,92 740,30 740,106" fill="url(#dhFoldGrad)"/>' +
-            '<path d="M 155,22 Q 460,2 765,22 L 752,100 Q 460,82 168,100 Z" fill="url(#dhRibbonGrad)" stroke="url(#dhTrimGrad)" stroke-width="2.2"/>' +
-            '<path d="M 165,28 Q 460,10 755,28" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>' +
-            '<path id="dhRibbonPath" d="M 168,74 Q 460,56 752,74" fill="none"/>' +
-            '<text font-family="\'Cinzel\',serif" font-size="41" font-weight="900" fill="#ffffff" letter-spacing="14" text-anchor="middle" style="filter:drop-shadow(0 2px 6px rgba(20,10,45,0.6));"><textPath href="#dhRibbonPath" startOffset="50%">CERTIFICATE</textPath></text>' +
-          '</svg>' +
-          '<div style="font-family:\'Cinzel\',serif;font-size:22px;font-weight:900;letter-spacing:0.42em;color:#241350;text-transform:uppercase;margin-top:-6px;">— OF PARTICIPATION —</div>' +
-        '</div>' +
+      '<linearGradient id="dhSilverBorder" x1="0%" y1="0%" x2="100%" y2="100%">' +
+        '<stop offset="0%" stop-color="#ffffff" />' +
+        '<stop offset="25%" stop-color="#d6ceee" />' +
+        '<stop offset="50%" stop-color="#ffffff" />' +
+        '<stop offset="75%" stop-color="#c8bee6" />' +
+        '<stop offset="100%" stop-color="#ffffff" />' +
+      '</linearGradient>' +
 
-        '<!-- 2. PRESENTED TO LEAD -->' +
-        '<div style="position:absolute;top:278px;left:0;right:0;text-align:center;font-family:\'Playfair Display\',Georgia,serif;font-size:22px;font-weight:800;letter-spacing:0.34em;color:#26144e;text-transform:uppercase;z-index:4;">THIS CERTIFICATE IS PROUDLY PRESENTED TO</div>' +
+      '<linearGradient id="dhSilverRibbonTrim" x1="0%" y1="0%" x2="100%" y2="0%">' +
+        '<stop offset="0%" stop-color="#ffffff" />' +
+        '<stop offset="20%" stop-color="#e8e2fa" />' +
+        '<stop offset="50%" stop-color="#ffffff" />' +
+        '<stop offset="80%" stop-color="#ded4f7" />' +
+        '<stop offset="100%" stop-color="#ffffff" />' +
+      '</linearGradient>' +
 
-        '<!-- 3. CANDIDATE NAME & ORG -->' +
-        '<div style="position:absolute;top:316px;left:0;right:0;text-align:center;z-index:4;">' +
-          '<div style="font-family:\'Lucida Calligraphy\',\'Playfair Display\',Georgia,serif;font-style:italic;font-size:98px;font-weight:900;color:#14072f;line-height:1.05;text-shadow:0 3px 18px rgba(45,20,95,0.16);letter-spacing:0.01em;">' + name + '</div>' +
-          '<div style="font-size:21px;font-weight:800;color:#291854;letter-spacing:0.05em;margin-top:6px;">' + org + '</div>' +
-        '</div>' +
+      '<linearGradient id="dhRibbonMain" x1="0%" y1="0%" x2="0%" y2="100%">' +
+        '<stop offset="0%" stop-color="#7e66e6" />' +
+        '<stop offset="20%" stop-color="#644cc6" />' +
+        '<stop offset="65%" stop-color="#4c34a6" />' +
+        '<stop offset="100%" stop-color="#341d80" />' +
+      '</linearGradient>' +
 
-        '<!-- 4. DATE HORIZON -->' +
-        '<div style="position:absolute;top:494px;left:0;right:0;z-index:4;display:flex;flex-direction:column;align-items:center;">' +
-          '<div style="font-family:\'Cinzel\',serif;font-size:23px;font-weight:800;letter-spacing:0.32em;color:#251352;text-transform:uppercase;margin-bottom:8px;">- OCTOBER 25TH, 2026 -</div>' +
-          '<div style="width:780px;height:2px;background:linear-gradient(90deg,transparent,#846bcc 20%,#684fc0 50%,#846bcc 80%,transparent);"></div>' +
-        '</div>' +
+      '<linearGradient id="dhRibbonTail" x1="0%" y1="0%" x2="0%" y2="100%">' +
+        '<stop offset="0%" stop-color="#503aa4" />' +
+        '<stop offset="100%" stop-color="#220e5c" />' +
+      '</linearGradient>' +
 
-        '<!-- 5. CITATION -->' +
-        '<div style="position:absolute;top:578px;left:0;right:0;max-width:1140px;margin:0 auto;text-align:center;z-index:4;">' +
-          '<div style="font-family:\'Cinzel\',serif;font-size:20px;font-weight:900;letter-spacing:0.28em;color:#2a165a;text-transform:uppercase;margin-bottom:12px;">NATIONAL HACKATHON · ORCA CODERS: ORCATHON 2026</div>' +
-          '<p style="font-size:21px;line-height:1.7;font-weight:600;color:#1d0e3a;margin:0;">For outstanding technical problem-solving, collaborative engineering dedication, and active participation in <strong style="color:#100524;font-weight:900;">ORCATHON 2026</strong> conducted under the auspices of <strong style="color:#100524;font-weight:900;">Dev Harbour</strong>. Your curiosity, tenacity, and teamwork have made a meaningful contribution to the hackathon.</p>' +
-        '</div>' +
+      '<linearGradient id="dhRibbonFold" x1="0%" y1="0%" x2="100%" y2="0%">' +
+        '<stop offset="0%" stop-color="#120534" />' +
+        '<stop offset="100%" stop-color="#28146a" />' +
+      '</linearGradient>' +
 
-        '<!-- 6. BOTTOM ROW: DATE | QR & ID | SIGNATURE -->' +
-        '<div style="position:absolute;bottom:88px;left:190px;right:190px;z-index:4;display:flex;align-items:flex-end;justify-content:space-between;">' +
-          '<!-- Left: Date -->' +
-          '<div style="display:flex;flex-direction:column;align-items:center;width:290px;">' +
-            '<div style="font-family:\'Cinzel\',serif;font-size:21px;font-weight:900;color:#180b34;margin-bottom:8px;letter-spacing:0.08em;">OCTOBER 25, 2026</div>' +
-            '<div style="width:100%;height:2px;background:#6e52bf;margin-bottom:8px;"></div>' +
-            '<div style="font-family:\'Cinzel\',serif;font-size:16px;font-weight:900;letter-spacing:0.36em;color:#3b2575;text-transform:uppercase;">DATE</div>' +
-            '<div style="font-size:12px;font-weight:800;color:#553b98;letter-spacing:0.08em;margin-top:4px;">DEV HARBOUR (ONLINE)</div>' +
-          '</div>' +
+      '<filter id="dhRibbonShadow" x="-10%" y="-10%" width="120%" height="140%">' +
+        '<feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#180738" flood-opacity="0.32" />' +
+      '</filter>' +
+      '<filter id="dhTextGlow" x="-20%" y="-20%" width="140%" height="140%">' +
+        '<feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#2a0d5c" flood-opacity="0.18" />' +
+      '</filter>' +
+    '</defs>' +
 
-          '<!-- Center: QR Code & ID -->' +
-          '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:-6px;">' +
-            qrSvg +
-            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:14px;font-weight:800;color:#ffffff;background:#1c0e3e;border:1px solid rgba(120,95,210,0.4);padding:4px 16px;border-radius:999px;letter-spacing:0.08em;">ID: #' + credId + '</div>' +
-            '<div style="font-size:11px;font-weight:800;letter-spacing:0.18em;color:#3c2578;text-transform:uppercase;">SCAN TO VERIFY AUTHENTICITY</div>' +
-          '</div>' +
+    '<!-- 1. Background Layers -->' +
+    '<rect width="1920" height="1080" fill="url(#dhBgGrad)" />' +
+    '<rect width="1920" height="1080" fill="url(#dhPinstripe)" />' +
+    '<rect width="1920" height="1080" fill="url(#dhSheen)" />' +
 
-          '<!-- Right: Authentic Signature -->' +
-          '<div style="display:flex;flex-direction:column;align-items:center;width:320px;">' +
-            '<img src="' + (window.__DH_SIGNATURE_DATA__ || '/assets/signature-rujula.png') + '" style="height:86px;width:auto;max-width:300px;object-fit:contain;margin-bottom:2px;" />' +
-            '<div style="width:100%;height:2px;background:#6e52bf;margin-bottom:8px;"></div>' +
-            '<div style="font-family:\'Cinzel\',serif;font-size:16px;font-weight:900;letter-spacing:0.36em;color:#3b2575;text-transform:uppercase;">SIGNATURE</div>' +
-            '<div style="font-size:12px;font-weight:800;color:#553b98;letter-spacing:0.08em;margin-top:4px;">AUTHORIZED SIGNATORY · DEV HARBOUR</div>' +
-          '</div>' +
-        '</div>' +
+    '<!-- 2. Dual Metallic Silver & Lavender Frame -->' +
+    '<rect x="44" y="44" width="1832" height="992" fill="none" stroke="url(#dhSilverBorder)" stroke-width="2.5" rx="4" />' +
+    '<rect x="52" y="52" width="1816" height="976" fill="none" stroke="rgba(95, 68, 170, 0.45)" stroke-width="1.4" rx="3" />' +
 
-      '</div>' +
-    '</foreignObject>' +
+    '<!-- Split Top Framing Line (Gap in middle for DEV HARBOUR) -->' +
+    '<line x1="200" y1="68" x2="690" y2="68" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
+    '<circle cx="690" cy="68" r="3.5" fill="#50349b" />' +
+    '<line x1="1230" y1="68" x2="1720" y2="68" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
+    '<circle cx="1230" cy="68" r="3.5" fill="#50349b" />' +
+
+    '<line x1="200" y1="1014" x2="1720" y2="1014" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
+    '<line x1="68" y1="200" x2="68" y2="880" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
+    '<line x1="1852" y1="200" x2="1852" y2="880" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
+
+    '<!-- Corner Filigree Scrollwork in Royal Lavender & Silver -->' +
+    '<g transform="translate(68,68)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
+    '</g>' +
+    '<g transform="translate(1852,68) scale(-1, 1)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
+    '</g>' +
+    '<g transform="translate(68,1014) scale(1, -1)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
+    '</g>' +
+    '<g transform="translate(1852,1014) scale(-1, -1)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
+    '</g>' +
+
+    '<!-- 3. TOP BRANDING: DEV HARBOUR WITH GAP (NO LINE CUTTING THROUGH, NO OFFICIAL REGISTRY) -->' +
+    '<g transform="translate(960, 68)">' +
+      '<rect x="-180" y="-24" width="360" height="48" rx="24" fill="rgba(255, 255, 255, 0.7)" stroke="rgba(255, 255, 255, 0.9)" stroke-width="1.5" />' +
+      (logoSrc ? '<image href="' + logoSrc + '" x="-162" y="-19" width="38" height="38" />' : '') +
+      '<text x="12" y="8" font-family="\'Cinzel\', serif" font-size="28" font-weight="900" letter-spacing="4" fill="#14062f" text-anchor="middle">DEV HARBOUR</text>' +
+    '</g>' +
+
+    '<!-- 4. 3D ARCHED RIBBON (Proportioned ~720px, perfectly balanced) -->' +
+    '<g transform="translate(960, 155)" filter="url(#dhRibbonShadow)">' +
+      '<path d="M -340,36 L -230,16 L -230,78 L -340,98 L -298,67 Z" fill="url(#dhRibbonTail)" />' +
+      '<path d="M 340,36 L 230,16 L 230,78 L 340,98 L 298,67 Z" fill="url(#dhRibbonTail)" />' +
+      '<polygon points="-245,68 -230,16 -230,76" fill="url(#dhRibbonFold)" />' +
+      '<polygon points="245,68 230,16 230,76" fill="url(#dhRibbonFold)" />' +
+      '<path d="M -245,12 Q 0,-6 245,12 L 234,74 Q 0,56 -234,74 Z" fill="url(#dhRibbonMain)" stroke="url(#dhSilverRibbonTrim)" stroke-width="2.5" />' +
+      '<path d="M -238,18 Q 0,2 238,18" fill="none" stroke="rgba(255, 255, 255, 0.7)" stroke-width="1.2" />' +
+      '<path id="archRibbonPath" d="M -234,54 Q 0,38 234,54" fill="none" />' +
+      '<text font-family="\'Cinzel\', serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="12" text-anchor="middle">' +
+        '<textPath href="#archRibbonPath" startOffset="50%">CERTIFICATE</textPath>' +
+      '</text>' +
+    '</g>' +
+
+    '<text x="960" y="278" font-family="\'Cinzel\', serif" font-size="20" font-weight="900" letter-spacing="8" fill="#200f48" text-anchor="middle">— OF PARTICIPATION —</text>' +
+
+    '<!-- 5. PRESENTED TO LEAD -->' +
+    '<text x="960" y="348" font-family="\'Playfair Display\', Georgia, serif" font-size="20" font-weight="800" letter-spacing="6" fill="#221046" text-anchor="middle">THIS CERTIFICATE IS PROUDLY PRESENTED TO</text>' +
+
+    '<!-- 6. CANDIDATE NAME & COLLEGE (Deep Obsidian Amethyst High Contrast) -->' +
+    '<text x="960" y="455" font-family="\'Lucida Calligraphy\', \'Playfair Display\', Georgia, serif" font-style="italic" font-size="82" font-weight="900" fill="#12052b" text-anchor="middle" filter="url(#dhTextGlow)">' + name + '</text>' +
+    '<text x="960" y="510" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="22" font-weight="700" fill="#24134d" text-anchor="middle">' + org + '</text>' +
+
+    '<!-- (MIDDLE DATE AND DIVIDER LINE ARE COMPLETELY REMOVED!) -->' +
+
+    '<!-- 7. CITATION PARAGRAPH (Spacious and completely clear) -->' +
+    '<text x="960" y="605" font-family="\'Cinzel\', serif" font-size="20" font-weight="900" letter-spacing="5" fill="#261252" text-anchor="middle">NATIONAL HACKATHON · ORCA CODERS: ORCATHON 2026</text>' +
+    '<text x="960" y="650" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="19" font-weight="600" fill="#180834" text-anchor="middle">For outstanding technical problem-solving, collaborative engineering dedication, and active participation in</text>' +
+    '<text x="960" y="685" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="19" font-weight="600" fill="#180834" text-anchor="middle">' +
+      '<tspan font-weight="900" fill="#0a0219">ORCATHON 2026</tspan> conducted under the auspices of <tspan font-weight="900" fill="#0a0219">Dev Harbour</tspan>. Your curiosity, tenacity, and teamwork' +
+    '</text>' +
+    '<text x="960" y="720" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="19" font-weight="600" fill="#180834" text-anchor="middle">have made a meaningful contribution to the hackathon.</text>' +
+
+    '<!-- 8. BOTTOM ROW: DATE | QR & ID | SIGNATURE -->' +
+    '<!-- Left: Date -->' +
+    '<g transform="translate(340, 940)">' +
+      '<text x="0" y="0" font-family="\'Cinzel\', serif" font-size="21" font-weight="900" fill="#14072f" letter-spacing="2" text-anchor="middle">OCTOBER 25, 2026</text>' +
+      '<line x1="-130" y1="12" x2="130" y2="12" stroke="#644ab5" stroke-width="2.2" />' +
+      '<text x="0" y="36" font-family="\'Cinzel\', serif" font-size="16" font-weight="900" letter-spacing="6" fill="#321c68" text-anchor="middle">DATE</text>' +
+      '<text x="0" y="58" font-family="\'Plus Jakarta Sans\', sans-serif" font-size="12" font-weight="800" fill="#4c328c" letter-spacing="1" text-anchor="middle">DEV HARBOUR (ONLINE)</text>' +
+    '</g>' +
+
+    '<!-- Center: QR Code & ID Badge -->' +
+    '<g id="qrCodeGroup">' +
+      '<rect x="910" y="850" width="100" height="100" rx="10" fill="#ffffff" stroke="rgba(160, 140, 215, 0.7)" stroke-width="1.8" />' +
+      qrRects +
+      '<rect x="850" y="960" width="220" height="26" rx="13" fill="#180b36" stroke="rgba(255, 255, 255, 0.85)" stroke-width="1.4" />' +
+      '<text x="960" y="978" font-family="\'JetBrains Mono\', monospace" font-size="13" font-weight="800" fill="#ffffff" letter-spacing="1" text-anchor="middle">ID: #' + credId + '</text>' +
+      '<text x="960" y="1004" font-family="\'Plus Jakarta Sans\', sans-serif" font-size="11" font-weight="800" letter-spacing="2" fill="#321c68" text-anchor="middle">SCAN TO VERIFY AUTHENTICITY</text>' +
+    '</g>' +
+
+    '<!-- Right: Signature -->' +
+    '<g transform="translate(1550, 940)">' +
+      '<image href="' + sigSrc + '" x="-110" y="-82" width="220" height="82" preserveAspectRatio="xMidYMid meet" />' +
+      '<line x1="-130" y1="12" x2="130" y2="12" stroke="#644ab5" stroke-width="2.2" />' +
+      '<text x="0" y="36" font-family="\'Cinzel\', serif" font-size="16" font-weight="900" letter-spacing="6" fill="#321c68" text-anchor="middle">SIGNATURE</text>' +
+      '<text x="0" y="58" font-family="\'Plus Jakarta Sans\', sans-serif" font-size="12" font-weight="800" fill="#4c328c" letter-spacing="1" text-anchor="middle">AUTHORIZED SIGNATORY · DEV HARBOUR</text>' +
+    '</g>' +
   '</svg>';
 }
+
 
 // Authoritative Client-Side Registry & Fallback Resolver
 async function resolveOrcathonParticipant(emailInput, nameInput) {
@@ -8830,7 +8898,9 @@ function downloadCertificatePng() {
   if (!svgEl) return;
 
   const svgData = new XMLSerializer().serializeToString(svgEl);
-  const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+  const fullSvg = svgData.includes('xmlns="http://www.w3.org/2000/svg"') ? svgData : svgData.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+
+  const svgBlob = new Blob([fullSvg], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(svgBlob);
   const img = new Image();
 
@@ -8845,7 +8915,7 @@ function downloadCertificatePng() {
 
       canvas.toBlob(function(blob) {
         if (!blob) {
-          window.print();
+          downloadCertificateSvgDirect();
           return;
         }
         const pngUrl = URL.createObjectURL(blob);
@@ -8856,19 +8926,38 @@ function downloadCertificatePng() {
         a.click();
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(pngUrl), 1000);
-        toast('Certificate downloaded successfully!');
+        toast('Certificate PNG downloaded successfully!');
       }, 'image/png', 1.0);
     } catch(err) {
       console.error('Canvas export error:', err);
-      window.print();
+      downloadCertificateSvgDirect();
     }
   };
 
-  img.onerror = function() {
-    window.print();
+  img.onerror = function(err) {
+    console.error('Image load error, falling back to direct SVG download:', err);
+    downloadCertificateSvgDirect();
   };
 
   img.src = url;
+}
+
+function downloadCertificateSvgDirect() {
+  if (!currentCertificate) return;
+  const svgEl = document.getElementById('dh-cert-svg');
+  if (!svgEl) return;
+
+  const svgData = new XMLSerializer().serializeToString(svgEl);
+  const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'DevHarbour-Certificate-' + (currentCertificate.recipient_name || 'Participant').replace(/[^a-zA-Z0-9]/g, '_') + '.svg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast('Certificate downloaded as Vector SVG!');
 }
 
 async function loadCertificateVerification(credentialId) {
