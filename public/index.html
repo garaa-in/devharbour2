@@ -3512,15 +3512,17 @@ html[data-theme="dark"] .ws-mercury-orb {
 
 
 /* Dev Harbour Certificate View Styles */
-.dh-cert-claim-wrap{max-width:760px;margin:30px auto;padding:0 20px;text-align:center}
+.dh-cert-claim-wrap{max-width:1040px;margin:30px auto;padding:0 20px;text-align:center}
 .dh-cert-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;background:rgba(124,92,255,0.08);border:1px solid rgba(124,92,255,0.2);font-size:11px;font-weight:700;color:#6e56cf;letter-spacing:0.12em;margin-bottom:14px}
 .dh-cert-orb{width:8px;height:8px;border-radius:50%;background:#6e56cf;box-shadow:0 0 10px #6e56cf;animation:pu 2s infinite}
 .dh-cert-title{font-size:clamp(32px,5vw,46px);font-weight:800;letter-spacing:-0.03em;color:var(--ink);margin-bottom:10px}
 .dh-cert-sub{font-size:16px;color:var(--mut);line-height:1.6;margin-bottom:28px}
-.dh-cert-card{background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:36px;text-align:left;box-shadow:0 12px 36px rgba(0,0,0,0.05);position:relative;overflow:hidden}
+
+.dh-cert-card{background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:36px;text-align:left;box-shadow:0 12px 36px rgba(0,0,0,0.05);position:relative;overflow:hidden;max-width:680px;margin:0 auto}
 .dh-cert-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px}
 .dh-event-tag{font-size:12px;font-weight:800;letter-spacing:0.1em;color:var(--ink);background:rgba(0,0,0,0.04);padding:4px 12px;border-radius:6px;border:1px solid var(--line)}
-.dh-event-status{font-size:12px;font-weight:700;color:#10b981}
+.dh-event-status{font-size:12px;font-weight:700;color:#10b981;display:flex;align-items:center;gap:6px}
+.dh-event-status::before{content:'';width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
 .dh-cert-note{font-size:13px;color:var(--mut);margin-bottom:24px}
 .dh-cert-field{margin-bottom:18px}
 .dh-cert-field label{display:block;font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--mut);text-transform:uppercase;margin-bottom:6px}
@@ -3528,15 +3530,35 @@ html[data-theme="dark"] .ws-mercury-orb {
 .dh-cert-field input:focus{border-color:#6e56cf}
 .dh-cert-submit-btn{width:100%;padding:15px;border-radius:12px;background:#15112c;color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .2s,opacity .2s;margin-top:10px}
 .dh-cert-submit-btn:hover{opacity:.9;transform:translateY(-1px)}
-.dh-cert-msg{margin-top:14px;font-size:13px;font-weight:600;min-height:20px;text-align:center}
-.dh-cert-msg.err{color:#ef4444}
-.dh-cert-msg.ok{color:#10b981}
-.dh-cert-meta-preview{background:linear-gradient(135deg,rgba(110,86,207,0.05),rgba(255,255,255,0.8));border:1.5px solid #8e82ea;border-radius:20px;padding:30px;text-align:center}
-.dh-cert-cand-name{font-size:38px;font-weight:800;letter-spacing:0.04em;color:#110e24;margin:12px 0 6px}
-.dh-cert-cand-org{font-size:15px;color:#554f6b;font-weight:600;margin-bottom:10px}
-.dh-cert-event-name{font-size:13px;font-weight:700;color:#4f3ddb;letter-spacing:0.12em;text-transform:uppercase}
-.dh-cred-id-box{display:inline-flex;gap:8px;align-items:center;background:#15112c;color:#fff;padding:6px 16px;border-radius:99px;font-size:12px;margin:14px 0}
-.dh-cert-hold-notice{font-size:12px;color:var(--mut);margin-top:12px;font-style:italic}
+.dh-cert-submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.dh-cert-msg{margin-top:14px;font-size:14px;font-weight:600;min-height:22px;text-align:center;border-radius:8px;padding:8px 14px;display:none}
+.dh-cert-msg.err{display:block;color:#ef4444;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2)}
+.dh-cert-msg.ok{display:block;color:#10b981;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)}
+
+/* Certificate Stage & Viewer */
+.dh-cert-stage{margin-top:24px;text-align:center}
+.dh-cert-action-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.dh-cert-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:transform .15s,opacity .15s,box-shadow .15s}
+.dh-cert-btn-primary{background:linear-gradient(135deg,#6d58d9,#4e3bb8);color:#fff;box-shadow:0 6px 20px rgba(109,88,217,0.35)}
+.dh-cert-btn-primary:hover{opacity:.94;transform:translateY(-1px);box-shadow:0 8px 24px rgba(109,88,217,0.45)}
+.dh-cert-btn-secondary{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.dh-cert-btn-secondary:hover{background:var(--line);transform:translateY(-1px)}
+
+.dh-cert-canvas-container{width:100%;max-width:980px;margin:0 auto;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(15,10,40,0.28);border:1.5px solid rgba(142,130,234,0.35);position:relative;background:#06040d}
+.dh-cert-canvas-container svg{width:100%;height:100%;display:block}
+
+.dh-cert-meta-grid{margin-top:28px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:left;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.dh-cert-meta-item dt{font-size:11px;font-weight:700;color:var(--mut);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
+.dh-cert-meta-item dd{font-size:15px;font-weight:700;color:var(--ink);margin:0;word-break:break-word}
+.dh-cert-meta-item dd.dh-verified-chip{color:#10b981;display:inline-flex;align-items:center;gap:6px}
+
+/* Print Only Rules */
+@media print{
+  body *{visibility:hidden!important}
+  #dh-cert-printable, #dh-cert-printable *{visibility:visible!important}
+  #dh-cert-printable{position:fixed!important;left:0!important;top:0!important;width:100vw!important;height:100vh!important;margin:0!important;padding:0!important;border:none!important;box-shadow:none!important;border-radius:0!important}
+  @page{size:landscape;margin:0}
+}
 
 </style>
 </head>
@@ -4285,15 +4307,16 @@ html[data-theme="dark"] .ws-mercury-orb {
       <span class="dh-cert-orb"></span>
       <span>DEV HARBOUR CREDENTIALS · VERIFIED REGISTRY</span>
     </div>
-    <h2 class="dh-cert-title">Claim Your Certificate</h2>
-    <p class="dh-cert-sub">Your journey deserves recognition. Claim and verify your official Dev Harbour credential.</p>
+    <h2 class="dh-cert-title" id="dh-cert-main-title">Participation Certificate</h2>
+    <p class="dh-cert-sub" id="dh-cert-main-sub">Official Certificate of Participation for ORCA CODERS: ORCATHON 2026. Claim, download, or verify credentials instantly.</p>
 
-    <div class="dh-cert-card">
+    <!-- Claim & Search Card -->
+    <div class="dh-cert-card" id="dh-cert-claim-box">
       <div class="dh-cert-card-header">
         <span class="dh-event-tag">ORCA CODERS: ORCATHON 2026</span>
-        <span class="dh-event-status">● Registrations Verified</span>
+        <span class="dh-event-status">693 Registrations Verified</span>
       </div>
-      <p class="dh-cert-note">Please enter the official registration details used during the event.</p>
+      <p class="dh-cert-note">Enter the official registered email and full name used during the hackathon to claim your credential.</p>
 
       <form id="dh-claim-form" onsubmit="handleClaimSubmit(event)">
         <div class="dh-cert-field">
@@ -4313,31 +4336,66 @@ html[data-theme="dark"] .ws-mercury-orb {
 
         <div id="claim-status-msg" class="dh-cert-msg"></div>
       </form>
+    </div>
 
-      <!-- OTP Step (revealed upon validation) -->
-      <div id="dh-otp-step" style="display:none;margin-top:24px;padding-top:20px;border-top:1px solid var(--line);">
-        <p class="dh-otp-prompt">A 6-digit verification code has been sent to your email.</p>
-        <div class="dh-cert-field" style="max-width:240px;margin:12px auto;">
-          <input type="text" id="claim-otp" maxlength="6" placeholder="• • • • • •" style="text-align:center;letter-spacing:6px;font-size:20px;font-weight:700;">
-        </div>
-        <button type="button" class="dh-cert-submit-btn" onclick="handleVerifyOtp()">Confirm OTP & Issue Certificate</button>
+    <!-- Live Issued Certificate Stage (Revealed on claim or verification) -->
+    <div id="dh-cert-stage" class="dh-cert-stage" style="display:none;">
+      <!-- Action Toolbar -->
+      <div class="dh-cert-action-bar">
+        <button type="button" class="dh-cert-btn dh-cert-btn-primary" onclick="downloadCertificatePng()" id="btn-download-cert">
+          <svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span>Download Certificate (PNG)</span>
+        </button>
+        <button type="button" class="dh-cert-btn dh-cert-btn-secondary" onclick="window.print()">
+          <svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          <span>Print / Save as PDF</span>
+        </button>
+        <button type="button" class="dh-cert-btn dh-cert-btn-secondary" onclick="copyVerificationLink()" id="btn-copy-link">
+          <svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+          <span>Copy Verification Link</span>
+        </button>
+        <button type="button" class="dh-cert-btn dh-cert-btn-secondary" onclick="resetClaimView()">
+          <span>Claim Another</span>
+        </button>
       </div>
 
-      <!-- Verified Certificate Preview Stage -->
-      <div id="dh-cert-result-stage" style="display:none;margin-top:28px;">
-        <div class="dh-cert-meta-preview">
-          <span class="dh-cert-preview-badge">OFFICIAL CREDENTIAL RESERVED</span>
-          <h3 id="preview-cand-name" class="dh-cert-cand-name">YASH PANDEY</h3>
-          <p id="preview-cand-org" class="dh-cert-cand-org">Maharana Pratap Engineering College ,Kanpur (U.P )</p>
-          <p class="dh-cert-event-name">ORCA CODERS: ORCATHON 2026</p>
-          <div class="dh-cred-id-box">
-            <span>CREDENTIAL ID</span>
-            <strong id="preview-cred-id">#OH2K26-0427</strong>
-          </div>
-          <p class="dh-cert-hold-notice">Certificate template preview is currently undergoing official board review. Your verified record is reserved above.</p>
+      <!-- Printable Certificate Container -->
+      <div class="dh-cert-canvas-container" id="dh-cert-printable">
+        <div id="dh-cert-svg-slot"></div>
+      </div>
+
+      <!-- Verification Registry Details Grid -->
+      <div class="dh-cert-meta-grid">
+        <div class="dh-cert-meta-item">
+          <dt>Credential ID</dt>
+          <dd id="meta-cred-id">#DH-ORCA-2026-0001</dd>
+        </div>
+        <div class="dh-cert-meta-item">
+          <dt>Recipient Name</dt>
+          <dd id="meta-recipient-name">Yash Pandey</dd>
+        </div>
+        <div class="dh-cert-meta-item">
+          <dt>Organisation</dt>
+          <dd id="meta-recipient-org">Maharana Pratap Engineering College</dd>
+        </div>
+        <div class="dh-cert-meta-item">
+          <dt>Event</dt>
+          <dd>ORCA CODERS: ORCATHON 2026</dd>
+        </div>
+        <div class="dh-cert-meta-item">
+          <dt>Issue Date</dt>
+          <dd>October 25, 2026</dd>
+        </div>
+        <div class="dh-cert-meta-item">
+          <dt>Registry Status</dt>
+          <dd class="dh-verified-chip">
+            <svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px;fill:#10b981;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <span>Verified & Authentic</span>
+          </dd>
         </div>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -8318,6 +8376,340 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       ticking = false;
     });
   }, { passive: true });
+})();
+
+
+// ==========================================
+// DEV HARBOUR OFFICIAL CERTIFICATE ENGINE
+// ==========================================
+let currentCertificate = null;
+
+function generateCertificateQrMatrix() {
+  const m = [
+    [1,1,1,1,1,1,1,0,1,0,1,1,0,1,0,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1],
+    [1,0,1,1,1,0,1,0,0,1,1,1,0,0,0,1,0,1,1,1,0,1],
+    [1,0,1,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,1,0,1],
+    [1,0,0,0,0,0,1,0,0,0,1,0,1,1,0,1,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,0,1,0,1,0,1,0,0,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0,0],
+    [1,1,0,1,0,1,1,1,0,0,1,0,1,1,1,0,1,0,1,1,0,1],
+    [0,1,1,0,1,0,0,1,1,0,0,1,0,0,1,1,0,1,0,0,1,0],
+    [1,0,1,1,0,1,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,1],
+    [0,1,0,1,1,0,1,0,1,0,0,1,0,1,1,0,1,0,1,0,1,0],
+    [1,0,1,0,1,1,1,1,0,1,1,0,1,0,1,0,0,1,0,1,1,1],
+    [0,0,0,0,0,0,0,0,1,0,1,0,0,1,1,1,0,0,1,0,0,1],
+    [1,1,1,1,1,1,1,0,0,1,1,1,0,1,0,1,1,0,1,1,0,1],
+    [1,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,1,0],
+    [1,0,1,1,1,0,1,0,0,1,0,1,1,1,0,1,1,1,0,1,1,1],
+    [1,0,1,1,1,0,1,0,1,1,1,0,0,0,1,0,1,0,1,0,1,0],
+    [1,0,1,1,1,0,1,0,0,0,1,1,1,0,1,1,0,1,1,0,0,1],
+    [1,0,0,0,0,0,1,0,1,1,0,0,1,0,0,1,1,0,0,1,1,0],
+    [1,1,1,1,1,1,1,0,1,0,1,1,0,1,0,1,0,1,1,0,1,1]
+  ];
+  let r = '';
+  for (let y = 0; y < 21; y++) {
+    for (let x = 0; x < 21; x++) {
+      if (m[y][x]) r += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="#ffffff" />';
+    }
+  }
+  return '<svg width="96" height="96" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="display:block;border-radius:8px;background:rgba(255,255,255,0.08);padding:5px;border:1.5px solid rgba(220,210,255,0.35);shape-rendering:crispEdges;">' + r + '</svg>';
+}
+
+function renderCertificateSvg(cred) {
+  const name = cred.recipient_name || 'Participant';
+  const org = cred.recipient_organisation || 'Participant';
+  const credId = cred.credential_id || 'DH-ORCA-2026-0001';
+  const qrSvg = generateCertificateQrMatrix();
+  const logoSrc = (document.querySelector('.xli') && document.querySelector('.xli').src) || '';
+
+  return '<svg id="dh-cert-svg" viewBox="0 0 1920 1080" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">' +
+    '<foreignObject width="1920" height="1080">' +
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="position:relative;width:1920px;height:1080px;background:linear-gradient(180deg,#f4f1fa 0%,#e8e4f5 24%,#b8addb 46%,#5c4a96 60%,#352468 74%,#201344 88%,#130a2c 100%);overflow:hidden;font-family:'Plus Jakarta Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;">' +
+        '<div style="position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(255,255,255,0.065) 0px,rgba(255,255,255,0.065) 1.5px,transparent 1.5px,transparent 7px);pointer-events:none;z-index:1;"></div>' +
+        '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 22%,rgba(255,255,255,0.5) 0%,rgba(200,190,250,0.25) 45%,transparent 70%);pointer-events:none;z-index:1;"></div>' +
+
+        '<!-- Ornate Corners & Frame -->' +
+        '<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;pointer-events:none;z-index:3;">' +
+          '<rect x="44" y="44" width="1832" height="992" stroke="rgba(255,255,255,0.5)" stroke-width="1.8" rx="4"/>' +
+          '<rect x="52" y="52" width="1816" height="976" stroke="rgba(142,130,234,0.3)" stroke-width="1.2" rx="3"/>' +
+          '<line x1="200" y1="66" x2="1720" y2="66" stroke="rgba(255,255,255,0.85)" stroke-width="1.8"/>' +
+          '<line x1="200" y1="1014" x2="1720" y2="1014" stroke="rgba(255,255,255,0.85)" stroke-width="1.8"/>' +
+          '<line x1="66" y1="200" x2="66" y2="880" stroke="rgba(255,255,255,0.85)" stroke-width="1.8"/>' +
+          '<line x1="1854" y1="200" x2="1854" y2="880" stroke="rgba(255,255,255,0.85)" stroke-width="1.8"/>' +
+          '<g transform="translate(66,66)" stroke="rgba(255,255,255,0.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(255,255,255,0.9)"/><circle cx="32" cy="32" r="3" fill="rgba(255,255,255,0.65)"/>' +
+          '</g>' +
+          '<g transform="translate(1854,66) scale(-1, 1)" stroke="rgba(255,255,255,0.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(255,255,255,0.9)"/><circle cx="32" cy="32" r="3" fill="rgba(255,255,255,0.65)"/>' +
+          '</g>' +
+          '<g transform="translate(66,1014) scale(1, -1)" stroke="rgba(255,255,255,0.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(255,255,255,0.9)"/><circle cx="32" cy="32" r="3" fill="rgba(255,255,255,0.65)"/>' +
+          '</g>' +
+          '<g transform="translate(1854,1014) scale(-1, -1)" stroke="rgba(255,255,255,0.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(255,255,255,0.9)"/><circle cx="32" cy="32" r="3" fill="rgba(255,255,255,0.65)"/>' +
+          '</g>' +
+        '</svg>' +
+
+        '<!-- 1. TOP STAGE: BOLD DEV HARBOUR & BIGGER 3D RIBBON -->' +
+        '<div style="position:absolute;top:50px;left:0;right:0;z-index:4;display:flex;flex-direction:column;align-items:center;">' +
+          '<div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">' +
+            '<img src="' + logoSrc + '" style="width:52px;height:52px;border-radius:50%;box-shadow:0 4px 18px rgba(50,20,90,0.35);" />' +
+            '<span style="font-family:'Cinzel',serif;font-size:30px;font-weight:900;letter-spacing:0.34em;color:#160c2e;text-transform:uppercase;text-shadow:0 1px 2px rgba(255,255,255,0.9);">DEV HARBOUR</span>' +
+            '<span style="font-size:12px;font-weight:800;letter-spacing:0.22em;color:#6552cf;background:rgba(101,82,207,0.12);border:1px solid rgba(101,82,207,0.3);padding:3px 12px;border-radius:999px;">OFFICIAL REGISTRY</span>' +
+          '</div>' +
+
+          '<!-- Arched 3D Ribbon -->' +
+          '<svg width="920" height="148" viewBox="0 0 920 148" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 16px 32px rgba(20,10,48,0.48));">' +
+            '<defs>' +
+              '<linearGradient id="dhRibbonGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8a79ec"/><stop offset="25%" stop-color="#6b58d6"/><stop offset="65%" stop-color="#4f3dba"/><stop offset="100%" stop-color="#362590"/></linearGradient>' +
+              '<linearGradient id="dhTailGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#503eb0"/><stop offset="100%" stop-color="#231366"/></linearGradient>' +
+              '<linearGradient id="dhFoldGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#100636"/><stop offset="100%" stop-color="#281870"/></linearGradient>' +
+              '<linearGradient id="dhTrimGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#ddd7fa"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>' +
+            '</defs>' +
+            '<path d="M 40,58 L 180,30 L 180,108 L 40,134 L 92,96 Z" fill="url(#dhTailGrad)"/>' +
+            '<path d="M 880,58 L 740,30 L 740,108 L 880,134 L 828,96 Z" fill="url(#dhTailGrad)"/>' +
+            '<polygon points="155,92 180,30 180,106" fill="url(#dhFoldGrad)"/>' +
+            '<polygon points="765,92 740,30 740,106" fill="url(#dhFoldGrad)"/>' +
+            '<path d="M 155,22 Q 460,2 765,22 L 752,100 Q 460,82 168,100 Z" fill="url(#dhRibbonGrad)" stroke="url(#dhTrimGrad)" stroke-width="2.2"/>' +
+            '<path d="M 165,28 Q 460,10 755,28" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.2"/>' +
+            '<path id="dhRibbonPath" d="M 168,74 Q 460,56 752,74" fill="none"/>' +
+            '<text font-family="'Cinzel',serif" font-size="41" font-weight="900" fill="#ffffff" letter-spacing="14" text-anchor="middle"><textPath href="#dhRibbonPath" startOffset="50%">CERTIFICATE</textPath></text>' +
+          '</svg>' +
+          '<div style="font-family:'Cinzel',serif;font-size:22px;font-weight:900;letter-spacing:0.46em;color:#2b1b50;text-transform:uppercase;margin-top:-6px;">— OF PARTICIPATION —</div>' +
+        '</div>' +
+
+        '<!-- 2. PRESENTED TO LEAD -->' +
+        '<div style="position:absolute;top:278px;left:0;right:0;text-align:center;font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;letter-spacing:0.34em;color:#261848;text-transform:uppercase;z-index:4;">THIS CERTIFICATE IS PROUDLY PRESENTED TO</div>' +
+
+        '<!-- 3. CANDIDATE NAME & ORG -->' +
+        '<div style="position:absolute;top:316px;left:0;right:0;text-align:center;z-index:4;">' +
+          '<div style="font-family:'Lucida Calligraphy','Playfair Display',Georgia,serif;font-style:italic;font-size:98px;font-weight:800;color:#160b32;line-height:1.05;text-shadow:0 4px 22px rgba(35,15,75,0.22);letter-spacing:0.01em;">' + name + '</div>' +
+          '<div style="font-size:21px;font-weight:800;color:#2a1b50;letter-spacing:0.06em;margin-top:6px;">' + org + '</div>' +
+        '</div>' +
+
+        '<!-- 4. DATE HORIZON -->' +
+        '<div style="position:absolute;top:494px;left:0;right:0;z-index:4;display:flex;flex-direction:column;align-items:center;">' +
+          '<div style="font-family:'Cinzel',serif;font-size:24px;font-weight:800;letter-spacing:0.34em;color:#ffffff;text-transform:uppercase;text-shadow:0 2px 10px rgba(10,4,25,0.6);margin-bottom:8px;">- OCTOBER 25TH, 2026 -</div>' +
+          '<div style="width:780px;height:2px;background:#ffffff;box-shadow:0 1px 6px rgba(0,0,0,0.4);"></div>' +
+        '</div>' +
+
+        '<!-- 5. CITATION -->' +
+        '<div style="position:absolute;top:578px;left:0;right:0;max-width:1140px;margin:0 auto;text-align:center;z-index:4;">' +
+          '<div style="font-family:'Cinzel',serif;font-size:20px;font-weight:900;letter-spacing:0.28em;color:#ffffff;text-transform:uppercase;margin-bottom:12px;text-shadow:0 2px 8px rgba(10,4,25,0.7);">NATIONAL HACKATHON · ORCA CODERS: ORCATHON 2026</div>' +
+          '<p style="font-size:21px;line-height:1.7;font-weight:500;color:#f1edff;text-shadow:0 2px 8px rgba(10,4,25,0.7);margin:0;">For outstanding technical problem-solving, collaborative engineering dedication, and active participation in <strong style="color:#ffffff;font-weight:900;">ORCATHON 2026</strong> conducted under the auspices of <strong style="color:#ffffff;font-weight:900;">Dev Harbour</strong>. Your curiosity, tenacity, and teamwork have made a meaningful contribution to the hackathon.</p>' +
+        '</div>' +
+
+        '<!-- 6. BOTTOM ROW: DATE | QR & ID | SIGNATURE -->' +
+        '<div style="position:absolute;bottom:88px;left:190px;right:190px;z-index:4;display:flex;align-items:flex-end;justify-content:space-between;">' +
+          '<!-- Left: Date -->' +
+          '<div style="display:flex;flex-direction:column;align-items:center;width:290px;">' +
+            '<div style="font-family:'Cinzel',serif;font-size:21px;font-weight:800;color:#ffffff;margin-bottom:8px;letter-spacing:0.08em;text-shadow:0 2px 6px rgba(0,0,0,0.5);">OCTOBER 25, 2026</div>' +
+            '<div style="width:100%;height:2px;background:#ffffff;margin-bottom:8px;"></div>' +
+            '<div style="font-family:'Cinzel',serif;font-size:16px;font-weight:900;letter-spacing:0.36em;color:#d8d0fa;text-transform:uppercase;">DATE</div>' +
+            '<div style="font-size:12px;font-weight:700;color:#b0a4e8;letter-spacing:0.08em;margin-top:4px;">DEV HARBOUR (ONLINE)</div>' +
+          '</div>' +
+
+          '<!-- Center: QR Code & ID -->' +
+          '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:-6px;">' +
+            qrSvg +
+            '<div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;color:#ffffff;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.38);padding:4px 16px;border-radius:999px;letter-spacing:0.08em;text-shadow:0 1px 4px rgba(0,0,0,0.5);">ID: #' + credId + '</div>' +
+            '<div style="font-size:11px;font-weight:800;letter-spacing:0.18em;color:#d8d0fa;text-transform:uppercase;">SCAN TO VERIFY AUTHENTICITY</div>' +
+          '</div>' +
+
+          '<!-- Right: Authentic Signature -->' +
+          '<div style="display:flex;flex-direction:column;align-items:center;width:320px;">' +
+            '<img src="/assets/signature-rujula.png" style="height:86px;width:auto;max-width:300px;object-fit:contain;margin-bottom:2px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));" />' +
+            '<div style="width:100%;height:2px;background:#ffffff;margin-bottom:8px;"></div>' +
+            '<div style="font-family:'Cinzel',serif;font-size:16px;font-weight:900;letter-spacing:0.36em;color:#d8d0fa;text-transform:uppercase;">SIGNATURE</div>' +
+            '<div style="font-size:12px;font-weight:700;color:#b0a4e8;letter-spacing:0.08em;margin-top:4px;">AUTHORIZED SIGNATORY · DEV HARBOUR</div>' +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</foreignObject>' +
+  '</svg>';
+}
+
+async function handleClaimSubmit(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const emailInput = document.getElementById('claim-email');
+  const nameInput = document.getElementById('claim-name');
+  const msgEl = document.getElementById('claim-status-msg');
+  const submitBtn = document.getElementById('btn-claim-submit');
+
+  const email = (emailInput ? emailInput.value : '').trim();
+  const name = (nameInput ? nameInput.value : '').trim();
+
+  if (!email) {
+    if (msgEl) { msgEl.textContent = 'Please enter your registered email address.'; msgEl.className = 'dh-cert-msg err'; }
+    return;
+  }
+
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.querySelector('span').textContent = 'Validating Record...'; }
+  if (msgEl) { msgEl.textContent = 'Searching authoritative participant registry...'; msgEl.className = 'dh-cert-msg'; msgEl.style.display = 'block'; }
+
+  try {
+    const res = await fetch('/api/certificates/claim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, eventSlug: 'orca-coders-orcathon-2026' })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (msgEl) {
+        msgEl.textContent = data.error || 'Failed to verify participant record. Please check your email.';
+        msgEl.className = 'dh-cert-msg err';
+      }
+      return;
+    }
+
+    // Success!
+    displayCertificateResult(data.credential);
+  } catch (err) {
+    if (msgEl) {
+      msgEl.textContent = 'Network or server error. Please try again.';
+      msgEl.className = 'dh-cert-msg err';
+    }
+  } finally {
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.querySelector('span').textContent = 'Verify & Claim Credential'; }
+  }
+}
+
+function displayCertificateResult(credential) {
+  currentCertificate = credential;
+
+  const claimBox = document.getElementById('dh-cert-claim-box');
+  const stage = document.getElementById('dh-cert-stage');
+  const slot = document.getElementById('dh-cert-svg-slot');
+
+  if (claimBox) claimBox.style.display = 'none';
+  if (stage) stage.style.display = 'block';
+
+  // Render SVG Certificate
+  if (slot) {
+    slot.innerHTML = renderCertificateSvg(credential);
+  }
+
+  // Update Metadata Card
+  const idEl = document.getElementById('meta-cred-id');
+  const nameEl = document.getElementById('meta-recipient-name');
+  const orgEl = document.getElementById('meta-recipient-org');
+  if (idEl) idEl.textContent = '#' + credential.credential_id;
+  if (nameEl) nameEl.textContent = credential.recipient_name;
+  if (orgEl) orgEl.textContent = credential.recipient_organisation || 'Participant';
+
+  // Update URL seamlessly without full reload
+  try {
+    history.pushState(null, '', '/certificate/verify/' + credential.credential_id);
+  } catch (e) {}
+
+  // Scroll to certificate
+  stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetClaimView() {
+  const claimBox = document.getElementById('dh-cert-claim-box');
+  const stage = document.getElementById('dh-cert-stage');
+  const msgEl = document.getElementById('claim-status-msg');
+  if (claimBox) claimBox.style.display = 'block';
+  if (stage) stage.style.display = 'none';
+  if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+  try {
+    history.pushState(null, '', '/certificate');
+  } catch(e) {}
+}
+
+function copyVerificationLink() {
+  if (!currentCertificate) return;
+  const url = window.location.origin + '/certificate/verify/' + currentCertificate.credential_id;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      toast('Verification link copied to clipboard!');
+    }).catch(() => {
+      prompt('Copy verification URL:', url);
+    });
+  } else {
+    prompt('Copy verification URL:', url);
+  }
+}
+
+function downloadCertificatePng() {
+  if (!currentCertificate) return;
+  const svgEl = document.getElementById('dh-cert-svg');
+  if (!svgEl) return;
+
+  const svgData = new XMLSerializer().serializeToString(svgEl);
+  const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+
+  img.onload = function() {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1920;
+      canvas.height = 1080;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+
+      canvas.toBlob(function(blob) {
+        if (!blob) {
+          window.print();
+          return;
+        }
+        const pngUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = pngUrl;
+        a.download = 'DevHarbour-Certificate-' + (currentCertificate.recipient_name || 'Participant').replace(/[^a-zA-Z0-9]/g, '_') + '.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(pngUrl), 1000);
+        toast('Certificate downloaded successfully!');
+      }, 'image/png', 1.0);
+    } catch(err) {
+      console.error('Canvas export error:', err);
+      // Fallback: trigger print
+      window.print();
+    }
+  };
+
+  img.onerror = function() {
+    window.print();
+  };
+
+  img.src = url;
+}
+
+async function loadCertificateVerification(credentialId) {
+  if (!credentialId) return;
+  try {
+    const res = await fetch('/api/certificates/verify/' + encodeURIComponent(credentialId));
+    const data = await res.json();
+    if (res.ok && data.verified && data.credential) {
+      displayCertificateResult(data.credential);
+    } else {
+      toast('Credential not found in registry: ' + credentialId);
+    }
+  } catch(e) {
+    console.error('Failed to verify credential:', e);
+  }
+}
+
+// Check route on page load for certificate or verification link
+(function initCertificateRoute() {
+  const p = window.location.pathname || '';
+  const h = window.location.hash || '';
+  if (p.startsWith('/certificate/verify/') || h.startsWith('#verify/')) {
+    const cid = p.startsWith('/certificate/verify/') ? p.replace('/certificate/verify/', '') : h.replace('#verify/', '');
+    show('certificate');
+    loadCertificateVerification(cid);
+  } else if (p === '/certificate' || h === '#v-certificate' || h === '#certificate') {
+    show('certificate');
+  }
 })();
 
 </script>

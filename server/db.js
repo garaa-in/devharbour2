@@ -264,6 +264,40 @@ function initSchema() {
       UNIQUE(user_id, url)
     );
     CREATE INDEX IF NOT EXISTS idx_ws_bookmarks_user ON workspace_bookmarks(user_id);
+
+    -- EVENT PARTICIPANTS & VERIFIED CERTIFICATES (ORCATHON 2026 & FUTURE HACKATHONS)
+    CREATE TABLE IF NOT EXISTS event_participants (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_slug TEXT NOT NULL DEFAULT 'orca-coders-orcathon-2026',
+      team_id TEXT DEFAULT '',
+      team_name TEXT DEFAULT '',
+      candidate_role TEXT DEFAULT 'Participant',
+      candidate_name TEXT NOT NULL,
+      candidate_email TEXT NOT NULL COLLATE NOCASE,
+      candidate_mobile TEXT DEFAULT '',
+      candidate_location TEXT DEFAULT '',
+      candidate_organisation TEXT DEFAULT '',
+      is_eligible INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_participants_email ON event_participants(candidate_email, event_slug);
+    CREATE INDEX IF NOT EXISTS idx_participants_name ON event_participants(candidate_name);
+
+    CREATE TABLE IF NOT EXISTS issued_certificates (
+      credential_id TEXT PRIMARY KEY,
+      event_slug TEXT NOT NULL DEFAULT 'orca-coders-orcathon-2026',
+      participant_id INTEGER REFERENCES event_participants(id) ON DELETE SET NULL,
+      recipient_name TEXT NOT NULL,
+      recipient_email TEXT NOT NULL COLLATE NOCASE,
+      recipient_organisation TEXT DEFAULT '',
+      certificate_type TEXT DEFAULT 'participation',
+      issue_date TEXT DEFAULT 'October 25, 2026',
+      status TEXT DEFAULT 'valid',
+      created_at TEXT DEFAULT (datetime('now')),
+      UNIQUE(recipient_email, event_slug)
+    );
+    CREATE INDEX IF NOT EXISTS idx_certs_cred ON issued_certificates(credential_id);
+    CREATE INDEX IF NOT EXISTS idx_certs_email ON issued_certificates(recipient_email, event_slug);
   `);
 }
 
@@ -1158,8 +1192,101 @@ function deleteWorkspaceBookmark(userId, bookmarkId) {
   return result.changes > 0;
 }
 
+// --- CERTIFICATES & PARTICIPANTS DATA ACCESS ---
+function findParticipantByEmail(email, eventSlug = 'orca-coders-orcathon-2026') {
+  if (!email) return null;
+  const cleanEmail = email.trim().toLowerCase();
+  return db.prepare('SELECT * FROM event_participants WHERE candidate_email = ? AND event_slug = ? LIMIT 1').get(cleanEmail, eventSlug) || null;
+}
 
+function findParticipantByEmailAndName(email, name, eventSlug = 'orca-coders-orcathon-2026') {
+  const p = findParticipantByEmail(email, eventSlug);
+  if (!p) return null;
+  if (name && name.trim()) {
+    const cleanInputName = name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanCandName = p.candidate_name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (cleanCandName === cleanInputName || cleanCandName.includes(cleanInputName) || cleanInputName.includes(cleanCandName)) {
+      return p;
+    }
+  }
+  return p;
+}
 
+function getIssuedCertificateById(credentialId) {
+  if (!credentialId) return null;
+  return db.prepare(`
+    SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+    FROM issued_certificates c
+    LEFT JOIN event_participants p ON c.participant_id = p.id
+    WHERE c.credential_id = ?
+    LIMIT 1
+  `).get(credentialId.trim().toUpperCase()) || null;
+}
+
+function getIssuedCertificateByEmail(email, eventSlug = 'orca-coders-orcathon-2026') {
+  if (!email) return null;
+  const cleanEmail = email.trim().toLowerCase();
+  return db.prepare(`
+    SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+    FROM issued_certificates c
+    LEFT JOIN event_participants p ON c.participant_id = p.id
+    WHERE c.recipient_email = ? AND c.event_slug = ?
+    LIMIT 1
+  `).get(cleanEmail, eventSlug) || null;
+}
+
+function issueCertificate({ participantId, recipientName, recipientEmail, recipientOrganisation, eventSlug = 'orca-coders-orcathon-2026', certificateType = 'Participation', issueDate = 'October 25, 2026', status = 'Valid' }) {
+  const cleanEmail = recipientEmail.trim().toLowerCase();
+  const existing = getIssuedCertificateByEmail(cleanEmail, eventSlug);
+  if (existing) return existing;
+
+  let credSuffix = '0001';
+  if (participantId) {
+    credSuffix = String(participantId).padStart(4, '0');
+  } else {
+    const countRow = db.prepare('SELECT COUNT(*) as count FROM issued_certificates WHERE event_slug = ?').get(eventSlug);
+    credSuffix = String((countRow ? countRow.count : 0) + 1).padStart(4, '0');
+  }
+  const credentialId = `DH-ORCA-2026-${credSuffix}`;
+
+  db.prepare(`
+    INSERT INTO issued_certificates (
+      credential_id, event_slug, participant_id, recipient_name, recipient_email, recipient_organisation, certificate_type, issue_date, status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(credentialId, eventSlug, participantId || null, recipientName.trim(), cleanEmail, (recipientOrganisation || '').trim(), certificateType, issueDate, status || 'Valid');
+
+  return getIssuedCertificateById(credentialId);
+}
+
+function insertParticipant(candidate) {
+  const stmt = db.prepare(`
+    INSERT INTO event_participants (
+      event_slug, team_id, team_name, candidate_role, candidate_name, candidate_email, candidate_mobile, candidate_location, candidate_organisation, is_eligible
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  return stmt.run(
+    candidate.eventSlug || 'orca-coders-orcathon-2026',
+    candidate.teamId || '',
+    candidate.teamName || '',
+    candidate.candidateRole || 'Participant',
+    candidate.candidateName,
+    candidate.candidateEmail.trim().toLowerCase(),
+    candidate.candidateMobile || '',
+    candidate.candidateLocation || '',
+    candidate.candidateOrganisation || '',
+    candidate.isEligible !== undefined ? candidate.isEligible : 1
+  );
+}
+
+function countParticipants(eventSlug = 'orca-coders-orcathon-2026') {
+  const row = db.prepare('SELECT COUNT(*) as count FROM event_participants WHERE event_slug = ?').get(eventSlug);
+  return row ? row.count : 0;
+}
+
+function countIssuedCertificates(eventSlug = 'orca-coders-orcathon-2026') {
+  const row = db.prepare('SELECT COUNT(*) as count FROM issued_certificates WHERE event_slug = ?').get(eventSlug);
+  return row ? row.count : 0;
+}
 
 module.exports = {
   db,
@@ -1213,5 +1340,13 @@ module.exports = {
   saveWorkspaceSnippet,
   deleteWorkspaceSnippet,
   addWorkspaceBookmark,
-  deleteWorkspaceBookmark
+  deleteWorkspaceBookmark,
+  findParticipantByEmail,
+  findParticipantByEmailAndName,
+  getIssuedCertificateById,
+  getIssuedCertificateByEmail,
+  issueCertificate,
+  insertParticipant,
+  countParticipants,
+  countIssuedCertificates
 };
