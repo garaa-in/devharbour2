@@ -8464,6 +8464,18 @@ window.openCertificateFromHero = function() {
 
 let currentCertificate = null;
 
+function generateUniqueCredentialId(participantId, email) {
+  const num = String(participantId || '1').padStart(4, '0');
+  let hash = 0;
+  const str = (email || '').toLowerCase() + '-' + num;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const hex = Math.abs(hash).toString(16).toUpperCase().padStart(4, '0').slice(-4);
+  return 'DH-ORCA-2026-' + num + '-' + hex;
+}
+
 function generateCertificateQrElements(startX, startY, size) {
   const m = [
     [1,1,1,1,1,1,1,0,1,0,1,1,0,1,0,1,1,1,1,1,1,1],
@@ -8501,76 +8513,76 @@ function generateCertificateQrElements(startX, startY, size) {
 }
 
 function generateCertificateQrMatrix() {
-  return generateCertificateQrElements(916, 856, 88);
+  return generateCertificateQrElements(915, 855, 90);
 }
 
 function renderCertificateSvg(cred) {
   const name = cred.recipient_name || 'Participant';
   const org = cred.recipient_organisation || 'Participant';
-  const credId = cred.credential_id || 'DH-ORCA-2026-0001';
-  const qrRects = generateCertificateQrElements(916, 856, 88);
+  const credId = cred.credential_id || 'DH-ORCA-2026-0001-XXXX';
+  const qrRects = generateCertificateQrElements(915, 855, 90);
   const logoEl = document.querySelector('.xli');
   const logoSrc = (logoEl && logoEl.src) || '';
   const sigSrc = (typeof window !== 'undefined' && window.__DH_SIGNATURE_DATA__) ? window.__DH_SIGNATURE_DATA__ : '/assets/signature-rujula.png';
 
-  return '<svg id="dh-cert-svg" viewBox="0 0 1920 1080" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;max-height:85vh;margin:0 auto;box-shadow:0 18px 50px rgba(25,10,50,0.3);border-radius:8px;">' +
+  return '<svg id="dh-cert-svg" viewBox="0 0 1920 1080" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;max-height:85vh;margin:0 auto;box-shadow:0 18px 50px rgba(25,10,50,0.25);border-radius:8px;">' +
     '<defs>' +
+      '<!-- Exact Lightest Lavender Gradient from previous approved design -->' +
       '<linearGradient id="dhBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">' +
-        '<stop offset="0%" stop-color="#ede4fa" />' +
-        '<stop offset="20%" stop-color="#e3d5f6" />' +
-        '<stop offset="50%" stop-color="#d6c3f0" />' +
-        '<stop offset="80%" stop-color="#c6b0ea" />' +
-        '<stop offset="100%" stop-color="#b69be2" />' +
+        '<stop offset="0%" stop-color="#fdfcff" />' +
+        '<stop offset="18%" stop-color="#f8f4ff" />' +
+        '<stop offset="42%" stop-color="#f1eaff" />' +
+        '<stop offset="68%" stop-color="#e7dcfb" />' +
+        '<stop offset="88%" stop-color="#d9cbf6" />' +
+        '<stop offset="100%" stop-color="#cdbbf2" />' +
       '</linearGradient>' +
 
       '<pattern id="dhPinstripe" width="8" height="8" patternTransform="rotate(-45 0 0)" patternUnits="userSpaceOnUse">' +
-        '<line x1="0" y1="0" x2="0" y2="8" stroke="rgba(100, 75, 185, 0.055)" stroke-width="1.6" />' +
+        '<line x1="0" y1="0" x2="0" y2="8" stroke="rgba(130, 105, 215, 0.045)" stroke-width="1.5" />' +
       '</pattern>' +
 
-      '<radialGradient id="dhSheen" cx="50%" cy="18%" r="65%">' +
-        '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.75" />' +
-        '<stop offset="45%" stop-color="#f2ebfc" stop-opacity="0.3" />' +
-        '<stop offset="100%" stop-color="#b69be2" stop-opacity="0" />' +
+      '<radialGradient id="dhSheen" cx="50%" cy="20%" r="65%">' +
+        '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />' +
+        '<stop offset="50%" stop-color="#e1d7ff" stop-opacity="0.3" />' +
+        '<stop offset="100%" stop-color="#cdbbf2" stop-opacity="0" />' +
       '</radialGradient>' +
 
       '<linearGradient id="dhSilverBorder" x1="0%" y1="0%" x2="100%" y2="100%">' +
         '<stop offset="0%" stop-color="#ffffff" />' +
-        '<stop offset="25%" stop-color="#d6ceee" />' +
+        '<stop offset="25%" stop-color="#dcd5f0" />' +
         '<stop offset="50%" stop-color="#ffffff" />' +
-        '<stop offset="75%" stop-color="#c8bee6" />' +
+        '<stop offset="75%" stop-color="#cfc4eb" />' +
         '<stop offset="100%" stop-color="#ffffff" />' +
       '</linearGradient>' +
 
       '<linearGradient id="dhSilverRibbonTrim" x1="0%" y1="0%" x2="100%" y2="0%">' +
         '<stop offset="0%" stop-color="#ffffff" />' +
-        '<stop offset="20%" stop-color="#e8e2fa" />' +
+        '<stop offset="20%" stop-color="#ede8fb" />' +
         '<stop offset="50%" stop-color="#ffffff" />' +
-        '<stop offset="80%" stop-color="#ded4f7" />' +
+        '<stop offset="80%" stop-color="#e2d8f7" />' +
         '<stop offset="100%" stop-color="#ffffff" />' +
       '</linearGradient>' +
 
       '<linearGradient id="dhRibbonMain" x1="0%" y1="0%" x2="0%" y2="100%">' +
-        '<stop offset="0%" stop-color="#7e66e6" />' +
-        '<stop offset="20%" stop-color="#644cc6" />' +
-        '<stop offset="65%" stop-color="#4c34a6" />' +
-        '<stop offset="100%" stop-color="#341d80" />' +
+        '<stop offset="0%" stop-color="#846ee6" />' +
+        '<stop offset="22%" stop-color="#6a52c8" />' +
+        '<stop offset="65%" stop-color="#5038a8" />' +
+        '<stop offset="100%" stop-color="#382084" />' +
       '</linearGradient>' +
-
       '<linearGradient id="dhRibbonTail" x1="0%" y1="0%" x2="0%" y2="100%">' +
-        '<stop offset="0%" stop-color="#503aa4" />' +
-        '<stop offset="100%" stop-color="#220e5c" />' +
+        '<stop offset="0%" stop-color="#553ea6" />' +
+        '<stop offset="100%" stop-color="#261060" />' +
       '</linearGradient>' +
-
       '<linearGradient id="dhRibbonFold" x1="0%" y1="0%" x2="100%" y2="0%">' +
-        '<stop offset="0%" stop-color="#120534" />' +
-        '<stop offset="100%" stop-color="#28146a" />' +
+        '<stop offset="0%" stop-color="#140638" />' +
+        '<stop offset="100%" stop-color="#2c176e" />' +
       '</linearGradient>' +
 
       '<filter id="dhRibbonShadow" x="-10%" y="-10%" width="120%" height="140%">' +
-        '<feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#180738" flood-opacity="0.32" />' +
+        '<feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#180738" flood-opacity="0.30" />' +
       '</filter>' +
       '<filter id="dhTextGlow" x="-20%" y="-20%" width="140%" height="140%">' +
-        '<feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#2a0d5c" flood-opacity="0.18" />' +
+        '<feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#2a0d5c" flood-opacity="0.16" />' +
       '</filter>' +
     '</defs>' +
 
@@ -8581,73 +8593,70 @@ function renderCertificateSvg(cred) {
 
     '<!-- 2. Dual Metallic Silver & Lavender Frame -->' +
     '<rect x="44" y="44" width="1832" height="992" fill="none" stroke="url(#dhSilverBorder)" stroke-width="2.5" rx="4" />' +
-    '<rect x="52" y="52" width="1816" height="976" fill="none" stroke="rgba(95, 68, 170, 0.45)" stroke-width="1.4" rx="3" />' +
+    '<rect x="52" y="52" width="1816" height="976" fill="none" stroke="rgba(110, 85, 185, 0.35)" stroke-width="1.3" rx="3" />' +
 
-    '<!-- Split Top Framing Line (Gap in middle for DEV HARBOUR) -->' +
-    '<line x1="200" y1="68" x2="690" y2="68" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
-    '<circle cx="690" cy="68" r="3.5" fill="#50349b" />' +
-    '<line x1="1230" y1="68" x2="1720" y2="68" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
-    '<circle cx="1230" cy="68" r="3.5" fill="#50349b" />' +
+    '<!-- Split Top Framing Line (Leaves a generous 580px gap in middle so DEV HARBOUR is never crossed!) -->' +
+    '<line x1="200" y1="68" x2="670" y2="68" stroke="rgba(85, 55, 160, 0.85)" stroke-width="2" />' +
+    '<circle cx="670" cy="68" r="3.5" fill="#5537a0" />' +
+    '<line x1="1250" y1="68" x2="1720" y2="68" stroke="rgba(85, 55, 160, 0.85)" stroke-width="2" />' +
+    '<circle cx="1250" cy="68" r="3.5" fill="#5537a0" />' +
 
-    '<line x1="200" y1="1014" x2="1720" y2="1014" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
-    '<line x1="68" y1="200" x2="68" y2="880" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
-    '<line x1="1852" y1="200" x2="1852" y2="880" stroke="rgba(80, 52, 155, 0.85)" stroke-width="2" />' +
+    '<line x1="200" y1="1014" x2="1720" y2="1014" stroke="rgba(85, 55, 160, 0.85)" stroke-width="2" />' +
+    '<line x1="68" y1="200" x2="68" y2="880" stroke="rgba(85, 55, 160, 0.85)" stroke-width="2" />' +
+    '<line x1="1852" y1="200" x2="1852" y2="880" stroke="rgba(85, 55, 160, 0.85)" stroke-width="2" />' +
 
     '<!-- Corner Filigree Scrollwork in Royal Lavender & Silver -->' +
-    '<g transform="translate(68,68)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
-      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
+    '<g transform="translate(68,68)" stroke="rgba(75,45,155,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(75,45,155,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
     '</g>' +
-    '<g transform="translate(1852,68) scale(-1, 1)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
-      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
+    '<g transform="translate(1852,68) scale(-1, 1)" stroke="rgba(75,45,155,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(75,45,155,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
     '</g>' +
-    '<g transform="translate(68,1014) scale(1, -1)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
-      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
+    '<g transform="translate(68,1014) scale(1, -1)" stroke="rgba(75,45,155,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(75,45,155,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#silverTrimGrad)"/>' +
     '</g>' +
-    '<g transform="translate(1852,1014) scale(-1, -1)" stroke="rgba(72,42,150,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
-      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(72,42,150,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#dhSilverBorder)"/>' +
-    '</g>' +
-
-    '<!-- 3. TOP BRANDING: DEV HARBOUR WITH GAP (NO LINE CUTTING THROUGH, NO OFFICIAL REGISTRY) -->' +
-    '<g transform="translate(960, 68)">' +
-      '<rect x="-180" y="-24" width="360" height="48" rx="24" fill="rgba(255, 255, 255, 0.7)" stroke="rgba(255, 255, 255, 0.9)" stroke-width="1.5" />' +
-      (logoSrc ? '<image href="' + logoSrc + '" x="-162" y="-19" width="38" height="38" />' : '') +
-      '<text x="12" y="8" font-family="\'Cinzel\', serif" font-size="28" font-weight="900" letter-spacing="4" fill="#14062f" text-anchor="middle">DEV HARBOUR</text>' +
+    '<g transform="translate(1852,1014) scale(-1, -1)" stroke="rgba(75,45,155,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">' +
+      '<path d="M0,134 C0,60 60,0 134,0"/><path d="M0,134 C0,170 52,176 68,136 C80,104 45,74 18,92 C-2,104 6,136 32,138 C48,138 60,122 48,110"/><path d="M134,0 C170,0 176,52 136,68 C104,80 74,45 92,18 C104,-2 136,6 138,32 C138,48 122,60 110,48"/><path d="M34,34 Q70,70 104,104" stroke-dasharray="2,4" opacity="0.6"/><circle cx="56" cy="56" r="5" fill="rgba(75,45,155,0.95)"/><circle cx="32" cy="32" r="3.5" fill="url(#silverTrimGrad)"/>' +
     '</g>' +
 
-    '<!-- 4. 3D ARCHED RIBBON (Proportioned ~720px, perfectly balanced) -->' +
-    '<g transform="translate(960, 155)" filter="url(#dhRibbonShadow)">' +
-      '<path d="M -340,36 L -230,16 L -230,78 L -340,98 L -298,67 Z" fill="url(#dhRibbonTail)" />' +
-      '<path d="M 340,36 L 230,16 L 230,78 L 340,98 L 298,67 Z" fill="url(#dhRibbonTail)" />' +
-      '<polygon points="-245,68 -230,16 -230,76" fill="url(#dhRibbonFold)" />' +
-      '<polygon points="245,68 230,16 230,76" fill="url(#dhRibbonFold)" />' +
-      '<path d="M -245,12 Q 0,-6 245,12 L 234,74 Q 0,56 -234,74 Z" fill="url(#dhRibbonMain)" stroke="url(#dhSilverRibbonTrim)" stroke-width="2.5" />' +
-      '<path d="M -238,18 Q 0,2 238,18" fill="none" stroke="rgba(255, 255, 255, 0.7)" stroke-width="1.2" />' +
-      '<path id="archRibbonPath" d="M -234,54 Q 0,38 234,54" fill="none" />' +
-      '<text font-family="\'Cinzel\', serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="12" text-anchor="middle">' +
+    '<!-- 3. TOP BRANDING: DEV HARBOUR WITH LOGO PERFECTLY ADJUSTED (NO LINE CUTTING THROUGH, NO OFFICIAL REGISTRY) -->' +
+    '<g id="brandHeader" transform="translate(960, 68)">' +
+      (logoSrc ? '<image href="' + logoSrc + '" x="-165" y="-24" width="48" height="48" preserveAspectRatio="xMidYMid meet" />' : '') +
+      '<text x="-105" y="10" font-family="\'Cinzel\', \'Times New Roman\', serif" font-size="32" font-weight="900" letter-spacing="4" fill="#14062f" text-anchor="start">DEV HARBOUR</text>' +
+    '</g>' +
+
+    '<!-- 4. 3D ARCHED RIBBON (Bigger, majestic ~840px wide) -->' +
+    '<g transform="translate(960, 158)" filter="url(#dhRibbonShadow)">' +
+      '<path d="M -410,42 L -280,18 L -280,90 L -410,114 L -360,78 Z" fill="url(#dhRibbonTail)" />' +
+      '<path d="M 410,42 L 280,18 L 280,90 L 410,114 L 360,78 Z" fill="url(#dhRibbonTail)" />' +
+      '<polygon points="-300,78 -280,18 -280,88" fill="url(#dhRibbonFold)" />' +
+      '<polygon points="300,78 280,18 280,88" fill="url(#dhRibbonFold)" />' +
+      '<path d="M -300,14 Q 0,-8 300,14 L 286,86 Q 0,66 -286,86 Z" fill="url(#dhRibbonMain)" stroke="url(#dhSilverRibbonTrim)" stroke-width="2.8" />' +
+      '<path d="M -290,21 Q 0,1 290,21" fill="none" stroke="rgba(255, 255, 255, 0.75)" stroke-width="1.4" />' +
+      '<path id="archRibbonPath" d="M -286,63 Q 0,44 286,63" fill="none" />' +
+      '<text font-family="\'Cinzel\', \'Times New Roman\', serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="14" text-anchor="middle">' +
         '<textPath href="#archRibbonPath" startOffset="50%">CERTIFICATE</textPath>' +
       '</text>' +
     '</g>' +
 
-    '<text x="960" y="278" font-family="\'Cinzel\', serif" font-size="20" font-weight="900" letter-spacing="8" fill="#200f48" text-anchor="middle">— OF PARTICIPATION —</text>' +
+    '<text x="960" y="286" font-family="\'Cinzel\', serif" font-size="22" font-weight="900" letter-spacing="8" fill="#200f48" text-anchor="middle">— OF PARTICIPATION —</text>' +
 
     '<!-- 5. PRESENTED TO LEAD -->' +
-    '<text x="960" y="348" font-family="\'Playfair Display\', Georgia, serif" font-size="20" font-weight="800" letter-spacing="6" fill="#221046" text-anchor="middle">THIS CERTIFICATE IS PROUDLY PRESENTED TO</text>' +
+    '<text x="960" y="354" font-family="\'Playfair Display\', Georgia, serif" font-size="21" font-weight="800" letter-spacing="6" fill="#221046" text-anchor="middle">THIS CERTIFICATE IS PROUDLY PRESENTED TO</text>' +
 
-    '<!-- 6. CANDIDATE NAME & COLLEGE (Deep Obsidian Amethyst High Contrast) -->' +
-    '<text x="960" y="455" font-family="\'Lucida Calligraphy\', \'Playfair Display\', Georgia, serif" font-style="italic" font-size="82" font-weight="900" fill="#12052b" text-anchor="middle" filter="url(#dhTextGlow)">' + name + '</text>' +
-    '<text x="960" y="510" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="22" font-weight="700" fill="#24134d" text-anchor="middle">' + org + '</text>' +
+    '<!-- 6. CANDIDATE NAME & COLLEGE -->' +
+    '<text x="960" y="460" font-family="\'Lucida Calligraphy\', \'Playfair Display\', Georgia, serif" font-style="italic" font-size="86" font-weight="900" fill="#12052b" text-anchor="middle" filter="url(#dhTextGlow)">' + name + '</text>' +
+    '<text x="960" y="515" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="22" font-weight="700" fill="#24134d" text-anchor="middle">' + org + '</text>' +
 
-    '<!-- (MIDDLE DATE AND DIVIDER LINE ARE COMPLETELY REMOVED!) -->' +
-
-    '<!-- 7. CITATION PARAGRAPH (Spacious and completely clear) -->' +
-    '<text x="960" y="605" font-family="\'Cinzel\', serif" font-size="20" font-weight="900" letter-spacing="5" fill="#261252" text-anchor="middle">NATIONAL HACKATHON · ORCA CODERS: ORCATHON 2026</text>' +
+    '<!-- 7. CITATION PARAGRAPH (NATIONAL HACKATHON REMOVED!) -->' +
+    '<text x="960" y="605" font-family="\'Cinzel\', serif" font-size="22" font-weight="900" letter-spacing="6" fill="#261252" text-anchor="middle">ORCA CODERS: ORCATHON 2026</text>' +
     '<text x="960" y="650" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="19" font-weight="600" fill="#180834" text-anchor="middle">For outstanding technical problem-solving, collaborative engineering dedication, and active participation in</text>' +
     '<text x="960" y="685" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="19" font-weight="600" fill="#180834" text-anchor="middle">' +
       '<tspan font-weight="900" fill="#0a0219">ORCATHON 2026</tspan> conducted under the auspices of <tspan font-weight="900" fill="#0a0219">Dev Harbour</tspan>. Your curiosity, tenacity, and teamwork' +
     '</text>' +
     '<text x="960" y="720" font-family="\'Plus Jakarta Sans\', -apple-system, sans-serif" font-size="19" font-weight="600" fill="#180834" text-anchor="middle">have made a meaningful contribution to the hackathon.</text>' +
 
-    '<!-- 8. BOTTOM ROW: DATE | QR & ID | SIGNATURE -->' +
+    '<!-- 8. BOTTOM ROW: DATE | QR & UNIQUE ID | BIGGER AUTHENTIC SIGNATURE -->' +
     '<!-- Left: Date -->' +
     '<g transform="translate(340, 940)">' +
       '<text x="0" y="0" font-family="\'Cinzel\', serif" font-size="21" font-weight="900" fill="#14072f" letter-spacing="2" text-anchor="middle">OCTOBER 25, 2026</text>' +
@@ -8656,32 +8665,30 @@ function renderCertificateSvg(cred) {
       '<text x="0" y="58" font-family="\'Plus Jakarta Sans\', sans-serif" font-size="12" font-weight="800" fill="#4c328c" letter-spacing="1" text-anchor="middle">DEV HARBOUR (ONLINE)</text>' +
     '</g>' +
 
-    '<!-- Center: QR Code & ID Badge -->' +
+    '<!-- Center: QR Code & Unique Credential ID Badge -->' +
     '<g id="qrCodeGroup">' +
       '<rect x="910" y="850" width="100" height="100" rx="10" fill="#ffffff" stroke="rgba(160, 140, 215, 0.7)" stroke-width="1.8" />' +
       qrRects +
-      '<rect x="850" y="960" width="220" height="26" rx="13" fill="#180b36" stroke="rgba(255, 255, 255, 0.85)" stroke-width="1.4" />' +
+      '<rect x="830" y="960" width="260" height="26" rx="13" fill="#180b36" stroke="rgba(255, 255, 255, 0.85)" stroke-width="1.4" />' +
       '<text x="960" y="978" font-family="\'JetBrains Mono\', monospace" font-size="13" font-weight="800" fill="#ffffff" letter-spacing="1" text-anchor="middle">ID: #' + credId + '</text>' +
       '<text x="960" y="1004" font-family="\'Plus Jakarta Sans\', sans-serif" font-size="11" font-weight="800" letter-spacing="2" fill="#321c68" text-anchor="middle">SCAN TO VERIFY AUTHENTICITY</text>' +
     '</g>' +
 
-    '<!-- Right: Signature -->' +
+    '<!-- Right: Bigger Authentic Signature -->' +
     '<g transform="translate(1550, 940)">' +
-      '<image href="' + sigSrc + '" x="-110" y="-82" width="220" height="82" preserveAspectRatio="xMidYMid meet" />' +
-      '<line x1="-130" y1="12" x2="130" y2="12" stroke="#644ab5" stroke-width="2.2" />' +
+      '<image href="' + sigSrc + '" x="-160" y="-95" width="320" height="100" preserveAspectRatio="xMidYMid meet" />' +
+      '<line x1="-150" y1="12" x2="150" y2="12" stroke="#644ab5" stroke-width="2.2" />' +
       '<text x="0" y="36" font-family="\'Cinzel\', serif" font-size="16" font-weight="900" letter-spacing="6" fill="#321c68" text-anchor="middle">SIGNATURE</text>' +
       '<text x="0" y="58" font-family="\'Plus Jakarta Sans\', sans-serif" font-size="12" font-weight="800" fill="#4c328c" letter-spacing="1" text-anchor="middle">AUTHORIZED SIGNATORY · DEV HARBOUR</text>' +
     '</g>' +
   '</svg>';
 }
 
-
 // Authoritative Client-Side Registry & Fallback Resolver
 async function resolveOrcathonParticipant(emailInput, nameInput) {
   const eClean = (emailInput || '').trim().toLowerCase();
   const nClean = (nameInput || '').trim().toLowerCase();
 
-  // Ensure registry is loaded
   if (!window.__DH_PARTICIPANTS__ || !window.__DH_PARTICIPANTS__.length) {
     try {
       const res = await fetch('/data/orcathon_participants.json');
@@ -8694,7 +8701,6 @@ async function resolveOrcathonParticipant(emailInput, nameInput) {
   const list = window.__DH_PARTICIPANTS__ || [];
   if (!list.length) return null;
 
-  // 1. Exact email match
   if (eClean) {
     const m = list.find(p => p.email && p.email.toLowerCase() === eClean);
     if (m) return m;
@@ -8703,8 +8709,6 @@ async function resolveOrcathonParticipant(emailInput, nameInput) {
     const m = list.find(p => p.email && p.email.toLowerCase() === nClean);
     if (m) return m;
   }
-
-  // 2. Exact name match
   if (nClean) {
     const m = list.find(p => p.name && p.name.toLowerCase() === nClean);
     if (m) return m;
@@ -8714,7 +8718,6 @@ async function resolveOrcathonParticipant(emailInput, nameInput) {
     if (m) return m;
   }
 
-  // 3. Multi-word name match (all words in query must appear in candidate name)
   const queryStr = (nClean || eClean).replace(/[^\w\s]/g, ' ').trim();
   const words = queryStr.split(/\s+/).filter(w => w.length >= 3);
   if (words.length > 0) {
@@ -8761,7 +8764,6 @@ async function handleClaimSubmit(e) {
   try {
     let credential = null;
 
-    // 1. Attempt API (works on Node server, localhost, and Vercel serverless)
     try {
       const res = await fetch('/api/certificates/claim', {
         method: 'POST',
@@ -8774,15 +8776,12 @@ async function handleClaimSubmit(e) {
           credential = data.credential;
         }
       }
-    } catch (apiErr) {
-      // Seamlessly fall through to client-side resolver
-    }
+    } catch (apiErr) {}
 
-    // 2. Client-side Authoritative Registry Fallback (guarantees 100% instant offline & static host reliability)
     if (!credential) {
       const matched = await resolveOrcathonParticipant(email, name);
       if (matched) {
-        const cid = 'DH-ORCA-2026-' + String(matched.id).padStart(4, '0');
+        const cid = generateUniqueCredentialId(matched.id, matched.email);
         credential = {
           credential_id: cid,
           recipient_name: matched.name,
@@ -8807,13 +8806,11 @@ async function handleClaimSubmit(e) {
       return;
     }
 
-    // Cache locally
     try {
       localStorage.setItem('dh_cert_' + credential.credential_id, JSON.stringify(credential));
       localStorage.setItem('dh_cert_latest', JSON.stringify(credential));
     } catch(e) {}
 
-    // Success!
     if (msgEl) {
       msgEl.textContent = 'Participant record verified! Rendering official credential...';
       msgEl.className = 'dh-cert-msg';

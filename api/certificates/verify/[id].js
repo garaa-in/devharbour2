@@ -1,6 +1,18 @@
 // Vercel Serverless Function: GET /api/certificates/verify/:id
 const participants = require('../../../server/data/orcathon_participants.json');
 
+function generateCredentialId(participantId, email) {
+  const num = String(participantId || '1').padStart(4, '0');
+  let hash = 0;
+  const str = (email || '').toLowerCase() + '-' + num;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const hex = Math.abs(hash).toString(16).toUpperCase().padStart(4, '0').slice(-4);
+  return `DH-ORCA-2026-${num}-${hex}`;
+}
+
 module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -15,7 +27,6 @@ module.exports = (req, res) => {
     return res.status(400).json({ error: 'Valid credential ID is required.' });
   }
 
-  // ID format: DH-ORCA-2026-0001
   const idMatch = id.match(/DH-ORCA-2026-(\d+)/i) || id.match(/(\d+)/);
   let found = null;
   if (idMatch) {
@@ -30,7 +41,7 @@ module.exports = (req, res) => {
     });
   }
 
-  const credId = 'DH-ORCA-2026-' + String(found.id).padStart(4, '0');
+  const credId = generateCredentialId(found.id, found.email);
   return res.json({
     verified: true,
     credential: {

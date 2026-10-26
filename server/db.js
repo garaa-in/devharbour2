@@ -1249,19 +1249,24 @@ function getIssuedCertificateByEmail(email, eventSlug = 'orca-coders-orcathon-20
   `).get(cleanEmail, eventSlug) || null;
 }
 
+function generateUniqueCredentialId(participantId, email) {
+  const num = String(participantId || '1').padStart(4, '0');
+  let hash = 0;
+  const str = (email || '').toLowerCase() + '-' + num;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const hex = Math.abs(hash).toString(16).toUpperCase().padStart(4, '0').slice(-4);
+  return 'DH-ORCA-2026-' + num + '-' + hex;
+}
+
 function issueCertificate({ participantId, recipientName, recipientEmail, recipientOrganisation, eventSlug = 'orca-coders-orcathon-2026', certificateType = 'Participation', issueDate = 'October 25, 2026', status = 'Valid' }) {
   const cleanEmail = recipientEmail.trim().toLowerCase();
   const existing = getIssuedCertificateByEmail(cleanEmail, eventSlug);
   if (existing) return existing;
 
-  let credSuffix = '0001';
-  if (participantId) {
-    credSuffix = String(participantId).padStart(4, '0');
-  } else {
-    const countRow = db.prepare('SELECT COUNT(*) as count FROM issued_certificates WHERE event_slug = ?').get(eventSlug);
-    credSuffix = String((countRow ? countRow.count : 0) + 1).padStart(4, '0');
-  }
-  const credentialId = `DH-ORCA-2026-${credSuffix}`;
+  const credentialId = generateUniqueCredentialId(participantId, cleanEmail);
 
   db.prepare(`
     INSERT INTO issued_certificates (
