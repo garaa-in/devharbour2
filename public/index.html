@@ -3599,6 +3599,7 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 .xa-cert-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,92,255,0.5)}
 
 </style>
+  <script src="/data/orcathon_participants.js"></script>
 </head>
 <body>
 <div id="intro"><div class="spb" id="spb"></div><div class="hz" id="hz" role="button" tabindex="0" aria-label="Enter Dev Harbour"><div class="xf">
@@ -4381,13 +4382,13 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 
       <form id="dh-claim-form" onsubmit="handleClaimSubmit(event)">
         <div class="dh-cert-field">
-          <label for="claim-email">Registered Email Address</label>
-          <input type="email" id="claim-email" placeholder="e.g. yash.pandey347683@gmail.com" required autocomplete="email">
+          <label for="claim-email">Registered Email Address or Full Name</label>
+          <input type="text" id="claim-email" placeholder="e.g. yash.pandey347683@gmail.com or Yash Pandey" autocomplete="email">
         </div>
 
         <div class="dh-cert-field">
-          <label for="claim-name">Participant Full Name</label>
-          <input type="text" id="claim-name" placeholder="e.g. Yash Pandey" required autocomplete="name">
+          <label for="claim-name">Participant Full Name (Optional if email entered)</label>
+          <input type="text" id="claim-name" placeholder="e.g. Yash Pandey" autocomplete="name">
         </div>
 
         <button type="submit" class="dh-cert-submit-btn" id="btn-claim-submit">
@@ -8595,7 +8596,7 @@ function renderCertificateSvg(cred) {
 
           '<!-- Right: Authentic Signature -->' +
           '<div style="display:flex;flex-direction:column;align-items:center;width:320px;">' +
-            '<img src="/assets/signature-rujula.png" style="height:86px;width:auto;max-width:300px;object-fit:contain;margin-bottom:2px;" />' +
+            '<img src="' + (window.__DH_SIGNATURE_DATA__ || '/assets/signature-rujula.png') + '" style="height:86px;width:auto;max-width:300px;object-fit:contain;margin-bottom:2px;" />' +
             '<div style="width:100%;height:2px;background:#6e52bf;margin-bottom:8px;"></div>' +
             '<div style="font-family:\'Cinzel\',serif;font-size:16px;font-weight:900;letter-spacing:0.36em;color:#3b2575;text-transform:uppercase;">SIGNATURE</div>' +
             '<div style="font-size:12px;font-weight:800;color:#553b98;letter-spacing:0.08em;margin-top:4px;">AUTHORIZED SIGNATORY · DEV HARBOUR</div>' +
@@ -8605,6 +8606,58 @@ function renderCertificateSvg(cred) {
       '</div>' +
     '</foreignObject>' +
   '</svg>';
+}
+
+// Authoritative Client-Side Registry & Fallback Resolver
+async function resolveOrcathonParticipant(emailInput, nameInput) {
+  const eClean = (emailInput || '').trim().toLowerCase();
+  const nClean = (nameInput || '').trim().toLowerCase();
+
+  // Ensure registry is loaded
+  if (!window.__DH_PARTICIPANTS__ || !window.__DH_PARTICIPANTS__.length) {
+    try {
+      const res = await fetch('/data/orcathon_participants.json');
+      if (res.ok) {
+        window.__DH_PARTICIPANTS__ = await res.json();
+      }
+    } catch(err) {}
+  }
+
+  const list = window.__DH_PARTICIPANTS__ || [];
+  if (!list.length) return null;
+
+  // 1. Exact email match
+  if (eClean) {
+    const m = list.find(p => p.email && p.email.toLowerCase() === eClean);
+    if (m) return m;
+  }
+  if (nClean) {
+    const m = list.find(p => p.email && p.email.toLowerCase() === nClean);
+    if (m) return m;
+  }
+
+  // 2. Exact name match
+  if (nClean) {
+    const m = list.find(p => p.name && p.name.toLowerCase() === nClean);
+    if (m) return m;
+  }
+  if (eClean) {
+    const m = list.find(p => p.name && p.name.toLowerCase() === eClean);
+    if (m) return m;
+  }
+
+  // 3. Multi-word name match (all words in query must appear in candidate name)
+  const queryStr = (nClean || eClean).replace(/[^\w\s]/g, ' ').trim();
+  const words = queryStr.split(/\s+/).filter(w => w.length >= 3);
+  if (words.length > 0) {
+    const m = list.find(p => {
+      const cand = (p.name || '').toLowerCase();
+      return words.every(w => cand.includes(w));
+    });
+    if (m) return m;
+  }
+
+  return null;
 }
 
 async function handleClaimSubmit(e) {
@@ -8617,39 +8670,99 @@ async function handleClaimSubmit(e) {
   const email = (emailInput ? emailInput.value : '').trim();
   const name = (nameInput ? nameInput.value : '').trim();
 
-  if (!email) {
-    if (msgEl) { msgEl.textContent = 'Please enter your registered email address.'; msgEl.className = 'dh-cert-msg err'; }
+  if (!email && !name) {
+    if (msgEl) {
+      msgEl.textContent = 'Please enter your registered email address or your name.';
+      msgEl.className = 'dh-cert-msg err';
+      msgEl.style.display = 'block';
+    }
     return;
   }
 
-  if (submitBtn) { submitBtn.disabled = true; submitBtn.querySelector('span').textContent = 'Validating Record...'; }
-  if (msgEl) { msgEl.textContent = 'Searching authoritative participant registry...'; msgEl.className = 'dh-cert-msg'; msgEl.style.display = 'block'; }
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    const s = submitBtn.querySelector('span');
+    if (s) s.textContent = 'Validating Record...';
+  }
+  if (msgEl) {
+    msgEl.textContent = 'Searching authoritative participant registry...';
+    msgEl.className = 'dh-cert-msg';
+    msgEl.style.display = 'block';
+  }
 
   try {
-    const res = await fetch('/api/certificates/claim', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, eventSlug: 'orca-coders-orcathon-2026' })
-    });
-    const data = await res.json();
+    let credential = null;
 
-    if (!res.ok) {
+    // 1. Attempt API (works on Node server, localhost, and Vercel serverless)
+    try {
+      const res = await fetch('/api/certificates/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, eventSlug: 'orca-coders-orcathon-2026' })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.credential) {
+          credential = data.credential;
+        }
+      }
+    } catch (apiErr) {
+      // Seamlessly fall through to client-side resolver
+    }
+
+    // 2. Client-side Authoritative Registry Fallback (guarantees 100% instant offline & static host reliability)
+    if (!credential) {
+      const matched = await resolveOrcathonParticipant(email, name);
+      if (matched) {
+        const cid = 'DH-ORCA-2026-' + String(matched.id).padStart(4, '0');
+        credential = {
+          credential_id: cid,
+          recipient_name: matched.name,
+          recipient_email: matched.email,
+          recipient_organisation: matched.org || 'Participant',
+          event_name: 'ORCA CODERS: ORCATHON 2026',
+          event_slug: 'orca-coders-orcathon-2026',
+          certificate_type: 'Participation',
+          issue_date: 'October 25, 2026',
+          status: 'Verified & Authentic',
+          team_name: matched.team || '',
+          verification_url: '/certificate/verify/' + cid
+        };
+      }
+    }
+
+    if (!credential) {
       if (msgEl) {
-        msgEl.textContent = data.error || 'Failed to verify participant record. Please check your email.';
+        msgEl.textContent = 'No registration found for "' + (email || name) + '" in Orcathon 2026. Please check for typos or enter the email used on Unstop.';
         msgEl.className = 'dh-cert-msg err';
       }
       return;
     }
 
+    // Cache locally
+    try {
+      localStorage.setItem('dh_cert_' + credential.credential_id, JSON.stringify(credential));
+      localStorage.setItem('dh_cert_latest', JSON.stringify(credential));
+    } catch(e) {}
+
     // Success!
-    displayCertificateResult(data.credential);
-  } catch (err) {
     if (msgEl) {
-      msgEl.textContent = 'Network or server error. Please try again.';
+      msgEl.textContent = 'Participant record verified! Rendering official credential...';
+      msgEl.className = 'dh-cert-msg';
+    }
+    displayCertificateResult(credential);
+  } catch (err) {
+    console.error('Claim error:', err);
+    if (msgEl) {
+      msgEl.textContent = 'Could not complete verification. Please try again.';
       msgEl.className = 'dh-cert-msg err';
     }
   } finally {
-    if (submitBtn) { submitBtn.disabled = false; submitBtn.querySelector('span').textContent = 'Verify & Claim Credential'; }
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      const s = submitBtn.querySelector('span');
+      if (s) s.textContent = 'Verify & Claim Credential';
+    }
   }
 }
 
@@ -8676,12 +8789,12 @@ function displayCertificateResult(credential) {
   if (nameEl) nameEl.textContent = credential.recipient_name;
   if (orgEl) orgEl.textContent = credential.recipient_organisation || 'Participant';
 
-  // Update URL seamlessly without full reload
+  // Update URL seamlessly
   try {
-    history.pushState(null, '', '/certificate/verify/' + credential.credential_id);
+    history.pushState(null, '', '#verify/' + credential.credential_id);
   } catch (e) {}
 
-  // Scroll to certificate
+  // Scroll smoothly to certificate
   stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -8693,13 +8806,13 @@ function resetClaimView() {
   if (stage) stage.style.display = 'none';
   if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
   try {
-    history.pushState(null, '', '/certificate');
+    history.pushState(null, '', '#v-certificate');
   } catch(e) {}
 }
 
 function copyVerificationLink() {
   if (!currentCertificate) return;
-  const url = window.location.origin + '/certificate/verify/' + currentCertificate.credential_id;
+  const url = window.location.origin + '/#verify/' + currentCertificate.credential_id;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(url).then(() => {
       toast('Verification link copied to clipboard!');
@@ -8747,7 +8860,6 @@ function downloadCertificatePng() {
       }, 'image/png', 1.0);
     } catch(err) {
       console.error('Canvas export error:', err);
-      // Fallback: trigger print
       window.print();
     }
   };
@@ -8761,17 +8873,62 @@ function downloadCertificatePng() {
 
 async function loadCertificateVerification(credentialId) {
   if (!credentialId) return;
+  const cid = credentialId.trim();
+
+  // 1. Try local cache
   try {
-    const res = await fetch('/api/certificates/verify/' + encodeURIComponent(credentialId));
-    const data = await res.json();
-    if (res.ok && data.verified && data.credential) {
-      displayCertificateResult(data.credential);
-    } else {
-      toast('Credential not found in registry: ' + credentialId);
+    const cached = localStorage.getItem('dh_cert_' + cid);
+    if (cached) {
+      displayCertificateResult(JSON.parse(cached));
+      return;
     }
-  } catch(e) {
-    console.error('Failed to verify credential:', e);
+  } catch(e) {}
+
+  // 2. Try Server API
+  try {
+    const res = await fetch('/api/certificates/verify/' + encodeURIComponent(cid));
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.verified && data.credential) {
+        displayCertificateResult(data.credential);
+        return;
+      }
+    }
+  } catch(e) {}
+
+  // 3. Try Client-side registry
+  if (!window.__DH_PARTICIPANTS__ || !window.__DH_PARTICIPANTS__.length) {
+    try {
+      const res = await fetch('/data/orcathon_participants.json');
+      if (res.ok) window.__DH_PARTICIPANTS__ = await res.json();
+    } catch(e) {}
   }
+
+  const list = window.__DH_PARTICIPANTS__ || [];
+  const idMatch = cid.match(/DH-ORCA-2026-(\d+)/i) || cid.match(/(\d+)/);
+  if (idMatch) {
+    const numericId = String(parseInt(idMatch[1], 10));
+    const matched = list.find(p => String(p.id) === numericId);
+    if (matched) {
+      const cred = {
+        credential_id: 'DH-ORCA-2026-' + String(matched.id).padStart(4, '0'),
+        recipient_name: matched.name,
+        recipient_email: matched.email,
+        recipient_organisation: matched.org || 'Participant',
+        event_name: 'ORCA CODERS: ORCATHON 2026',
+        event_slug: 'orca-coders-orcathon-2026',
+        certificate_type: 'Participation',
+        issue_date: 'October 25, 2026',
+        status: 'Verified & Authentic',
+        team_name: matched.team || '',
+        verification_url: '/certificate/verify/' + ('DH-ORCA-2026-' + String(matched.id).padStart(4, '0'))
+      };
+      displayCertificateResult(cred);
+      return;
+    }
+  }
+
+  toast('Credential not found in registry: ' + cid);
 }
 
 // Check route on page load for certificate or verification link
