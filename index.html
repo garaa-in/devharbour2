@@ -3547,29 +3547,34 @@ html[data-theme="dark"] .ws-mercury-orb {
 .dh-cert-msg.ok{display:block;color:#10b981;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)}
 
 /* Dev Harbour Premium Transparent 3D Certificate Experience */
-.dh-cert-stage{margin:24px auto 40px;text-align:center;position:relative;background:transparent;max-width:1080px;padding:0 12px;overflow:visible}
+.dh-cert-stage{margin:20px auto 36px;text-align:center;position:relative;background:transparent;max-width:960px;padding:0 12px;overflow:visible}
 
-/* 3D Perspective Scene */
-.dh-cert-3d-scene{position:relative;width:100%;max-width:880px;margin:0 auto;perspective:1400px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent}
+/* 3D Perspective Scene: Web desktop compact sizing so it sits nicely in between rings and prevents scroll freeze */
+.dh-cert-3d-scene{position:relative;width:100%;max-width:540px;margin:0 auto;perspective:1200px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;touch-action:pan-y}
 
 /* Floating & Tilting 3D Certificate Plaque */
 .dh-cert-float-card{position:relative;z-index:10;width:100%;transform-style:preserve-3d;animation:dhCertFloat3D 7.5s ease-in-out infinite;transform-origin:center center;will-change:transform;background:transparent;transition:transform .25s ease-out}
-.dh-cert-float-card svg{display:block;width:100%;height:auto;filter:drop-shadow(0 20px 40px rgba(20,10,45,0.28));background:transparent;border:none}
+.dh-cert-float-card svg{display:block;width:100%;height:auto;filter:drop-shadow(0 16px 36px rgba(20,10,45,0.25));background:transparent;border:none}
 
 @keyframes dhCertFloat3D{
-  0%,100%{transform:translateY(0px) rotateY(-4deg) rotateX(2deg)}
-  50%{transform:translateY(-18px) rotateY(4deg) rotateX(-1.5deg)}
+  0%,100%{transform:translateY(0px) rotateY(-3.5deg) rotateX(1.8deg)}
+  50%{transform:translateY(-14px) rotateY(3.5deg) rotateX(-1.2deg)}
 }
 
 /* Subtle Ground Shadow Directly Beneath Metal Stand */
-.dh-cert-stand-shadow{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:52%;height:18px;background:radial-gradient(ellipse at center,rgba(16,8,34,0.65) 0%,rgba(16,8,34,0) 75%);filter:blur(8px);border-radius:50%;z-index:5;pointer-events:none;animation:dhShadowScale 7.5s ease-in-out infinite}
+.dh-cert-stand-shadow{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:60%;height:16px;background:radial-gradient(ellipse at center,rgba(16,8,34,0.65) 0%,rgba(16,8,34,0) 75%);filter:blur(8px);border-radius:50%;z-index:5;pointer-events:none;animation:dhShadowScale 7.5s ease-in-out infinite}
 @keyframes dhShadowScale{
   0%,100%{transform:translateX(-50%) scale(1);opacity:0.85}
   50%{transform:translateX(-50%) scale(0.9);opacity:0.5}
 }
 
 /* Animated Rings Situated Directly Beneath the Certificate */
-.dh-cert-rings-under{position:absolute;bottom:-10px;left:50%;transform:translate(-50%,35%) rotateX(76deg);width:740px;height:740px;pointer-events:none;z-index:1;display:flex;align-items:center;justify-content:center}
+.dh-cert-rings-under{position:absolute;bottom:-12px;left:50%;transform:translate(-50%,30%) rotateX(75deg);width:680px;height:680px;pointer-events:none;z-index:1;display:flex;align-items:center;justify-content:center}
+
+@media (max-width: 640px){
+  .dh-cert-3d-scene{max-width:100%}
+  .dh-cert-rings-under{width:360px;height:360px;transform:translate(-50%,32%) rotateX(74deg);bottom:-8px}
+}
 .dh-ring-disc{position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle,rgba(180,150,245,0.2) 0%,rgba(130,95,220,0.06) 55%,transparent 75%);filter:blur(14px);animation:dhDiscPulse 5s ease-in-out infinite alternate}
 @keyframes dhDiscPulse{
   0%{opacity:0.4;transform:scale(0.95)}
@@ -3672,14 +3677,7 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 <div><h3 id="chN"></h3><p id="chP"></p><div class="zk"><button class="zb" id="chTry" type="button" aria-expanded="false" aria-controls="chB">Try Challenge</button><button class="zb o" id="chNew" type="button">Another challenge</button><button class="zl" id="chBack" type="button" hidden>Back to today’s</button></div><div class="zbr" id="chB" hidden></div></div></div></section>
 <!-- 3 HACKATHONS & EVENTS (one unified section) -->
 <section class="zs" id="events"><h2 class="zh">Build. Compete. Win.</h2>
-<div class="hkc zv" id="hkc"><div class="hkh"><span class="xlg"><img class="xli" data-logo alt="">DEV HARBOUR</span><b>Hackathons</b></div><div id="hkl"></div><p class="zn hkn">New hackathons are added here as we announce them. Confirm dates and eligibility on the official page.</p></div><div class="dh-event-cert-banner zv">
-  <div class="dh-event-cert-info">
-    <div class="dh-event-cert-tag">ORCA CODERS: ORCATHON 2026 · OFFICIAL REGISTRY</div>
-    <h4>Participation Certificates Are Live!</h4>
-    <p>All 693 verified hackathon participants can now claim, download, and publicly verify their official Dev Harbour participation credential with authentic signatory and QR verification.</p>
-  </div>
-  <button type="button" class="zb" onclick="event.stopPropagation();openCertificateFromHero();">Claim Your Certificate →</button>
-</div>
+<div class="hkc zv" id="hkc"><div class="hkh"><span class="xlg"><img class="xli" data-logo alt="">DEV HARBOUR</span><b>Hackathons</b></div><div id="hkl"></div><p class="zn hkn">New hackathons are added here as we announce them. Confirm dates and eligibility on the official page.</p></div>
 <div id="zpst" hidden></div>
 <h3 class="zsub zv">More opportunities</h3><div id="zmore" data-st></div></section>
 <!-- 4 LEARNING PATHS -->
@@ -3701,13 +3699,13 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
   <p class="zn zv" style="margin:-30px 0 40px;font-size:15px"><b>Three co-founders.</b> One mission: a free place for students, developers and vibe coders to learn, build and grow.</p>
   <div class="fg">
 
-    <!-- 01 RUJULA SHARMA -->
+    <!-- 09 RUJULA SHARMA -->
     <article class="fc zv" style="--i:0">
       <div class="fc-identity">
         <div class="fc-id-top">
           <div class="fh">
             <span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span>
-            <small>01</small>
+            <small>09</small>
           </div>
           <h3>RUJULA SHARMA</h3>
           <span class="fro">Founder &amp; CEO @devharbour</span>
@@ -3740,13 +3738,13 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
       </div>
     </article>
 
-    <!-- 02 PARTH VIJAY GIDDE -->
+    <!-- 01 PARTH VIJAY GIDDE -->
     <article class="fc zv" style="--i:1">
       <div class="fc-identity">
         <div class="fc-id-top">
           <div class="fh">
             <span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span>
-            <small>02</small>
+            <small>01</small>
           </div>
           <h3>PARTH VIJAY GIDDE</h3>
           <span class="fro">Co-Founder @Dev Harbour │ Cybersecurity &amp; AI</span>
@@ -3780,13 +3778,13 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
       </div>
     </article>
 
-    <!-- 03 DHAIRYA SHARMA -->
+    <!-- 06 DHAIRYA SHARMA -->
     <article class="fc zv" style="--i:2">
       <div class="fc-identity">
         <div class="fc-id-top">
           <div class="fh">
             <span class="xlg"><img class="xli" alt="" data-logo>DEV HARBOUR</span>
-            <small>03</small>
+            <small>06</small>
           </div>
           <h3>DHAIRYA SHARMA</h3>
           <span class="fro">Founder, Chief Technology Officer @devharbour</span>
@@ -4518,6 +4516,8 @@ function show(id, fromUserAction){
     const introEl = document.getElementById('intro');
     if (introEl && !introEl.classList.contains('out')) {
       introEl.classList.add('out');
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
   }
   if (id === 'certificate' && typeof window.isCertificateUnlocked === 'function' && !window.isCertificateUnlocked()) {
@@ -4537,7 +4537,7 @@ function show(id, fromUserAction){
     });
   }
 }
-const H={tag:'Hackathon · 2026',name:'ORCA CODERS: ORCATHON 2026',desc:'Build in a team, ship in a weekend, and pitch to judges. Compete with top student developers across Web, AI & Security.',info:[['Status','Registrations Live on Unstop'],['Prize Pool','₹3,00,000+ & Mentorship'],['Format','Online & Offline (Hybrid)'],['Team size','1 – 4 Developers'],['Registration fee','Free'],['Eligibility','Students & Developers']]};
+const H={tag:'Hackathon · 2026',name:'ORCA CODERS: ORCATHON 2026',desc:'Build in a team, ship in a weekend, and pitch to judges. Compete with top student developers across Web, AI & Security.',info:[['Status','Closed'],['Prize Pool','₹3,00,000+ & Mentorship'],['Format','Online & Offline (Hybrid)'],['Team size','1 – 4 Developers'],['Registration fee','Free'],['Eligibility','Students & Developers']]};
 $('hT').textContent=H.tag;$('hN').textContent=H.name;$('hD').textContent=H.desc;$('hI').innerHTML=H.info.map(i=>`<div><dt>${i[0]}</dt><dd>${i[1]}</dd></div>`).join('');
 /* ===== REAL CURRICULUM COURSES & YOUTUBE / GOOGLE REFERENCES ===== */
 const P = [
@@ -7705,7 +7705,7 @@ $('chTry').onclick=()=>{const c=CH[ci],b=$('chB'),open=b.hidden;if(open)b.innerH
 chRender();
 /* hackathons */
 /* ADD NEW HACKATHONS HERE: copy one block, change the text, set status to 'Live now', 'Upcoming' or 'Ended' */
-const HACKS=[{name:'Orcathon 2K26',org:'Orca Coders · October 2026',status:'Live now',headline:'₹3 lakh+ worth of AI credits & prizes',desc:'Build with AI, turn an idea into a working project, and pitch it to judges.',link:LINKS.orcathon,poster:LINKS.poster,cta:'Register Here ↗'}];
+const HACKS=[{name:'Orcathon 2K26',org:'Orca Coders · October 2026',status:'Closed',headline:'₹3 lakh+ worth of AI credits & prizes',desc:'Build with AI, turn an idea into a working project, and pitch it to judges.',link:LINKS.orcathon,poster:LINKS.poster,cta:'Closed'}];
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
 $('hkl').innerHTML=HACKS.map(h=>`<article class="hk"><div class="hkp"><span>${h.name.split(' ').join('<br>')}</span>${h.poster?`<img src="${esc(h.poster)}" alt="${esc(h.name)} poster" decoding="async" onerror="this.remove()">`:''}</div><div class="hkb"><span class="hks${h.status=='Live now'?' live':''}">${h.status}</span><h3>${h.name}</h3><p class="zn">${h.org}</p><p class="zhl">${h.headline}</p><p class="zd">${h.desc}</p>${h.link?`<a class="zb" href="${esc(h.link)}" target="_blank" rel="noopener noreferrer">${h.cta||'Register ↗'}</a>`:`<a class="zb" href="#" data-t="Registration link not added yet">${h.cta||'Register ↗'}</a>`}</div></article>`).join('');
 const pi=document.createElement('img');/* PLACE YOUR POSTER AT: assets/orcathon-2k26-poster.jpg (next to this HTML file) */
@@ -8932,8 +8932,12 @@ function displayCertificateResult(credential) {
     history.pushState(null, '', '#verify/' + credential.credential_id);
   } catch (e) {}
 
+  // Ensure scrolling is completely free and active
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+
   // Scroll smoothly to certificate
-  stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function initCertificate3DTilt() {
