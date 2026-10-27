@@ -4508,14 +4508,17 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 <script>
 const $=id=>document.getElementById(id),toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)};
 const I=d=>`<svg class="i" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
-document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t)toast(t.dataset.t);const v=e.target.closest('[data-v]');if(v&&v.dataset.v&&!v.classList.contains('pill'))show(v.dataset.v)});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t)toast(t.dataset.t);const v=e.target.closest('[data-v]');if(v&&v.dataset.v&&!v.classList.contains('pill'))show(v.dataset.v, true)});
 /* data */
 const V=[['home','Dashboard','M3 11l9-8 9 8M5 10v10h14V10'],['learn','Learn','M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-6'],['practice','Practice','M8 18 2 12l6-6M16 6l6 6-6 6'],['timer','Timer','M12 6v6l4 2m6-2a10 10 0 1 1-20 0 10 10 0 0 1 20 0z'],['projects','Projects','M3 7h7l2 2h9v10H3z'],['hack','Hackathons','M7 4h10v5a5 5 0 0 1-10 0zM12 14v5M8 20h8'],['work','Workspace','M3 4h18v13H3zM8 21h8M12 17v4'],['comm','Community','M16 20v-2a4 4 0 0 0-8 0v2M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6'],['certificate','Certificate','M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z']];
 $('nav').innerHTML=V.map(v=>`<button class="nv" data-v="${v[0]}">${I(v[2])}${v[1]}</button>`).join('');
-function show(id){
-  const introEl = document.getElementById('intro');
-  if (introEl && !introEl.classList.contains('out')) {
-    introEl.classList.add('out');
+function show(id, fromUserAction){
+  // Only auto-dismiss hero intro if navigating away from default 'home' view or explicitly triggered by user action
+  if (id !== 'home' || fromUserAction) {
+    const introEl = document.getElementById('intro');
+    if (introEl && !introEl.classList.contains('out')) {
+      introEl.classList.add('out');
+    }
   }
   if (id === 'certificate' && typeof window.isCertificateUnlocked === 'function' && !window.isCertificateUnlocked()) {
     window.promptCertificatePasscode(function() {
