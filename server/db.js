@@ -1228,13 +1228,27 @@ function findParticipantByEmailAndName(email, name, eventSlug = 'orca-coders-orc
 
 function getIssuedCertificateById(credentialId) {
   if (!credentialId) return null;
-  return db.prepare(`
+  const clean = credentialId.trim().toUpperCase();
+  let cert = db.prepare(`
     SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
     FROM issued_certificates c
     LEFT JOIN event_participants p ON c.participant_id = p.id
     WHERE c.credential_id = ?
     LIMIT 1
-  `).get(credentialId.trim().toUpperCase()) || null;
+  `).get(clean);
+
+  if (!cert && clean.startsWith('ORC26-')) {
+    const num = clean.replace('ORC26-', '');
+    cert = db.prepare(`
+      SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+      FROM issued_certificates c
+      LEFT JOIN event_participants p ON c.participant_id = p.id
+      WHERE c.credential_id LIKE ?
+      LIMIT 1
+    `).get('%-' + num + '-%');
+  }
+
+  return cert || null;
 }
 
 function getIssuedCertificateByEmail(email, eventSlug = 'orca-coders-orcathon-2026') {
