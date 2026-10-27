@@ -524,6 +524,39 @@ function seedDatabase() {
       }
     }
   }
+
+  // 7. Seed / Issue Certificates for all Orcathon participants into issued_certificates table
+  const certsCount = db.prepare("SELECT COUNT(*) as count FROM issued_certificates WHERE event_slug = ?").get('orca-coders-orcathon-2026').count;
+  if (certsCount < 693) {
+    const participants = db.prepare("SELECT * FROM event_participants WHERE event_slug = ?").all('orca-coders-orcathon-2026');
+    const insertCertStmt = db.prepare(`
+      INSERT OR IGNORE INTO issued_certificates (
+        credential_id, event_slug, participant_id, recipient_name, recipient_email, recipient_organisation, certificate_type, issue_date, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    for (const p of participants) {
+      const num = String(p.id || '1').padStart(4, '0');
+      let hash = 0;
+      const str = (p.candidate_email || '').toLowerCase() + '-' + num;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      const hex = Math.abs(hash).toString(16).toUpperCase().padStart(4, '0').slice(-4);
+      const credId = 'DH-ORCA-2026-' + num + '-' + hex;
+      insertCertStmt.run(
+        credId,
+        p.event_slug,
+        p.id,
+        p.candidate_name,
+        p.candidate_email.trim().toLowerCase(),
+        p.candidate_organisation || '',
+        'Participation',
+        'October 25, 2026',
+        'Valid'
+      );
+    }
+  }
 }
 
 // Level computation from XP thresholds:
@@ -1237,15 +1270,18 @@ function getIssuedCertificateById(credentialId) {
     LIMIT 1
   `).get(clean);
 
-  if (!cert && clean.startsWith('ORC26-')) {
-    const num = clean.replace('ORC26-', '');
-    cert = db.prepare(`
-      SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
-      FROM issued_certificates c
-      LEFT JOIN event_participants p ON c.participant_id = p.id
-      WHERE c.credential_id LIKE ?
-      LIMIT 1
-    `).get('%-' + num + '-%');
+  if (!cert) {
+    const rawNum = clean.replace(/[^0-9]/g, '');
+    if (rawNum) {
+      const num = rawNum.length <= 4 ? rawNum.padStart(4, '0') : (rawNum.startsWith('26') ? rawNum.slice(2).padStart(4, '0') : rawNum.slice(-4));
+      cert = db.prepare(`
+        SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+        FROM issued_certificates c
+        LEFT JOIN event_participants p ON c.participant_id = p.id
+        WHERE c.credential_id LIKE ? OR c.credential_id LIKE ? OR c.participant_id = ?
+        LIMIT 1
+      `).get('%-' + num + '-%', '%-' + num, String(parseInt(num, 10)));
+    }
   }
 
   return cert || null;
