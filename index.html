@@ -8667,13 +8667,16 @@ function renderCertificateSvg(cred) {
     <text x="0" y="58" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#4d3290" letter-spacing="1" text-anchor="middle">DEV HARBOUR (ONLINE)</text>
   </g>
 
-  <!-- Center: QR Code & Unique Credential ID Badge -->
+  <!-- Center: QR Code & Unique Credential ID Badge with Distinctive Luxury Border -->
   <g id="qrCodeGroup">
-    <rect x="910" y="850" width="100" height="100" rx="10" fill="#ffffff" stroke="rgba(145, 115, 215, 0.7)" stroke-width="2" />
+    <!-- Outer Distinct Solid Royal Lavender Frame -->
+    <rect x="903" y="843" width="114" height="114" rx="12" fill="#ffffff" stroke="#482b8a" stroke-width="2.6" />
+    <!-- Inner Metallic Silver & Lilac Accent Border -->
+    <rect x="907" y="847" width="106" height="106" rx="9" fill="none" stroke="rgba(140, 110, 215, 0.45)" stroke-width="1.2" />
     ${qrRects}
-    <rect x="820" y="962" width="280" height="26" rx="13" fill="#1e0e42" stroke="rgba(255, 255, 255, 0.9)" stroke-width="1.4" />
-    <text x="960" y="980" font-family="JetBrains Mono, monospace" font-size="13" font-weight="800" fill="#ffffff" letter-spacing="1" text-anchor="middle">ID: #${credId}</text>
-    <text x="960" y="1006" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="800" letter-spacing="2" fill="#3a1f76" text-anchor="middle">SCAN TO VERIFY AUTHENTICITY</text>
+    <rect x="820" y="966" width="280" height="26" rx="13" fill="#1e0e42" stroke="rgba(255, 255, 255, 0.9)" stroke-width="1.4" />
+    <text x="960" y="984" font-family="JetBrains Mono, monospace" font-size="13" font-weight="800" fill="#ffffff" letter-spacing="1" text-anchor="middle">ID: #${credId}</text>
+    <text x="960" y="1010" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="800" letter-spacing="2" fill="#3a1f76" text-anchor="middle">SCAN TO VERIFY AUTHENTICITY</text>
   </g>
 
   <!-- Right: Signature (Natural Midnight Ink, RESTING RIGHT ON THE LINE!) -->
