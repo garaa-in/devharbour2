@@ -8,8 +8,10 @@ const router = express.Router();
 const {
   findParticipantByEmail,
   findParticipantByEmailAndName,
+  findParticipantByEmailOrName,
   getIssuedCertificateById,
   getIssuedCertificateByEmail,
+  getIssuedCertificateByEmailOrName,
   issueCertificate,
   countParticipants,
   countIssuedCertificates
@@ -17,27 +19,27 @@ const {
 
 /**
  * POST /api/certificates/claim
- * Validates participant registration against authoritative event registry and issues credential.
- * No OTP required as per official event design.
+ * Validates participant registration against authoritative event registry and issues/retrieves credential.
+ * Supports lookup by email, candidate name, or both.
  */
 router.post('/claim', (req, res) => {
   try {
-    const { email, name, eventSlug = 'orca-coders-orcathon-2026' } = req.body;
+    const { email, name, eventSlug = 'orca-coders-orcathon-2026' } = req.body || {};
 
-    if (!email || typeof email !== 'string' || !email.trim()) {
-      return res.status(400).json({ error: 'Please enter your registered email address.' });
-    }
-
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanEmail = (email || '').trim().toLowerCase();
     const cleanName = (name || '').trim();
 
-    // 1. Check if already claimed and issued
-    const existingCert = getIssuedCertificateByEmail(cleanEmail, eventSlug);
+    if (!cleanEmail && !cleanName) {
+      return res.status(400).json({ error: 'Please enter your registered email address or name.' });
+    }
+
+    // 1. Check if credential already exists in issued_certificates
+    const existingCert = getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
     if (existingCert) {
       return res.json({
         success: true,
         alreadyIssued: true,
-        message: 'Certificate already issued for this participant.',
+        message: 'Certificate successfully verified and retrieved!',
         credential: {
           credential_id: existingCert.credential_id,
           recipient_name: existingCert.recipient_name,
@@ -48,16 +50,17 @@ router.post('/claim', (req, res) => {
           certificate_type: existingCert.certificate_type,
           issue_date: existingCert.issue_date,
           status: existingCert.status,
+          team_name: existingCert.team_name || '',
           verification_url: `/certificate/verify/${existingCert.credential_id}`
         }
       });
     }
 
     // 2. Validate against participant database
-    const participant = findParticipantByEmail(cleanEmail, eventSlug);
+    const participant = findParticipantByEmailOrName(cleanEmail, cleanName, eventSlug);
     if (!participant) {
       return res.status(404).json({
-        error: `No registration found for "${cleanEmail}" in ORCATHON 2026. Please check for typos or use the email registered on Unstop.`
+        error: `No registration found for "${email || name}" in ORCATHON 2026. Please check for typos or enter the email or name registered on Unstop.`
       });
     }
 
@@ -67,15 +70,16 @@ router.post('/claim', (req, res) => {
       });
     }
 
-    // Determine canonical name: use clean registered name or provided name if provided
+    // Determine canonical name and email
     const recipientName = participant.candidate_name || cleanName;
     const recipientOrg = participant.candidate_organisation || '';
+    const recipientEmail = participant.candidate_email || cleanEmail;
 
     // 3. Issue new credential
     const newCert = issueCertificate({
       participantId: participant.id,
       recipientName,
-      recipientEmail: cleanEmail,
+      recipientEmail,
       recipientOrganisation: recipientOrg,
       eventSlug,
       certificateType: 'Participation',
@@ -90,12 +94,13 @@ router.post('/claim', (req, res) => {
         credential_id: newCert.credential_id,
         recipient_name: newCert.recipient_name,
         recipient_email: newCert.recipient_email,
-        recipient_organisation: newCert.recipient_organisation,
+        recipient_organisation: newCert.recipient_organisation || 'Participant',
         event_name: 'ORCA CODERS: ORCATHON 2026',
         event_slug: newCert.event_slug,
         certificate_type: newCert.certificate_type,
         issue_date: newCert.issue_date,
         status: newCert.status,
+        team_name: participant.team_name || '',
         verification_url: `/certificate/verify/${newCert.credential_id}`
       }
     });

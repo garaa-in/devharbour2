@@ -22,15 +22,28 @@ test('Certificates API Suite', async (t) => {
     assert.ok(body.totalParticipants >= 690);
   });
 
-  await t.test('POST /api/certificates/claim rejects unregistered participant email', async () => {
+  await t.test('POST /api/certificates/claim successfully issues certificate for registered participant by name alone', async () => {
     const res = await fetch(`${baseUrl}/api/certificates/claim`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'unknown.participant.999@test.com', name: 'Unknown' })
+      body: JSON.stringify({ name: 'Poornika R' })
     });
-    assert.equal(res.status, 404);
+    assert.ok(res.status === 200 || res.status === 201);
     const body = await res.json();
-    assert.ok(body.error.includes('No registration found'));
+    assert.equal(body.success, true);
+    assert.equal(body.credential.recipient_name, 'Poornika R');
+    assert.ok(body.credential.credential_id.startsWith('DH-ORCA-2026-'));
+  });
+
+  await t.test('POST /api/certificates/claim rejects empty input', async () => {
+    const res = await fetch(`${baseUrl}/api/certificates/claim`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: '', name: '' })
+    });
+    assert.equal(res.status, 400);
+    const body = await res.json();
+    assert.ok(body.error.includes('Please enter'));
   });
 
   await t.test('POST /api/certificates/claim successfully issues certificate for registered participant', async () => {

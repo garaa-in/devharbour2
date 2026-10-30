@@ -1247,16 +1247,108 @@ function findParticipantByEmail(email, eventSlug = 'orca-coders-orcathon-2026') 
 }
 
 function findParticipantByEmailAndName(email, name, eventSlug = 'orca-coders-orcathon-2026') {
-  const p = findParticipantByEmail(email, eventSlug);
-  if (!p) return null;
-  if (name && name.trim()) {
-    const cleanInputName = name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-    const cleanCandName = p.candidate_name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (cleanCandName === cleanInputName || cleanCandName.includes(cleanInputName) || cleanInputName.includes(cleanCandName)) {
-      return p;
+  return findParticipantByEmailOrName(email, name, eventSlug);
+}
+
+function findParticipantByEmailOrName(email, name, eventSlug = 'orca-coders-orcathon-2026') {
+  const eClean = (email || '').trim().toLowerCase();
+  const nClean = (name || '').trim().toLowerCase();
+
+  // 1. Direct Email Match
+  if (eClean) {
+    const p = db.prepare('SELECT * FROM event_participants WHERE LOWER(candidate_email) = ? AND event_slug = ? LIMIT 1').get(eClean, eventSlug);
+    if (p) return p;
+  }
+
+  // 2. Direct Name Match
+  if (nClean) {
+    const p = db.prepare('SELECT * FROM event_participants WHERE LOWER(candidate_name) = ? AND event_slug = ? LIMIT 1').get(nClean, eventSlug);
+    if (p) return p;
+  }
+
+  // 3. Inverted Match (if user entered name in email field or email in name field)
+  if (eClean && !eClean.includes('@')) {
+    const p = db.prepare('SELECT * FROM event_participants WHERE LOWER(candidate_name) = ? AND event_slug = ? LIMIT 1').get(eClean, eventSlug);
+    if (p) return p;
+  }
+  if (nClean && nClean.includes('@')) {
+    const p = db.prepare('SELECT * FROM event_participants WHERE LOWER(candidate_email) = ? AND event_slug = ? LIMIT 1').get(nClean, eventSlug);
+    if (p) return p;
+  }
+
+  // 4. Substring / Token matching
+  const testStr = (nClean || (eClean && !eClean.includes('@') ? eClean : '')).trim();
+  if (testStr && testStr.length >= 3) {
+    const p = db.prepare('SELECT * FROM event_participants WHERE LOWER(candidate_name) LIKE ? AND event_slug = ? LIMIT 1').get('%' + testStr + '%', eventSlug);
+    if (p) return p;
+
+    const words = testStr.split(/\s+/).filter(w => w.length >= 3);
+    if (words.length > 1) {
+      let query = 'SELECT * FROM event_participants WHERE event_slug = ?';
+      const params = [eventSlug];
+      for (const w of words) {
+        query += ' AND LOWER(candidate_name) LIKE ?';
+        params.push('%' + w + '%');
+      }
+      query += ' LIMIT 1';
+      const matched = db.prepare(query).get(...params);
+      if (matched) return matched;
     }
   }
-  return p;
+
+  return null;
+}
+
+function getIssuedCertificateByEmailOrName(email, name, eventSlug = 'orca-coders-orcathon-2026') {
+  const eClean = (email || '').trim().toLowerCase();
+  const nClean = (name || '').trim().toLowerCase();
+
+  if (eClean) {
+    const c = db.prepare(`
+      SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+      FROM issued_certificates c
+      LEFT JOIN event_participants p ON c.participant_id = p.id
+      WHERE LOWER(c.recipient_email) = ? AND c.event_slug = ?
+      LIMIT 1
+    `).get(eClean, eventSlug);
+    if (c) return c;
+  }
+
+  if (nClean) {
+    const c = db.prepare(`
+      SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+      FROM issued_certificates c
+      LEFT JOIN event_participants p ON c.participant_id = p.id
+      WHERE LOWER(c.recipient_name) = ? AND c.event_slug = ?
+      LIMIT 1
+    `).get(nClean, eventSlug);
+    if (c) return c;
+  }
+
+  if (eClean && !eClean.includes('@')) {
+    const c = db.prepare(`
+      SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+      FROM issued_certificates c
+      LEFT JOIN event_participants p ON c.participant_id = p.id
+      WHERE LOWER(c.recipient_name) = ? AND c.event_slug = ?
+      LIMIT 1
+    `).get(eClean, eventSlug);
+    if (c) return c;
+  }
+
+  const testStr = (nClean || (eClean && !eClean.includes('@') ? eClean : '')).trim();
+  if (testStr && testStr.length >= 3) {
+    const c = db.prepare(`
+      SELECT c.*, p.candidate_mobile, p.candidate_location, p.team_name, p.team_id
+      FROM issued_certificates c
+      LEFT JOIN event_participants p ON c.participant_id = p.id
+      WHERE LOWER(c.recipient_name) LIKE ? AND c.event_slug = ?
+      LIMIT 1
+    `).get('%' + testStr + '%', eventSlug);
+    if (c) return c;
+  }
+
+  return null;
 }
 
 function getIssuedCertificateById(credentialId) {
@@ -1412,8 +1504,10 @@ module.exports = {
   deleteWorkspaceBookmark,
   findParticipantByEmail,
   findParticipantByEmailAndName,
+  findParticipantByEmailOrName,
   getIssuedCertificateById,
   getIssuedCertificateByEmail,
+  getIssuedCertificateByEmailOrName,
   issueCertificate,
   insertParticipant,
   countParticipants,
