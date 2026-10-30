@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
 const app = require('../server/index');
+const { getPgPool } = require('../server/supabase');
 
 test('Certificates API Suite', async (t) => {
   const server = http.createServer(app);
@@ -9,8 +10,12 @@ test('Certificates API Suite', async (t) => {
   const port = server.address().port;
   const baseUrl = `http://127.0.0.1:${port}`;
 
-  t.after(() => {
+  t.after(async () => {
     server.close();
+    const pool = getPgPool();
+    if (pool) {
+      await pool.end();
+    }
   });
 
   await t.test('GET /api/certificates/stats returns registry status and participant count', async () => {

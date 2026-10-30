@@ -1,6 +1,7 @@
 /**
  * Dev Harbour — Official Certificate Issuance & Verification Routes
  * High-integrity credential registry for ORCA CODERS: ORCATHON 2026.
+ * Powered by Supabase PostgreSQL with automatic SQLite fallback.
  */
 
 const express = require('express');
@@ -17,12 +18,20 @@ const {
   countIssuedCertificates
 } = require('../db');
 
+const {
+  isSupabaseConfigured,
+  findParticipantByEmailOrNameSupabase,
+  getIssuedCertificateByEmailOrNameSupabase,
+  getIssuedCertificateByIdSupabase,
+  issueCertificateSupabase
+} = require('../supabase');
+
 /**
  * POST /api/certificates/claim
  * Validates participant registration against authoritative event registry and issues/retrieves credential.
- * Supports lookup by email, candidate name, or both.
+ * Supports lookup by email, candidate name, or both via Supabase PostgreSQL or local SQLite.
  */
-router.post('/claim', (req, res) => {
+router.post('/claim', async (req, res) => {
   try {
     const { email, name, eventSlug = 'orca-coders-orcathon-2026' } = req.body || {};
 
@@ -33,12 +42,24 @@ router.post('/claim', (req, res) => {
       return res.status(400).json({ error: 'Please enter your registered email address or name.' });
     }
 
-    // 1. Check if credential already exists in issued_certificates
-    const existingCert = getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
+    // 1. Check if credential already exists
+    let existingCert = null;
+    if (isSupabaseConfigured()) {
+      try {
+        existingCert = await getIssuedCertificateByEmailOrNameSupabase(cleanEmail, cleanName, eventSlug);
+      } catch (err) {
+        console.warn('[SUPABASE CLAIM CHECK WARNING]:', err.message);
+      }
+    }
+    if (!existingCert) {
+      existingCert = getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
+    }
+
     if (existingCert) {
       return res.json({
         success: true,
         alreadyIssued: true,
+        database: isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local SQLite',
         message: 'Certificate successfully verified and retrieved!',
         credential: {
           credential_id: existingCert.credential_id,
@@ -57,14 +78,25 @@ router.post('/claim', (req, res) => {
     }
 
     // 2. Validate against participant database
-    const participant = findParticipantByEmailOrName(cleanEmail, cleanName, eventSlug);
+    let participant = null;
+    if (isSupabaseConfigured()) {
+      try {
+        participant = await findParticipantByEmailOrNameSupabase(cleanEmail, cleanName, eventSlug);
+      } catch (err) {
+        console.warn('[SUPABASE PARTICIPANT SEARCH WARNING]:', err.message);
+      }
+    }
+    if (!participant) {
+      participant = findParticipantByEmailOrName(cleanEmail, cleanName, eventSlug);
+    }
+
     if (!participant) {
       return res.status(404).json({
         error: `No registration found for "${email || name}" in ORCATHON 2026. Please check for typos or enter the email or name registered on Unstop.`
       });
     }
 
-    if (!participant.is_eligible) {
+    if (participant.is_eligible === false) {
       return res.status(403).json({
         error: 'This registration is marked as ineligible for certificate issuance.'
       });
@@ -76,19 +108,38 @@ router.post('/claim', (req, res) => {
     const recipientEmail = participant.candidate_email || cleanEmail;
 
     // 3. Issue new credential
-    const newCert = issueCertificate({
-      participantId: participant.id,
-      recipientName,
-      recipientEmail,
-      recipientOrganisation: recipientOrg,
-      eventSlug,
-      certificateType: 'Participation',
-      issueDate: 'October 25, 2026'
-    });
+    let newCert = null;
+    if (isSupabaseConfigured()) {
+      try {
+        newCert = await issueCertificateSupabase({
+          participantId: participant.id,
+          recipientName,
+          recipientEmail,
+          recipientOrganisation: recipientOrg,
+          eventSlug,
+          certificateType: 'Participation',
+          issueDate: 'October 25, 2026'
+        });
+      } catch (err) {
+        console.warn('[SUPABASE ISSUE WARNING]:', err.message);
+      }
+    }
+    if (!newCert) {
+      newCert = issueCertificate({
+        participantId: participant.id,
+        recipientName,
+        recipientEmail,
+        recipientOrganisation: recipientOrg,
+        eventSlug,
+        certificateType: 'Participation',
+        issueDate: 'October 25, 2026'
+      });
+    }
 
     return res.status(201).json({
       success: true,
       alreadyIssued: false,
+      database: isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local SQLite',
       message: 'Certificate successfully verified and issued!',
       credential: {
         credential_id: newCert.credential_id,
@@ -114,14 +165,25 @@ router.post('/claim', (req, res) => {
  * GET /api/certificates/verify/:credentialId
  * Public verification endpoint to authenticate any issued credential.
  */
-router.get('/verify/:credentialId', (req, res) => {
+router.get('/verify/:credentialId', async (req, res) => {
   try {
     const { credentialId } = req.params;
     if (!credentialId || !credentialId.trim()) {
       return res.status(400).json({ error: 'Valid credential ID is required.' });
     }
 
-    const cert = getIssuedCertificateById(credentialId.trim());
+    let cert = null;
+    if (isSupabaseConfigured()) {
+      try {
+        cert = await getIssuedCertificateByIdSupabase(credentialId.trim());
+      } catch (err) {
+        console.warn('[SUPABASE VERIFY WARNING]:', err.message);
+      }
+    }
+    if (!cert) {
+      cert = getIssuedCertificateById(credentialId.trim());
+    }
+
     if (!cert) {
       return res.status(404).json({
         verified: false,
@@ -131,6 +193,7 @@ router.get('/verify/:credentialId', (req, res) => {
 
     return res.json({
       verified: true,
+      database: isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local SQLite',
       credential: {
         credential_id: cert.credential_id,
         recipient_name: cert.recipient_name,
@@ -162,7 +225,8 @@ router.get('/stats', (req, res) => {
       event: 'ORCA CODERS: ORCATHON 2026',
       totalParticipants,
       totalIssued,
-      status: 'Active'
+      status: 'Active',
+      database: isSupabaseConfigured() ? 'Supabase PostgreSQL (Connected)' : 'Local SQLite'
     });
   } catch (err) {
     return res.status(500).json({ error: 'Failed to retrieve stats.' });

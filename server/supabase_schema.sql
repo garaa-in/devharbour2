@@ -296,6 +296,7 @@ CREATE TABLE IF NOT EXISTS event_participants (
     candidate_organisation TEXT DEFAULT '',
     is_eligible BOOLEAN DEFAULT TRUE,
     registered_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_event_participant UNIQUE (event_slug, candidate_email)
 );
 
