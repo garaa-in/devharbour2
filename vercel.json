@@ -4,8 +4,17 @@
     { "source": "/api/certificates/claim", "destination": "/api/certificates/claim.js" },
     { "source": "/api/certificates/stats", "destination": "/api/certificates/stats.js" },
     { "source": "/api/certificates/verify/:id", "destination": "/api/certificates/verify/[id].js" },
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
     { "source": "/certificate/verify/(.*)", "destination": "/index.html" },
     { "source": "/certificate", "destination": "/index.html" },
-    { "source": "/verify/(.*)", "destination": "/index.html" }
+    { "source": "/verify/(.*)", "destination": "/index.html" },
+    { "source": "/courses(.*)", "destination": "/index.html" },
+    { "source": "/challenges(.*)", "destination": "/index.html" },
+    { "source": "/projects(.*)", "destination": "/index.html" },
+    { "source": "/leaderboard(.*)", "destination": "/index.html" },
+    { "source": "/workspace(.*)", "destination": "/index.html" },
+    { "source": "/profile(.*)", "destination": "/index.html" },
+    { "source": "/settings(.*)", "destination": "/index.html" },
+    { "source": "/claim(.*)", "destination": "/index.html" }
   ]
 }

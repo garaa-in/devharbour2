@@ -6,3 +6,7 @@ node_modules/
 .DS_Store
 dist/
 coverage/
+
+# Deliverable zip archives and generated duplicates
+output/*.zip
+output/*.pdf
