@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="google-adsense-account" content="ca-pub-8063985890472880">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HJSFWLF5VT"></script>
 <script>
@@ -3655,10 +3656,40 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 .xa-cert-cta{background:linear-gradient(135deg,#7c5cff,#5a3bd9)!important;color:#fff!important;border:1px solid rgba(255,255,255,0.3)!important;font-weight:700!important;box-shadow:0 2px 10px rgba(124,92,255,0.35);transition:transform .15s,box-shadow .15s;padding:8px 18px!important;border-radius:99px!important;cursor:pointer;font-size:13px!important;display:inline-flex!important;align-items:center!important}
 .xa-cert-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,92,255,0.5)}
 
+
+/* Dev Harbour Anti-Spy & Anti-Tamper Security Modal */
+.dh-sec-overlay{position:fixed;inset:0;z-index:99999999;background:rgba(8,4,18,0.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .2s ease}
+.dh-sec-overlay.active{display:flex;opacity:1}
+.dh-sec-card{position:relative;background:radial-gradient(circle at 50% 0%,rgba(255,59,92,0.18) 0%,rgba(16,8,30,0.98) 75%);border:1px solid rgba(255,59,92,0.55);box-shadow:0 0 50px rgba(255,59,92,0.35),0 20px 60px rgba(0,0,0,0.8);border-radius:22px;max-width:480px;width:100%;padding:34px 28px;text-align:center;color:#fff;animation:dhSecPop .3s cubic-bezier(0.16,1,0.3,1)}
+@keyframes dhSecPop{0%{transform:scale(0.88);opacity:0}100%{transform:scale(1);opacity:1}}
+.dh-sec-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:99px;background:rgba(255,59,92,0.15);border:1px solid rgba(255,59,92,0.45);color:#ff4d6d;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:18px}
+.dh-sec-icon{width:70px;height:70px;margin:0 auto 16px;border-radius:50%;background:radial-gradient(circle,rgba(255,59,92,0.3) 0%,rgba(255,59,92,0.06) 70%);border:2px solid #ff3b5c;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 30px rgba(255,59,92,0.45)}
+.dh-sec-title{font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.02em;margin:0 0 10px;line-height:1.25}
+.dh-sec-desc{font-size:14px;color:rgba(240,236,255,0.85);line-height:1.6;margin:0 0 20px}
+.dh-sec-desc b{color:#ff4d6d;font-weight:700}
+.dh-sec-meta{font-size:11px;color:rgba(255,255,255,0.45);font-family:monospace;margin-bottom:24px;letter-spacing:0.04em;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08)}
+.dh-sec-btn{background:linear-gradient(135deg,#ff3b5c,#e60039);color:#fff;border:none;border-radius:12px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(255,59,92,0.4);transition:transform .15s,box-shadow .15s}
+.dh-sec-btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(255,59,92,0.6)}
+
 </style>
-  <script src="/data/orcathon_participants.js"></script>
 </head>
 <body>
+
+<!-- Anti-Spying & Security Warning Modal -->
+<div id="dh-security-modal" class="dh-sec-overlay" role="dialog" aria-modal="true" aria-labelledby="dh-sec-title">
+  <div class="dh-sec-card">
+    <div class="dh-sec-badge">⚠️ Security Restriction</div>
+    <div class="dh-sec-icon">🛡️</div>
+    <h3 class="dh-sec-title" id="dh-sec-title">Access Restricted</h3>
+    <p class="dh-sec-desc">
+      <b>Copying or spying in the web is not allowed!</b><br>
+      Viewing page source (Ctrl+U), developer inspection, and unauthorized code extraction on Dev Harbour are strictly prohibited.
+    </p>
+    <div class="dh-sec-meta" id="dh-sec-trigger-meta">Triggered: Ctrl+U Attempt Intercepted</div>
+    <button type="button" class="dh-sec-btn" onclick="closeSecurityModal()">Understood</button>
+  </div>
+</div>
+
 <div id="intro"><div class="spb" id="spb"></div><div class="hz" id="hz" role="button" tabindex="0" aria-label="Enter Dev Harbour"><div class="xf">
 <div class="xn"><span class="xlg"><img class="xli" alt="" src="data:image/webp;base64,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">DEV HARBOUR</span><span class="xm"><span data-sc="#featured" role="link" tabindex="0">Ecosystem</span><span data-sc="#learning" role="link" tabindex="0">Learn</span><span data-sc="#challenge" role="link" tabindex="0">Build</span><span data-sc="#events" role="link" tabindex="0">Orca X Code</span></span><span class="xa" id="hero-auth-actions"><button type="button" class="xa-btn xa-login" id="hero-login-btn" onclick="event.stopPropagation();if(window.openAuthModal)window.openAuthModal('login');" data-auth="login" aria-label="Log in">Log in</button></span></div>
 <svg class="xc" viewBox="0 0 150 90" aria-hidden="true"><path d="M0 0Q6 40 50 45Q6 50 0 90Z" opacity=".55"/><path d="M50 0Q56 40 100 45Q56 50 50 90Z" opacity=".75"/><path d="M100 0Q106 40 150 45Q106 50 100 90Z"/></svg>
@@ -8750,52 +8781,6 @@ function renderCertificateSvg(cred) {
 </svg>`;
 }
 
-async function resolveOrcathonParticipant(emailInput, nameInput) {
-  const eClean = (emailInput || '').trim().toLowerCase();
-  const nClean = (nameInput || '').trim().toLowerCase();
-
-  if (!window.__DH_PARTICIPANTS__ || !window.__DH_PARTICIPANTS__.length) {
-    try {
-      const res = await fetch('/data/orcathon_participants.json');
-      if (res.ok) {
-        window.__DH_PARTICIPANTS__ = await res.json();
-      }
-    } catch(err) {}
-  }
-
-  const list = window.__DH_PARTICIPANTS__ || [];
-  if (!list.length) return null;
-
-  if (eClean) {
-    const m = list.find(p => p.email && p.email.toLowerCase() === eClean);
-    if (m) return m;
-  }
-  if (nClean) {
-    const m = list.find(p => p.email && p.email.toLowerCase() === nClean);
-    if (m) return m;
-  }
-  if (nClean) {
-    const m = list.find(p => p.name && p.name.toLowerCase() === nClean);
-    if (m) return m;
-  }
-  if (eClean) {
-    const m = list.find(p => p.name && p.name.toLowerCase() === eClean);
-    if (m) return m;
-  }
-
-  const queryStr = (nClean || eClean).replace(/[^\w\s]/g, ' ').trim();
-  const words = queryStr.split(/\s+/).filter(w => w.length >= 3);
-  if (words.length > 0) {
-    const m = list.find(p => {
-      const cand = (p.name || '').toLowerCase();
-      return words.every(w => cand.includes(w));
-    });
-    if (m) return m;
-  }
-
-  return null;
-}
-
 async function handleClaimSubmit(e) {
   if (e && e.preventDefault) e.preventDefault();
   const emailInput = document.getElementById('claim-email');
@@ -8828,6 +8813,7 @@ async function handleClaimSubmit(e) {
 
   try {
     let credential = null;
+    let errorMessage = 'No registration found for "' + (email || name) + '" in Orcathon 2026. Please check for typos or enter the email or name you registered with on Unstop.';
 
     try {
       const res = await fetch('/api/certificates/claim', {
@@ -8835,37 +8821,19 @@ async function handleClaimSubmit(e) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name, eventSlug: 'orca-coders-orcathon-2026' })
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.credential) {
-          credential = data.credential;
-        }
+      const data = await res.json();
+      if (res.ok && data && data.credential) {
+        credential = data.credential;
+      } else if (data && data.error) {
+        errorMessage = data.error;
       }
-    } catch (apiErr) {}
-
-    if (!credential) {
-      const matched = await resolveOrcathonParticipant(email, name);
-      if (matched) {
-        const cid = generateUniqueCredentialId(matched.id, matched.email);
-        credential = {
-          credential_id: cid,
-          recipient_name: matched.name,
-          recipient_email: matched.email,
-          recipient_organisation: matched.org || 'Participant',
-          event_name: 'ORCA CODERS: ORCATHON 2026',
-          event_slug: 'orca-coders-orcathon-2026',
-          certificate_type: 'Participation',
-          issue_date: 'October 25, 2026',
-          status: 'Verified & Authentic',
-          team_name: matched.team || '',
-          verification_url: '/certificate/verify/' + cid
-        };
-      }
+    } catch (apiErr) {
+      console.warn('Backend claim error:', apiErr);
     }
 
     if (!credential) {
       if (msgEl) {
-        msgEl.textContent = 'No registration found for "' + (email || name) + '" in Orcathon 2026. Please check for typos or enter the email used on Unstop.';
+        msgEl.textContent = errorMessage;
         msgEl.className = 'dh-cert-msg err';
       }
       return;
@@ -9122,38 +9090,6 @@ async function loadCertificateVerification(credentialId) {
     }
   } catch(e) {}
 
-  // 3. Try Client-side registry
-  if (!window.__DH_PARTICIPANTS__ || !window.__DH_PARTICIPANTS__.length) {
-    try {
-      const res = await fetch('/data/orcathon_participants.json');
-      if (res.ok) window.__DH_PARTICIPANTS__ = await res.json();
-    } catch(e) {}
-  }
-
-  const list = window.__DH_PARTICIPANTS__ || [];
-  const idMatch = cid.match(/DH-ORCA-2026-(\d+)/i) || cid.match(/(\d+)/);
-  if (idMatch) {
-    const numericId = String(parseInt(idMatch[1], 10));
-    const matched = list.find(p => String(p.id) === numericId);
-    if (matched) {
-      const cred = {
-        credential_id: 'DH-ORCA-2026-' + String(matched.id).padStart(4, '0'),
-        recipient_name: matched.name,
-        recipient_email: matched.email,
-        recipient_organisation: matched.org || 'Participant',
-        event_name: 'ORCA CODERS: ORCATHON 2026',
-        event_slug: 'orca-coders-orcathon-2026',
-        certificate_type: 'Participation',
-        issue_date: 'October 25, 2026',
-        status: 'Verified & Authentic',
-        team_name: matched.team || '',
-        verification_url: '/certificate/verify/' + ('DH-ORCA-2026-' + String(matched.id).padStart(4, '0'))
-      };
-      displayCertificateResult(cred);
-      return;
-    }
-  }
-
   toast('Credential not found in registry: ' + cid);
 }
 
@@ -9203,5 +9139,82 @@ async function loadCertificateVerification(credentialId) {
     </form>
   </div>
 </div>
+
+<script>
+// --- Anti-Spying & Source Protection System ---
+function showSecurityWarning(actionName) {
+  const modal = document.getElementById('dh-security-modal');
+  const meta = document.getElementById('dh-sec-trigger-meta');
+  if (meta && actionName) {
+    meta.textContent = 'Triggered: ' + actionName + ' Attempt Intercepted';
+  }
+  if (modal) {
+    modal.classList.add('active');
+  }
+  if (typeof window.toast === 'function') {
+    window.toast('⚠️ Copying or spying in the web is not allowed!');
+  }
+  try {
+    if (navigator.vibrate) navigator.vibrate(200);
+  } catch(e) {}
+}
+
+function closeSecurityModal() {
+  const modal = document.getElementById('dh-security-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+window.addEventListener('keydown', function(e) {
+  const isCtrl = e.ctrlKey || e.metaKey;
+  const key = (e.key || '').toLowerCase();
+  const code = e.keyCode || e.which;
+
+  // 1. Intercept Ctrl+U / Cmd+U (View Source)
+  if (isCtrl && key === 'u') {
+    e.preventDefault();
+    e.stopPropagation();
+    showSecurityWarning('Ctrl+U (View Source)');
+    return false;
+  }
+
+  // 2. Intercept DevTools shortcuts: Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, F12
+  if (code === 123 || key === 'f12') {
+    e.preventDefault();
+    e.stopPropagation();
+    showSecurityWarning('F12 (DevTools)');
+    return false;
+  }
+  if (isCtrl && e.shiftKey && (key === 'i' || key === 'j' || key === 'c')) {
+    e.preventDefault();
+    e.stopPropagation();
+    showSecurityWarning('DevTools Shortcut');
+    return false;
+  }
+
+  // 3. Intercept Ctrl+S / Cmd+S (Save Page)
+  if (isCtrl && key === 's') {
+    e.preventDefault();
+    e.stopPropagation();
+    showSecurityWarning('Ctrl+S (Save Page)');
+    return false;
+  }
+
+  // Close modal on Escape
+  if (key === 'escape') {
+    closeSecurityModal();
+  }
+}, true);
+
+// Intercept right-click inspection (except inside input / textarea)
+window.addEventListener('contextmenu', function(e) {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+    return;
+  }
+  e.preventDefault();
+  showSecurityWarning('Right Click (Context Menu)');
+  return false;
+}, true);
+</script>
+
 </body>
 </html>

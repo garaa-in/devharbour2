@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
+    "build": "node -e \"console.log('Build complete')\"",
+    "build:vercel": "node -e \"console.log('Build complete')\"",
     "test": "node --test tests/api.test.js"
   },
   "repository": {
