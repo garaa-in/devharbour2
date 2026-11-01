@@ -6,28 +6,36 @@ const { executeCode } = require('../execution');
 const eventBus = require('../events');
 
 // GET /api/challenges
-router.get('/', (req, res) => {
-  const { category, difficulty, search } = req.query;
-  const challenges = db.getChallenges(category, difficulty, search);
-  res.json({ challenges });
+router.get('/', async (req, res) => {
+  try {
+    const { category, difficulty, search } = req.query;
+    const challenges = await db.getChallenges(category, difficulty, search);
+    res.json({ challenges: challenges || [] });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve challenges.' });
+  }
 });
 
 // GET /api/challenges/:id
-router.get('/:id', (req, res) => {
-  const challenge = db.getChallengeById(req.params.id, false); // hidden tests kept private
-  if (!challenge) {
-    return res.status(404).json({ error: 'Coding challenge not found.' });
-  }
+router.get('/:id', async (req, res) => {
+  try {
+    const challenge = await db.getChallengeById(req.params.id, false); // hidden tests kept private
+    if (!challenge) {
+      return res.status(404).json({ error: 'Coding challenge not found.' });
+    }
 
-  let userSubmissions = [];
-  if (req.user) {
-    userSubmissions = db.getUserSubmissions(req.user.id, challenge.id);
-  }
+    let userSubmissions = [];
+    if (req.user) {
+      userSubmissions = await db.getUserSubmissions(req.user.id, challenge.id);
+    }
 
-  res.json({
-    challenge,
-    submissions: userSubmissions
-  });
+    res.json({
+      challenge,
+      submissions: userSubmissions || []
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load challenge details.' });
+  }
 });
 
 // POST /api/challenges/:id/submit
@@ -39,7 +47,7 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
   }
 
   // Load challenge with secret tests for evaluation
-  const challenge = db.getChallengeById(req.params.id, true);
+  const challenge = await db.getChallengeById(req.params.id, true);
   if (!challenge) {
     return res.status(404).json({ error: 'Challenge not found.' });
   }
@@ -54,7 +62,7 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
     );
 
     // Record submission and award XP if qualifying pass
-    const submissionResult = db.recordSubmission({
+    const submissionResult = await db.recordSubmission({
       userId: req.user.id,
       challengeId: challenge.id,
       code,
@@ -73,8 +81,8 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
         challengeId: challenge.id,
         challengeTitle: challenge.title,
         executionTimeMs: result.executionTimeMs,
-        xpEarned: submissionResult.xp ? submissionResult.xp.awarded : 0,
-        message: `${req.user.username} solved "${challenge.title}" (+${submissionResult.xp ? submissionResult.xp.awarded : 0} XP)`
+        xpEarned: submissionResult && submissionResult.xp ? submissionResult.xp.awarded : 0,
+        message: `${req.user.username} solved "${challenge.title}" (+${submissionResult && submissionResult.xp ? submissionResult.xp.awarded : 0} XP)`
       });
     }
 
@@ -87,7 +95,7 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
       sampleResults: result.sampleResults, // Public tests results only
       logs: result.logs,
       errorMessage: result.errorMessage,
-      xp: submissionResult.xp
+      xp: submissionResult ? submissionResult.xp : null
     });
   } catch (err) {
     res.status(500).json({ error: 'Execution service error: ' + err.message });
@@ -95,9 +103,13 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
 });
 
 // GET /api/challenges/:id/submissions
-router.get('/:id/submissions', requireAuth, (req, res) => {
-  const submissions = db.getUserSubmissions(req.user.id, req.params.id);
-  res.json({ submissions });
+router.get('/:id/submissions', requireAuth, async (req, res) => {
+  try {
+    const submissions = await db.getUserSubmissions(req.user.id, req.params.id);
+    res.json({ submissions: submissions || [] });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve user submissions.' });
+  }
 });
 
 module.exports = router;

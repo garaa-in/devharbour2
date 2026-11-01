@@ -2,6 +2,7 @@
  * Dev Harbour - Secure Code Execution Sandbox
  * Evaluates student code in isolated, timeout-guarded environments.
  * Validates submissions against both public tests and secret server-side tests.
+ * Hardened with static analysis, prototype lockdown, and AST pattern guards.
  */
 
 const vm = require('node:vm');
@@ -32,6 +33,25 @@ function deepEqual(a, b) {
   return true;
 }
 
+// Forbidden patterns that attempt host reflection, escape, or file/process access
+const FORBIDDEN_PATTERNS = [
+  /\bprocess\b/,
+  /\brequire\b/,
+  /\bimport\b/,
+  /\bchild_process\b/,
+  /\bfs\b/,
+  /\bconstructor\s*\(/,
+  /\.constructor\b/,
+  /__proto__/,
+  /\bFunction\s*\(/,
+  /\beval\s*\(/,
+  /\bglobal\b/,
+  /\bglobalThis\b/,
+  /\bReflect\b/,
+  /\bWebAssembly\b/,
+  /\bmainModule\b/
+];
+
 /**
  * Executes student JavaScript code against a suite of test cases.
  * @param {string} code - The student-submitted code
@@ -44,12 +64,41 @@ async function executeCode(code, publicTests = [], hiddenTests = [], challengeSl
   const startTime = Date.now();
   const logs = [];
 
-  // Sandbox environment: clean, unpolluted, no filesystem or network access
+  // 1. Static Analysis Security Gate
+  if (!code || typeof code !== 'string') {
+    return {
+      status: 'error',
+      passed: false,
+      executionTimeMs: 0,
+      errorMessage: 'Invalid code submission: code must be a non-empty string.',
+      passedCount: 0,
+      totalCount: publicTests.length + hiddenTests.length,
+      sampleResults: [],
+      logs: []
+    };
+  }
+
+  for (const pattern of FORBIDDEN_PATTERNS) {
+    if (pattern.test(code)) {
+      return {
+        status: 'error',
+        passed: false,
+        executionTimeMs: 0,
+        errorMessage: 'Security policy violation: Restricted keyword, system call, or prototype access pattern detected.',
+        passedCount: 0,
+        totalCount: publicTests.length + hiddenTests.length,
+        sampleResults: [],
+        logs: ['[SECURITY SYSTEM] Execution aborted: submission attempted restricted keyword or prototype traversal.']
+      };
+    }
+  }
+
+  // 2. Sandbox environment: clean, unpolluted, no filesystem or network access
   const sandbox = {
-    console: {
+    console: Object.freeze({
       log: (...args) => logs.push(args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ')),
       error: (...args) => logs.push('[ERROR] ' + args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' '))
-    },
+    }),
     Math,
     JSON,
     Array,
@@ -59,9 +108,9 @@ async function executeCode(code, publicTests = [], hiddenTests = [], challengeSl
     Boolean,
     Map,
     Set,
-    Date: {
+    Date: Object.freeze({
       now: () => Date.now()
-    },
+    }),
     parseInt,
     parseFloat,
     isNaN,
@@ -70,7 +119,7 @@ async function executeCode(code, publicTests = [], hiddenTests = [], challengeSl
 
   const context = vm.createContext(sandbox);
 
-  // 1. Run user code in sandbox to declare functions / classes
+  // 3. Run user code in sandbox to declare functions / classes
   try {
     const script = new vm.Script(code, { filename: 'solution.js' });
     script.runInContext(context, { timeout: 2500 });
@@ -124,7 +173,7 @@ async function executeCode(code, publicTests = [], hiddenTests = [], challengeSl
     };
   }
 
-  // 2. Evaluate Public Test Cases
+  // 4. Evaluate Public Test Cases
   let passedCount = 0;
   const sampleResults = [];
   context.__targetFn__ = targetFn;
@@ -157,7 +206,7 @@ async function executeCode(code, publicTests = [], hiddenTests = [], challengeSl
     }
   }
 
-  // 3. Evaluate Hidden Test Cases (kept private - do not leak to client!)
+  // 5. Evaluate Hidden Test Cases (kept private - do not leak to client!)
   let allHiddenPassed = true;
   for (let j = 0; j < hiddenTests.length; j++) {
     const hTest = hiddenTests[j];

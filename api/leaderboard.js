@@ -1,21 +1,29 @@
 // Vercel Serverless Function: GET /api/leaderboard
 // Authoritative leaderboard directly connected to Supabase PostgreSQL with seed fallback
+// Strictly uses environment variables; no hardcoded credentials.
 
 const { Pool } = require('pg');
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://REDACTED';
+function cleanConnectionString(url) {
+  if (!url) return '';
+  return url.replace(/&?sslrootcert=[^&]+/g, '').replace(/&?sslmode=[^&]+/g, '');
+}
+
+const DATABASE_URL = cleanConnectionString(process.env.DATABASE_URL || process.env.DIRECT_URL || '');
 
 let pgPool = null;
-try {
-  pgPool = new Pool({
-    connectionString: DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-    max: 5,
-    idleTimeoutMillis: 15000,
-    connectionTimeoutMillis: 5000
-  });
-} catch (e) {
-  console.warn('Could not initialize PostgreSQL pool in api/leaderboard:', e.message);
+if (DATABASE_URL) {
+  try {
+    pgPool = new Pool({
+      connectionString: DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+      max: 5,
+      idleTimeoutMillis: 15000,
+      connectionTimeoutMillis: 10000
+    });
+  } catch (e) {
+    console.warn('Could not initialize PostgreSQL pool in api/leaderboard:', e.message);
+  }
 }
 
 const SEED_DEVELOPERS = [
@@ -47,9 +55,9 @@ module.exports = async (req, res) => {
     try {
       let dateFilter = '';
       if (timeframe === 'Weekly') {
-        dateFilter = "AND l.created_at >= NOW() - INTERVAL '7 days'";
+        dateFilter = "AND l.created_at::timestamp >= NOW() - INTERVAL '7 days'";
       } else if (timeframe === 'Monthly') {
-        dateFilter = "AND l.created_at >= NOW() - INTERVAL '30 days'";
+        dateFilter = "AND l.created_at::timestamp >= NOW() - INTERVAL '30 days'";
       }
 
       const query = `

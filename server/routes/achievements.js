@@ -4,24 +4,33 @@ const db = require('../db');
 const { requireAuth } = require('../auth');
 
 // GET /api/achievements (Catalog of all platform achievements)
-router.get('/', (req, res) => {
-  const achievements = db.db.prepare('SELECT * FROM achievements ORDER BY xp_bonus ASC').all();
-  let userUnlocked = [];
-  if (req.user) {
-    userUnlocked = db.getUserAchievements(req.user.id).map(a => a.id);
+router.get('/', async (req, res) => {
+  try {
+    const achievements = await db.getAchievements();
+    let userUnlocked = [];
+    if (req.user) {
+      const userAchievements = await db.getUserAchievements(req.user.id);
+      userUnlocked = (userAchievements || []).map(a => a.id);
+    }
+    res.json({
+      achievements: (achievements || []).map(a => ({
+        ...a,
+        unlocked: userUnlocked.includes(a.id)
+      }))
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve achievements.' });
   }
-  res.json({
-    achievements: achievements.map(a => ({
-      ...a,
-      unlocked: userUnlocked.includes(a.id)
-    }))
-  });
 });
 
 // GET /api/achievements/user (Current user's unlocked badges)
-router.get('/user', requireAuth, (req, res) => {
-  const achievements = db.getUserAchievements(req.user.id);
-  res.json({ achievements });
+router.get('/user', requireAuth, async (req, res) => {
+  try {
+    const achievements = await db.getUserAchievements(req.user.id);
+    res.json({ achievements: achievements || [] });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve user achievements.' });
+  }
 });
 
 module.exports = router;

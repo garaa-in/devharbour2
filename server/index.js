@@ -22,6 +22,16 @@ const eventBus = require('./events');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Hardened Security Headers Middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+
 // Security & Parsing Middlewares
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
@@ -74,6 +84,14 @@ app.get('/api/health', (req, res) => {
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
 
+// Public config endpoint — exposes only non-secret environment values needed by the browser
+app.get('/api/config/public', (req, res) => {
+  res.json({
+    googleClientId: process.env.GOOGLE_CLIENT_ID || null,
+    appBaseUrl: process.env.APP_BASE_URL || null
+  });
+});
+
 // SPA Fallback
 app.use((req, res, next) => {
   if (req.method !== 'GET') return next();
@@ -83,11 +101,12 @@ app.use((req, res, next) => {
   res.sendFile(path.join(publicDir, 'index.html'));
 });
 
-// Central Error Handler
+// Central Error Handler — Sanitizes error responses in production to prevent leaking sensitive internals
 app.use((err, req, res, next) => {
-  console.error('[SERVER ERROR]:', err);
+  console.error('[SERVER ERROR]:', err.message || err);
+  const isProd = process.env.NODE_ENV === 'production';
   res.status(err.status || 500).json({
-    error: err.message || 'An unexpected server error occurred.'
+    error: isProd ? 'An internal error occurred. Please try again later.' : (err.message || 'An unexpected server error occurred.')
   });
 });
 

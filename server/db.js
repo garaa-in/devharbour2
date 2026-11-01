@@ -322,6 +322,20 @@ function initSchema() {
     );
     CREATE INDEX IF NOT EXISTS idx_certs_cred ON issued_certificates(credential_id);
     CREATE INDEX IF NOT EXISTS idx_certs_email ON issued_certificates(recipient_email, event_slug);
+    CREATE TABLE IF NOT EXISTS email_verifications (
+      user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      email TEXT NOT NULL,
+      challenge_id TEXT,
+      code_hash TEXT,
+      expires_at TEXT,
+      sent_at TEXT,
+      attempts INTEGER DEFAULT 0,
+      state TEXT DEFAULT 'pending',
+      verified_at TEXT,
+      hour_started_at TEXT,
+      send_count INTEGER DEFAULT 1
+    );
+    CREATE INDEX IF NOT EXISTS idx_email_verif_email ON email_verifications(email);
   `);
 }
 
@@ -785,11 +799,20 @@ function getCourses(category = null) {
 }
 
 function getCourseById(courseId) {
-  return db.prepare('SELECT * FROM courses WHERE id = ?').get(courseId);
+  if (!db) return null;
+  let row = db.prepare('SELECT * FROM courses WHERE id = ?').get(courseId);
+  if (!row) {
+    row = db.prepare('SELECT * FROM courses WHERE id LIKE ? OR category LIKE ? LIMIT 1').get(`%${courseId}%`, `%${courseId}%`);
+  }
+  return row || null;
 }
 
 function getCourseLessons(courseId) {
-  return db.prepare('SELECT id, course_id, title, slug, reading_time_mins, order_index FROM lessons WHERE course_id = ? ORDER BY order_index ASC').all(courseId);
+  if (!db) return [];
+  let actualCourseId = courseId;
+  const course = getCourseById(courseId);
+  if (course) actualCourseId = course.id;
+  return db.prepare('SELECT id, course_id, title, slug, reading_time_mins, order_index FROM lessons WHERE course_id = ? ORDER BY order_index ASC').all(actualCourseId);
 }
 
 function getLessonById(lessonId) {
@@ -1473,67 +1496,191 @@ function countIssuedCertificates(eventSlug = 'orca-coders-orcathon-2026') {
   return row ? row.count : 0;
 }
 
-module.exports = {
-  db,
+
+function getAchievements() {
+  if (!db) return [];
+  return db.prepare('SELECT * FROM achievements ORDER BY xp_bonus ASC').all();
+}
+
+function getUserSummaryStats(userId) {
+  if (!db) return { completedLessons: 0, solvedChallenges: 0, submittedProjects: 0 };
+  const completedLessons = db.prepare("SELECT COUNT(*) as count FROM lesson_progress WHERE user_id = ? AND status = 'completed'").get(userId)?.count || 0;
+  const solvedChallenges = db.prepare("SELECT COUNT(DISTINCT challenge_id) as count FROM submissions WHERE user_id = ? AND status = 'passed'").get(userId)?.count || 0;
+  const submittedProjects = db.prepare('SELECT COUNT(*) as count FROM projects WHERE user_id = ?').get(userId)?.count || 0;
+  return { completedLessons, solvedChallenges, submittedProjects };
+}
+
+function getUserProjects(userId, status = 'approved') {
+  if (!db) return [];
+  const rows = db.prepare('SELECT id, title, description, category, tech_stack_json, repo_url, demo_url, votes_count FROM projects WHERE user_id = ? AND status = ?').all(userId, status);
+  return rows.map(p => ({
+    ...p,
+    techStack: JSON.parse(p.tech_stack_json || '[]')
+  }));
+}
+
+function updateUserPassword(userId, passwordHash, salt) {
+  if (!db) return false;
+  db.prepare("UPDATE users SET password_hash = ?, salt = ?, updated_at = datetime('now') WHERE id = ?").run(passwordHash, salt, userId);
+  db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userId);
+  return true;
+}
+
+function getEmailVerification(userId) {
+  if (!db) return null;
+  return db.prepare('SELECT * FROM email_verifications WHERE user_id = ?').get(userId) || null;
+}
+
+function saveEmailVerification({ userId, email, challengeId, codeHash, expiresAt }) {
+  if (!db) return null;
+  const existing = getEmailVerification(userId);
+  const now = new Date().toISOString();
+  let sendCount = 1;
+  let hourStartedAt = now;
+  if (existing && existing.hour_started_at) {
+    const elapsed = Date.now() - new Date(existing.hour_started_at).getTime();
+    if (elapsed < 3600000) {
+      sendCount = (existing.send_count || 0) + 1;
+      hourStartedAt = existing.hour_started_at;
+    }
+  }
+  db.prepare(`
+    INSERT INTO email_verifications (user_id, email, challenge_id, code_hash, expires_at, sent_at, attempts, state, hour_started_at, send_count)
+    VALUES (?, ?, ?, ?, ?, ?, 0, 'pending', ?, ?)
+    ON CONFLICT(user_id) DO UPDATE SET
+      email = excluded.email,
+      challenge_id = excluded.challenge_id,
+      code_hash = excluded.code_hash,
+      expires_at = excluded.expires_at,
+      sent_at = excluded.sent_at,
+      attempts = 0,
+      state = 'pending',
+      hour_started_at = excluded.hour_started_at,
+      send_count = excluded.send_count
+  `).run(userId, email.toLowerCase().trim(), challengeId || crypto.randomUUID(), codeHash, expiresAt, now, hourStartedAt, sendCount);
+  return getEmailVerification(userId);
+}
+
+function markEmailVerified(userId) {
+  if (!db) return null;
+  const now = new Date().toISOString();
+  db.prepare(`
+    UPDATE email_verifications
+    SET state = 'verified', verified_at = ?, code_hash = NULL, expires_at = NULL
+    WHERE user_id = ?
+  `).run(now, userId);
+  return getEmailVerification(userId);
+}
+
+function recordOtpAttempt(userId, success) {
+  if (!db) return null;
+  if (success) return markEmailVerified(userId);
+  const existing = getEmailVerification(userId);
+  const attempts = (existing ? existing.attempts : 0) + 1;
+  const state = attempts >= 5 ? 'locked' : 'pending';
+  db.prepare('UPDATE email_verifications SET attempts = ?, state = ? WHERE user_id = ?').run(attempts, state, userId);
+  return getEmailVerification(userId);
+}
+
+
+let pgDb = null;
+try {
+  pgDb = require('./db-postgres');
+} catch (e) {
+  console.warn('[DB] PostgreSQL adapter could not be loaded:', e.message);
+  pgDb = null;
+}
+
+function isPostgres() {
+  return process.env.DB_PROVIDER === 'postgresql' && process.env.NODE_ENV !== 'test' && pgDb !== null;
+}
+
+function delegate(fnName, sqliteFn) {
+  return function(...args) {
+    if (isPostgres()) {
+      if (typeof pgDb[fnName] === 'function') {
+        return pgDb[fnName](...args);
+      }
+      throw new Error(`Method ${fnName} not implemented in PostgreSQL adapter`);
+    }
+    return sqliteFn(...args);
+  };
+}
+
+const exported = {
+  get db() { return db; },
+  get pool() { return pgDb ? pgDb.pool : null; },
+  isPostgres,
   calculateLevel,
-  getUserById,
-  getUserByEmail,
-  getUserByUsername,
-  createUser,
-  updateUserProfile,
-  updateStreak,
-  createSession,
-  getSession,
-  deleteSession,
-  awardXp,
-  getUserTotalXp,
-  getXpHistory,
-  getLeaderboard,
-  getCourses,
-  getCourseById,
-  getCourseLessons,
-  getLessonById,
-  getLessonProgress,
-  saveLessonProgress,
-  getChallenges,
-  getChallengeById,
-  recordSubmission,
-  getUserSubmissions,
-  getProjects,
-  getProjectById,
-  createProject,
-  updateProject,
-  deleteProject,
-  incrementProjectVotes,
-  toggleProjectVote,
-  toggleProjectBookmark,
-  getUserInteractions,
-  checkAndUnlockAchievements,
-  getUserAchievements,
-  getUserSettings,
-  saveUserSettings,
-  getWorkspaceData,
-  createWorkspaceTask,
-  updateWorkspaceTask,
-  deleteWorkspaceTask,
-  createWorkspaceNote,
-  updateWorkspaceNote,
-  deleteWorkspaceNote,
-  createWorkspaceAssignment,
-  updateWorkspaceAssignment,
-  deleteWorkspaceAssignment,
-  saveWorkspaceSnippet,
-  deleteWorkspaceSnippet,
-  addWorkspaceBookmark,
-  deleteWorkspaceBookmark,
-  findParticipantByEmail,
-  findParticipantByEmailAndName,
-  findParticipantByEmailOrName,
-  getIssuedCertificateById,
-  getIssuedCertificateByEmail,
-  getIssuedCertificateByEmailOrName,
-  issueCertificate,
-  insertParticipant,
-  countParticipants,
-  countIssuedCertificates
+  getUserById: delegate('getUserById', getUserById),
+  getUserByEmail: delegate('getUserByEmail', getUserByEmail),
+  getUserByUsername: delegate('getUserByUsername', getUserByUsername),
+  createUser: delegate('createUser', createUser),
+  updateUserProfile: delegate('updateUserProfile', updateUserProfile),
+  updateStreak: delegate('updateStreak', updateStreak),
+  createSession: delegate('createSession', createSession),
+  getSession: delegate('getSession', getSession),
+  deleteSession: delegate('deleteSession', deleteSession),
+  awardXp: delegate('awardXp', awardXp),
+  getUserTotalXp: delegate('getUserTotalXp', getUserTotalXp),
+  getXpHistory: delegate('getXpHistory', getXpHistory),
+  getLeaderboard: delegate('getLeaderboard', getLeaderboard),
+  getCourses: delegate('getCourses', getCourses),
+  getCourseById: delegate('getCourseById', getCourseById),
+  getCourseLessons: delegate('getCourseLessons', getCourseLessons),
+  getLessonById: delegate('getLessonById', getLessonById),
+  getLessonProgress: delegate('getLessonProgress', getLessonProgress),
+  saveLessonProgress: delegate('saveLessonProgress', saveLessonProgress),
+  getChallenges: delegate('getChallenges', getChallenges),
+  getChallengeById: delegate('getChallengeById', getChallengeById),
+  recordSubmission: delegate('recordSubmission', recordSubmission),
+  getUserSubmissions: delegate('getUserSubmissions', getUserSubmissions),
+  getProjects: delegate('getProjects', getProjects),
+  getProjectById: delegate('getProjectById', getProjectById),
+  createProject: delegate('createProject', createProject),
+  updateProject: delegate('updateProject', updateProject),
+  deleteProject: delegate('deleteProject', deleteProject),
+  incrementProjectVotes: delegate('incrementProjectVotes', incrementProjectVotes),
+  toggleProjectVote: delegate('toggleProjectVote', toggleProjectVote),
+  toggleProjectBookmark: delegate('toggleProjectBookmark', toggleProjectBookmark),
+  getUserInteractions: delegate('getUserInteractions', getUserInteractions),
+  getAchievements: delegate('getAchievements', getAchievements),
+  checkAndUnlockAchievements: delegate('checkAndUnlockAchievements', checkAndUnlockAchievements),
+  getUserAchievements: delegate('getUserAchievements', getUserAchievements),
+  getUserSettings: delegate('getUserSettings', getUserSettings),
+  saveUserSettings: delegate('saveUserSettings', saveUserSettings),
+  getWorkspaceData: delegate('getWorkspaceData', getWorkspaceData),
+  createWorkspaceTask: delegate('createWorkspaceTask', createWorkspaceTask),
+  updateWorkspaceTask: delegate('updateWorkspaceTask', updateWorkspaceTask),
+  deleteWorkspaceTask: delegate('deleteWorkspaceTask', deleteWorkspaceTask),
+  createWorkspaceNote: delegate('createWorkspaceNote', createWorkspaceNote),
+  updateWorkspaceNote: delegate('updateWorkspaceNote', updateWorkspaceNote),
+  deleteWorkspaceNote: delegate('deleteWorkspaceNote', deleteWorkspaceNote),
+  createWorkspaceAssignment: delegate('createWorkspaceAssignment', createWorkspaceAssignment),
+  updateWorkspaceAssignment: delegate('updateWorkspaceAssignment', updateWorkspaceAssignment),
+  deleteWorkspaceAssignment: delegate('deleteWorkspaceAssignment', deleteWorkspaceAssignment),
+  saveWorkspaceSnippet: delegate('saveWorkspaceSnippet', saveWorkspaceSnippet),
+  deleteWorkspaceSnippet: delegate('deleteWorkspaceSnippet', deleteWorkspaceSnippet),
+  addWorkspaceBookmark: delegate('addWorkspaceBookmark', addWorkspaceBookmark),
+  deleteWorkspaceBookmark: delegate('deleteWorkspaceBookmark', deleteWorkspaceBookmark),
+  findParticipantByEmail: delegate('findParticipantByEmail', findParticipantByEmail),
+  findParticipantByEmailAndName: delegate('findParticipantByEmailAndName', findParticipantByEmailAndName),
+  findParticipantByEmailOrName: delegate('findParticipantByEmailOrName', findParticipantByEmailOrName),
+  getIssuedCertificateById: delegate('getIssuedCertificateById', getIssuedCertificateById),
+  getIssuedCertificateByEmail: delegate('getIssuedCertificateByEmail', getIssuedCertificateByEmail),
+  getIssuedCertificateByEmailOrName: delegate('getIssuedCertificateByEmailOrName', getIssuedCertificateByEmailOrName),
+  issueCertificate: delegate('issueCertificate', issueCertificate),
+  insertParticipant: delegate('insertParticipant', insertParticipant),
+  countParticipants: delegate('countParticipants', countParticipants),
+  countIssuedCertificates: delegate('countIssuedCertificates', countIssuedCertificates),
+  getEmailVerification: delegate('getEmailVerification', getEmailVerification),
+  saveEmailVerification: delegate('saveEmailVerification', saveEmailVerification),
+  markEmailVerified: delegate('markEmailVerified', markEmailVerified),
+  recordOtpAttempt: delegate('recordOtpAttempt', recordOtpAttempt),
+  updateUserPassword: delegate('updateUserPassword', updateUserPassword),
+  getUserSummaryStats: delegate('getUserSummaryStats', getUserSummaryStats),
+  getUserProjects: delegate('getUserProjects', getUserProjects)
 };
+
+module.exports = exported;
+

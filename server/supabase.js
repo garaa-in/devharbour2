@@ -1,21 +1,41 @@
 /**
  * Dev Harbour — Official Supabase Database Client & Integration Layer
  * Provides enterprise-grade PostgreSQL persistence with automatic fallback.
+ * Strictly uses environment variables; no hardcoded credentials.
  */
 
 require('dotenv').config();
-const { createClient } = require('@supabase/supabase-js');
+let createClient = null;
+try {
+  createClient = require('@supabase/supabase-js').createClient;
+} catch {
+  createClient = null;
+}
 const { Pool } = require('pg');
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://bvymtkqpgdzofqrcyxqu.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '';
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://REDACTED';
+
+// Clean connection string: strip Windows-specific cert path and conflicting sslmode
+function cleanConnectionString(url) {
+  if (!url) return '';
+  return url.replace(/&?sslrootcert=[^&]+/g, '').replace(/&?sslmode=[^&]+/g, '');
+}
+
+const DATABASE_URL = cleanConnectionString(process.env.DATABASE_URL || process.env.DIRECT_URL || '');
 
 let supabaseClient = null;
 let pgPool = null;
 
-// Initialize PostgreSQL direct pool for Supabase
-if (DATABASE_URL) {
+// Share canonical PostgreSQL direct pool from db-postgres to avoid duplicate pool contention
+try {
+  const dbPostgres = require('./db-postgres');
+  pgPool = dbPostgres.pool;
+} catch {
+  pgPool = null;
+}
+
+if (!pgPool && DATABASE_URL) {
   try {
     pgPool = new Pool({
       connectionString: DATABASE_URL,
@@ -24,14 +44,15 @@ if (DATABASE_URL) {
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000
     });
-    console.log('⚡ Connected to Supabase PostgreSQL pool:', DATABASE_URL.split('@')[1] || 'connected');
+    const hostInfo = DATABASE_URL.split('@')[1] ? DATABASE_URL.split('@')[1].split('/')[0] : 'connected';
+    console.log('⚡ Connected to Supabase PostgreSQL pool:', hostInfo);
   } catch (err) {
     console.warn('⚠️ Could not initialize PostgreSQL pool:', err.message);
   }
 }
 
 // Initialize Supabase JS Client if key is provided
-if (SUPABASE_URL && SUPABASE_KEY) {
+if (createClient && SUPABASE_URL && SUPABASE_KEY) {
   try {
     supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY, {
       auth: {

@@ -1,12 +1,40 @@
+# Dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & Secret files
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# Local SQLite databases & journals
+*.sqlite
 *.sqlite-wal
 *.sqlite-shm
+*.sqlite-journal
+devharbour.sqlite
+
+# System and logs
 *.log
 .DS_Store
+Thumbs.db
+.local/
+scratch/
+
+# Private Keys & TLS certificates (except root trust bundles)
+security/certs/*.key
+security/certs/*.pem
+
+# Production build & coverage
 dist/
+build/
 coverage/
 
-# Deliverable zip archives and generated duplicates
+# Deliverables & generated archives
 output/*.zip
 output/*.pdf

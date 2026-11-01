@@ -31,7 +31,7 @@ function validatePassword(password) {
 }
 
 // Authentication Middleware: populates req.user if valid token provided
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
   let token = null;
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -43,18 +43,22 @@ function authMiddleware(req, res, next) {
   }
 
   if (token) {
-    const session = db.getSession(token);
-    if (session) {
-      const user = db.getUserById(session.user_id);
-      if (user) {
-        const totalXp = db.getUserTotalXp(user.id);
-        req.user = {
-          ...user,
-          totalXp,
-          level: db.calculateLevel(totalXp)
-        };
-        req.token = token;
+    try {
+      const session = await db.getSession(token);
+      if (session) {
+        const user = await db.getUserById(session.user_id);
+        if (user) {
+          const totalXp = await db.getUserTotalXp(user.id);
+          req.user = {
+            ...user,
+            totalXp: totalXp || 0,
+            level: db.calculateLevel(totalXp || 0)
+          };
+          req.token = token;
+        }
       }
+    } catch (err) {
+      console.error('authMiddleware error:', err.message);
     }
   }
 

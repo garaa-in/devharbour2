@@ -2,6 +2,40 @@
 <html lang="en">
 <head>
 <meta name="google-adsense-account" content="ca-pub-8063985890472880">
+<meta name="google-gis-client-id" id="google-gis-client-id" content="">
+<script>
+(function(){
+  // Lazily load Google GIS SDK when auth modal opens.
+  // Set the meta content or window.__GOOGLE_CLIENT_ID to your OAuth Client ID.
+  // Fetch non-secret public config from server to get GOOGLE_CLIENT_ID
+  fetch('/api/config/public').then(function(r){return r.json()}).then(function(cfg){
+    if (cfg && cfg.googleClientId) {
+      var el = document.getElementById('google-gis-client-id');
+      if (el) el.content = cfg.googleClientId;
+      window.__GOOGLE_CLIENT_ID = cfg.googleClientId;
+    }
+  }).catch(function(){});
+
+  window.__loadGIS = function() {
+    var cid = (document.getElementById('google-gis-client-id')||{}).content || window.__GOOGLE_CLIENT_ID || '';
+    if (!cid || window.__gisLoading || (window.google && window.google.accounts)) return;
+    window.__gisLoading = true;
+    var s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true; s.defer = true;
+    s.onload = function() {
+      if (!window.google || !cid) return;
+      google.accounts.id.initialize({
+        client_id: cid,
+        callback: window.onGoogleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+    };
+    document.head.appendChild(s);
+  };
+})();
+</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HJSFWLF5VT"></script>
 <script>
@@ -9641,23 +9675,31 @@ async function submitPracticeCode() {
 }
 window.submitPracticeCode = submitPracticeCode;
 
-/* ===== GOOGLE AUTHENTICATION ===== */
+/* ===== GOOGLE AUTHENTICATION (Cryptographically Secured) ===== */
 window.handleGoogleAuth = async function() {
-  let email = prompt('Enter your Google Email (or test Gmail account):', (currentUser && currentUser.email) || '');
-  if (!email || !email.trim()) return;
-  email = email.trim().toLowerCase();
-  const name = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  // Trigger lazy GIS load on first click
+  if (typeof window.__loadGIS === 'function') window.__loadGIS();
+  // Small delay to allow GIS to initialise if just loaded
+  await new Promise(r => setTimeout(r, 300));
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    google.accounts.id.prompt();
+    return;
+  }
+  toast('Google Sign-In requires GOOGLE_CLIENT_ID to be configured. Please sign in with email and password.');
+};
 
+window.onGoogleCredentialResponse = async function(response) {
+  if (!response || !response.credential) return;
   try {
     const res = await fetch('/api/auth/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, googleId: 'g_' + Date.now() })
+      body: JSON.stringify({ credential: response.credential })
     });
     const data = await res.json();
     if (res.ok && data.user) {
       currentUser = data.user;
-      const t = data.token || ('local-token-' + data.user.id);
+      const t = data.token;
       localStorage.setItem('dh_token', t);
       localStorage.setItem('dh-auth-token', t);
       localStorage.setItem('dh_current_user', JSON.stringify(data.user));
@@ -9670,19 +9712,8 @@ window.handleGoogleAuth = async function() {
     } else {
       toast(data.error || 'Google sign-in failed.');
     }
-  } catch(err) {
-    const user = LocalDB.signup({ fullName: name, username: email.split('@')[0], email, password: 'google_oauth_user' });
-    currentUser = user;
-    const t = 'local-token-' + user.id;
-    localStorage.setItem('dh_token', t);
-    localStorage.setItem('dh-auth-token', t);
-    localStorage.setItem('dh_current_user', JSON.stringify(user));
-    localStorage.setItem('dh-current-user', JSON.stringify(user));
-    localStorage.setItem('dh_last_username', user.username || '');
-    updateAuthUI(user);
-    closeAuthModal();
-    toast(`Signed in with Google as ${user.fullName}!`);
-    if (typeof rl === 'function') rl(currentLeaderboardTimeframe);
+  } catch (err) {
+    toast('Network error during Google sign-in.');
   }
 };
 

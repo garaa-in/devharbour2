@@ -6,6 +6,10 @@
 
 const express = require('express');
 const router = express.Router();
+function isCloudDb() {
+  return isSupabaseConfigured() && process.env.NODE_ENV !== 'test';
+}
+
 const {
   findParticipantByEmail,
   findParticipantByEmailAndName,
@@ -44,7 +48,7 @@ router.post('/claim', async (req, res) => {
 
     // 1. Check if credential already exists
     let existingCert = null;
-    if (isSupabaseConfigured()) {
+    if (isCloudDb()) {
       try {
         existingCert = await getIssuedCertificateByEmailOrNameSupabase(cleanEmail, cleanName, eventSlug);
       } catch (err) {
@@ -52,14 +56,14 @@ router.post('/claim', async (req, res) => {
       }
     }
     if (!existingCert) {
-      existingCert = getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
+      existingCert = await getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
     }
 
     if (existingCert) {
       return res.json({
         success: true,
         alreadyIssued: true,
-        database: isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local SQLite',
+        database: isCloudDb() ? 'Supabase PostgreSQL' : 'Local SQLite',
         message: 'Certificate successfully verified and retrieved!',
         credential: {
           credential_id: existingCert.credential_id,
@@ -79,7 +83,7 @@ router.post('/claim', async (req, res) => {
 
     // 2. Validate against participant database
     let participant = null;
-    if (isSupabaseConfigured()) {
+    if (isCloudDb()) {
       try {
         participant = await findParticipantByEmailOrNameSupabase(cleanEmail, cleanName, eventSlug);
       } catch (err) {
@@ -87,7 +91,7 @@ router.post('/claim', async (req, res) => {
       }
     }
     if (!participant) {
-      participant = findParticipantByEmailOrName(cleanEmail, cleanName, eventSlug);
+      participant = await findParticipantByEmailOrName(cleanEmail, cleanName, eventSlug);
     }
 
     if (!participant) {
@@ -109,7 +113,7 @@ router.post('/claim', async (req, res) => {
 
     // 3. Issue new credential
     let newCert = null;
-    if (isSupabaseConfigured()) {
+    if (isCloudDb()) {
       try {
         newCert = await issueCertificateSupabase({
           participantId: participant.id,
@@ -125,7 +129,7 @@ router.post('/claim', async (req, res) => {
       }
     }
     if (!newCert) {
-      newCert = issueCertificate({
+      newCert = await issueCertificate({
         participantId: participant.id,
         recipientName,
         recipientEmail,
@@ -139,7 +143,7 @@ router.post('/claim', async (req, res) => {
     return res.status(201).json({
       success: true,
       alreadyIssued: false,
-      database: isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local SQLite',
+      database: isCloudDb() ? 'Supabase PostgreSQL' : 'Local SQLite',
       message: 'Certificate successfully verified and issued!',
       credential: {
         credential_id: newCert.credential_id,
@@ -173,7 +177,7 @@ router.get('/verify/:credentialId', async (req, res) => {
     }
 
     let cert = null;
-    if (isSupabaseConfigured()) {
+    if (isCloudDb()) {
       try {
         cert = await getIssuedCertificateByIdSupabase(credentialId.trim());
       } catch (err) {
@@ -181,7 +185,7 @@ router.get('/verify/:credentialId', async (req, res) => {
       }
     }
     if (!cert) {
-      cert = getIssuedCertificateById(credentialId.trim());
+      cert = await getIssuedCertificateById(credentialId.trim());
     }
 
     if (!cert) {
@@ -193,7 +197,7 @@ router.get('/verify/:credentialId', async (req, res) => {
 
     return res.json({
       verified: true,
-      database: isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local SQLite',
+      database: isCloudDb() ? 'Supabase PostgreSQL' : 'Local SQLite',
       credential: {
         credential_id: cert.credential_id,
         recipient_name: cert.recipient_name,
@@ -217,16 +221,16 @@ router.get('/verify/:credentialId', async (req, res) => {
  * GET /api/certificates/stats
  * Public registry overview statistics
  */
-router.get('/stats', (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
-    const totalParticipants = countParticipants('orca-coders-orcathon-2026');
-    const totalIssued = countIssuedCertificates('orca-coders-orcathon-2026');
+    const totalParticipants = await countParticipants('orca-coders-orcathon-2026');
+    const totalIssued = await countIssuedCertificates('orca-coders-orcathon-2026');
     return res.json({
       event: 'ORCA CODERS: ORCATHON 2026',
       totalParticipants,
       totalIssued,
       status: 'Active',
-      database: isSupabaseConfigured() ? 'Supabase PostgreSQL (Connected)' : 'Local SQLite'
+      database: isCloudDb() ? 'Supabase PostgreSQL (Connected)' : 'Local SQLite'
     });
   } catch (err) {
     return res.status(500).json({ error: 'Failed to retrieve stats.' });
