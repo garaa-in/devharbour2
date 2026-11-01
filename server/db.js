@@ -3,23 +3,47 @@
  * Uses Node v24 built-in DatabaseSync for persistent relational storage.
  */
 
-const { DatabaseSync } = require('node:sqlite');
+let DatabaseSync = null;
+try {
+  DatabaseSync = require('node:sqlite').DatabaseSync;
+} catch (e) {
+  DatabaseSync = null;
+}
 const path = require('node:path');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 
-const DB_PATH = process.env.DB_PATH || path.join(__dirname, '..', 'devharbour.sqlite');
+let DB_PATH = process.env.DB_PATH;
+if (!DB_PATH) {
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    DB_PATH = path.join('/tmp', 'devharbour.sqlite');
+  } else {
+    DB_PATH = path.join(__dirname, '..', 'devharbour.sqlite');
+  }
+}
 
-const db = new DatabaseSync(DB_PATH);
-
-// Enable WAL mode & foreign keys for optimal concurrency and integrity
-db.exec(`
-  PRAGMA journal_mode = WAL;
-  PRAGMA foreign_keys = ON;
-`);
+let db = null;
+if (DatabaseSync) {
+  try {
+    db = new DatabaseSync(DB_PATH);
+    db.exec(`
+      PRAGMA journal_mode = WAL;
+      PRAGMA foreign_keys = ON;
+    `);
+  } catch (err) {
+    console.warn('SQLite file open failed, falling back to memory database:', err.message);
+    try {
+      db = new DatabaseSync(':memory:');
+      db.exec(`PRAGMA foreign_keys = ON;`);
+    } catch (memErr) {
+      db = null;
+    }
+  }
+}
 
 // Initialize Database Schema
 function initSchema() {
+  if (!db) return;
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,

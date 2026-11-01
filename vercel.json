@@ -1,6 +1,7 @@
 {
   "version": 2,
   "rewrites": [
+    { "source": "/api/leaderboard", "destination": "/api/leaderboard.js" },
     { "source": "/api/certificates/claim", "destination": "/api/certificates/claim.js" },
     { "source": "/api/certificates/stats", "destination": "/api/certificates/stats.js" },
     { "source": "/api/certificates/verify/:id", "destination": "/api/certificates/verify/[id].js" },
