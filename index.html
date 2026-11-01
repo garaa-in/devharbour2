@@ -5432,7 +5432,7 @@ function toggleModuleCompletion(modNum) {
     // Award XP
     if (currentUser) {
       currentUser.totalXp = (currentUser.totalXp || 0) + 25;
-      try { localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); } catch(e) {}
+      try { localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); localStorage.setItem('dh-current-user', JSON.stringify(currentUser)); } catch(e) {}
       if (typeof updateAuthUI === 'function') updateAuthUI();
     }
     // Also notify server if authenticated
@@ -5561,9 +5561,67 @@ const cats=['All','Arrays','Strings','Hash Maps','Stacks','Queues','Trees','Grap
 function pills(el,l,c,f){el.innerHTML=l.map(x=>`<button class="pill ${x==c?'on':''}" data-v="${x}">${x}</button>`).join('');el.onclick=e=>{const v=e.target.dataset.v;if(v){f(v);pills(el,l,v,f)}}}
 function rc(){const s=$('cq').value.toLowerCase(),l=C.map((c,i)=>[c,i]).filter(([c])=>(cat=='All'||c[2]==cat)&&c[0].toLowerCase().includes(s));$('cl').innerHTML=l.length?l.map(([c,i])=>`<div class="row"><b class="mut">0${i+1}</b><div><h4>${c[0]}</h4></div><small class="tp">${c[2]}</small><span class="${c[1]}">${c[1]}</span><button class="sv" onclick="openPracticeStudio(${i})">Solve →</button></div>`).join(''):'<p class="mut" style="padding:20px 0">No challenges match yet.</p>'}
 pills($('cf'),cats,cat,v=>{cat=v;rc()});$('cq').oninput=rc;rc();
-const L={Weekly:[['ayesha',12,980],['kabir',10,860],['mei',9,790],['lucas',7,640],['nora',6,510]],'All-time':[['mei',212,18400],['ayesha',198,17120],['kabir',187,15900],['nora',160,13300],['lucas',151,12100]]};
-function rl(k){$('lb').innerHTML=L[k].map((u,i)=>`<div class="lr"><b>${i+1}</b><span class="a"></span><span>${u[0]}<br><em>${u[1]} solved</em></span><span>${u[2]} XP</span></div>`).join('')}
-pills($('lt'),['Weekly','All-time'],'Weekly',rl);rl('Weekly');
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+window.esc = esc;
+
+/* ===== REAL DYNAMIC LEADERBOARD ===== */
+let currentLeaderboardTimeframe = 'Weekly';
+async function rl(k) {
+  currentLeaderboardTimeframe = k || currentLeaderboardTimeframe;
+  const lbContainer = $('lb');
+  if (!lbContainer) return;
+
+  try {
+    const res = await fetch(`/api/leaderboard?timeframe=${encodeURIComponent(currentLeaderboardTimeframe)}&limit=15`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.rankings && data.rankings.length > 0) {
+        lbContainer.innerHTML = data.rankings.map((u, i) => {
+          const isMe = currentUser && (u.userId === currentUser.id || u.username === currentUser.username);
+          const name = u.fullName || u.username || 'Developer';
+          const uName = u.username ? `@${u.username}` : '';
+          const initial = (u.fullName || u.username || 'D')[0].toUpperCase();
+          const solvedText = `${u.challengesSolved || 0} solved`;
+          return `<div class="lr${isMe ? ' is-me' : ''}">
+            <b>${u.rank || (i + 1)}</b>
+            <span class="a" title="${esc(name)}">${initial}</span>
+            <span><b>${esc(name)}</b> ${uName ? `<small class="mut">${esc(uName)}</small>` : ''}<br><em>${solvedText}</em></span>
+            <span>${(u.xp || 0).toLocaleString()} XP</span>
+          </div>`;
+        }).join('');
+        return;
+      }
+    }
+  } catch(err) {
+    console.warn('Backend leaderboard fetch, using local fallback:', err);
+  }
+
+  // Local fallback
+  const localUsers = typeof LocalDB !== 'undefined' ? LocalDB.getUsers() : [];
+  if (localUsers.length > 0) {
+    const sorted = [...localUsers].sort((a, b) => (b.totalXp || 0) - (a.totalXp || 0));
+    lbContainer.innerHTML = sorted.slice(0, 10).map((u, i) => {
+      const isMe = currentUser && (u.id === currentUser.id || u.username === currentUser.username);
+      const name = u.fullName || u.username || 'Developer';
+      const uName = u.username ? `@${u.username}` : '';
+      const initial = (name || 'D')[0].toUpperCase();
+      return `<div class="lr${isMe ? ' is-me' : ''}">
+        <b>${i + 1}</b>
+        <span class="a" title="${esc(name)}">${initial}</span>
+        <span><b>${esc(name)}</b> ${uName ? `<small class="mut">${esc(uName)}</small>` : ''}<br><em>${u.level ? `Lvl ${u.level}` : 'Active'}</em></span>
+        <span>${(u.totalXp || 50).toLocaleString()} XP</span>
+      </div>`;
+    }).join('');
+  } else {
+    lbContainer.innerHTML = '<div style="padding:24px;text-align:center;color:#8a78a5;">No developers ranked yet. Solve challenges to earn XP!</div>';
+  }
+}
+window.rl = rl;
+pills($('lt'), ['Weekly', 'All-time'], 'Weekly', rl);
+rl('Weekly');
 // Project Likes State & Real-Time Sync (Strictly real likes, NO fake counts)
 let likesStore = {};
 try {
@@ -5574,7 +5632,10 @@ try {
 
 let serverVotes = {};
 let currentUser = null;
-
+try {
+  const _stUser = localStorage.getItem('dh_current_user') || localStorage.getItem('dh-current-user');
+  if (_stUser) currentUser = JSON.parse(_stUser);
+} catch(e) {}
 // Built-in Local Database Engine (Unified offline & static fallback)
 const LocalDB = {
   getUsers() {
@@ -5598,7 +5659,7 @@ const LocalDB = {
       // Update existing record so sign-in will match new password
       users[existingIdx].password = password;
       users[existingIdx].fullName = fullName.trim() || users[existingIdx].fullName;
-      users[existingIdx].location = (location || users[existingIdx].location || 'Navi Mumbai, India').trim();
+      users[existingIdx].location = (location || users[existingIdx].location || '').trim();
       users[existingIdx].bio = (bio || users[existingIdx].bio || '').trim();
       this.saveUsers(users);
       return users[existingIdx];
@@ -5610,7 +5671,7 @@ const LocalDB = {
       username: cleanUser,
       email: cleanEmail,
       password: password,
-      location: (location || 'Navi Mumbai, India').trim(),
+      location: (location || '').trim(),
       bio: (bio || '').trim(),
       role: 'student',
       totalXp: 50,
@@ -5665,7 +5726,7 @@ try {
 } catch(e) {}
 
 function getAuthHeaders() {
-  const token = localStorage.getItem('dh_token');
+  const token = localStorage.getItem('dh_token') || localStorage.getItem('dh-auth-token');
   const h = { 'Content-Type': 'application/json' };
   if (token) h['Authorization'] = 'Bearer ' + token;
   return h;
@@ -5764,8 +5825,10 @@ function handleSignup(e) {
   const user = rawUser.replace(/^@+/, '').trim();
   const email = document.getElementById('su-email').value.trim();
   const pass = document.getElementById('su-pass').value;
-  const loc = document.getElementById('su-loc').value.trim() || 'Navi Mumbai, India';
-  const bio = document.getElementById('su-bio').value.trim();
+  const suLocEl = document.getElementById('su-loc');
+  const loc = suLocEl ? suLocEl.value.trim() : '';
+  const suBioEl = document.getElementById('su-bio');
+  const bio = suBioEl ? suBioEl.value.trim() : '';
   const msg = document.getElementById('su-msg');
   msg.className = 'dh-status-msg';
   msg.textContent = 'Creating your account…';
@@ -5797,9 +5860,9 @@ function handleSignup(e) {
       }
       const token = data.token || (localUser ? 'local-token-' + localUser.id : 'local-token-dev');
       const userObj = data.user || localUser;
-      localStorage.setItem('dh_token', token);
+      localStorage.setItem('dh_token', token); localStorage.setItem('dh-auth-token', token);
       currentUser = userObj;
-      localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+      localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
       localStorage.setItem('dh_last_username', userObj.username || user);
       updateAuthUI();
       closeAuthModal();
@@ -5878,7 +5941,7 @@ function handleLogin(e) {
       if (ok && data.user) {
         localStorage.setItem('dh_token', data.token);
         currentUser = data.user;
-        localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+        localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
         localStorage.setItem('dh_last_username', currentUser.username || loginVal);
         try {
           LocalDB.signup({ fullName: currentUser.fullName, username: currentUser.username, email: currentUser.email, password: pass });
@@ -5910,7 +5973,7 @@ function openProfileModal() {
   if (!m) return;
   document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
   document.getElementById('pm-user').textContent = '@' + currentUser.username;
-  document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || 'Navi Mumbai, India');
+  document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || '');
   document.getElementById('pm-avatar-letter').textContent = (currentUser.username || 'U')[0].toUpperCase();
   document.getElementById('pm-xp').innerHTML = '<span class="dh-ast-star dh-star-purple">✦</span> ' + (currentUser.totalXp || 50);
   document.getElementById('pm-level').innerHTML = '<span class="dh-ast-star dh-star-blue">✧</span> Lvl ' + (currentUser.level || 1);
@@ -5960,10 +6023,10 @@ function handleSaveProfile(e) {
         return;
       }
       currentUser = { ...currentUser, ...data.user };
-      localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+      localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
       updateAuthUI();
       document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
-      document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || 'Navi Mumbai, India');
+      document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || '');
       msg.className = 'dh-status-msg success';
       msg.textContent = '✓ Profile saved successfully!';
       setTimeout(closeProfileModal, 1200);
@@ -5974,10 +6037,10 @@ function handleSaveProfile(e) {
         const updated = LocalDB.updateProfile(currentUser.id, { fullName: name, location: loc, bio, githubUrl: github, portfolioUrl: port });
         if (updated) currentUser = updated;
         else currentUser = { ...currentUser, fullName: name, location: loc, bio, githubUrl: github, portfolioUrl: port };
-        localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+        localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
         updateAuthUI();
         document.getElementById('pm-name').textContent = currentUser.fullName || currentUser.username;
-        document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || 'Navi Mumbai, India');
+        document.getElementById('pm-loc').innerHTML = '<span class="dh-ast-star">✦</span> ' + (currentUser.location || '');
         msg.className = 'dh-status-msg success';
         msg.textContent = '✓ Profile saved locally!';
         setTimeout(closeProfileModal, 1200);
@@ -5993,7 +6056,9 @@ window.handleSaveProfile = handleSaveProfile;
 function handleLogout() {
   fetch('/api/auth/logout', { method: 'POST', headers: getAuthHeaders() }).catch(() => {});
   localStorage.removeItem('dh_token');
+  localStorage.removeItem('dh-auth-token');
   localStorage.removeItem('dh_current_user');
+  localStorage.removeItem('dh-current-user');
   currentUser = null;
   updateAuthUI();
   closeProfileModal();
@@ -6002,15 +6067,16 @@ function handleLogout() {
 window.handleLogout = handleLogout;
 
 function checkAuthSession() {
-  try {
-    const localUser = JSON.parse(localStorage.getItem('dh_current_user') || 'null');
-    if (localUser) {
-      currentUser = localUser;
-      updateAuthUI();
-    }
-  } catch(e) {}
+  const token = localStorage.getItem('dh_token') || localStorage.getItem('dh-auth-token');
+  const storedUser = localStorage.getItem('dh_current_user') || localStorage.getItem('dh-current-user');
 
-  const token = localStorage.getItem('dh_token');
+  if (storedUser) {
+    try {
+      currentUser = JSON.parse(storedUser);
+      updateAuthUI();
+    } catch(e) {}
+  }
+
   if (!token) {
     updateAuthUI();
     return;
@@ -6020,7 +6086,12 @@ function checkAuthSession() {
     return;
   }
 
-  fetch('/api/auth/me', { headers: getAuthHeaders() })
+  fetch('/api/auth/me', {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    }
+  })
     .then(r => {
       if (!r.ok) throw new Error('Session invalid');
       return r.json();
@@ -6028,21 +6099,16 @@ function checkAuthSession() {
     .then(data => {
       if (data && data.user) {
         currentUser = data.user;
-        localStorage.setItem('dh_current_user', JSON.stringify(currentUser));
+        localStorage.setItem('dh_token', token); localStorage.setItem('dh-auth-token', token);
+        localStorage.setItem('dh-auth-token', token);
+        localStorage.setItem('dh_current_user', JSON.stringify(currentUser)); localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
+        localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
         updateAuthUI();
       }
     })
     .catch(() => {
-      try {
-        const localUser = JSON.parse(localStorage.getItem('dh_current_user') || 'null');
-        if (localUser) {
-          currentUser = localUser;
-        } else {
-          localStorage.removeItem('dh_token');
-          currentUser = null;
-        }
-      } catch(e) {
-        currentUser = null;
+      if (!currentUser && storedUser) {
+        try { currentUser = JSON.parse(storedUser); } catch(e) {}
       }
       updateAuthUI();
     });
@@ -6082,7 +6148,7 @@ function toggleProjectLike(title, event) {
     localStorage.setItem('dh-project-likes', JSON.stringify(likesStore));
   } catch(e) {}
 
-  const userLoc = (currentUser && currentUser.location) ? currentUser.location : 'Navi Mumbai';
+  const userLoc = (currentUser && currentUser.location) ? currentUser.location : '';
   const userName = (currentUser && currentUser.username) ? currentUser.username : 'A developer';
 
   // Broadcast to other open tabs / windows immediately via BroadcastChannel
@@ -6262,7 +6328,7 @@ const code=$('code'),hl=$('hl');let cur=0;
 function paint(){hl.innerHTML=code.value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/(\/\/.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(function|const|let|var|return|for|if|else|class|new|while|of|null|true|false)\b|\b(\d+)\b/g,(m,c,s,k,n)=>c?`<span class="cm">${c}</span>`:s?`<span class="s2">${s}</span>`:k?`<span class="kw">${k}</span>`:`<span class="nm">${n}</span>`)+'\n';hl.scrollTop=code.scrollTop;hl.scrollLeft=code.scrollLeft}
 code.oninput=paint;code.onscroll=()=>{hl.scrollTop=code.scrollTop;hl.scrollLeft=code.scrollLeft};
 code.onkeydown=e=>{if(e.key=='Tab'){e.preventDefault();code.setRangeText('  ',code.selectionStart,code.selectionEnd,'end');paint()}};
-function load(i,go=true){cur=i;openPracticeStudio(i);if(go)show('practice')}
+function load(i,go=true){cur=i;if(typeof openPracticeStudio==='function')openPracticeStudio(i);if(go)show('practice')}
 $('rst').onclick=()=>load(cur,false);
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(code.value);toast('Code copied')}catch(e){toast('Copy failed')}};
 let fr,to;
@@ -7866,7 +7932,7 @@ $('zpath').innerHTML=PA.map(p=>`<article><h3>${p[0]}</h3><p>${p[1]}</p><ul class
 const PR=[['Ayesha','AI · Data','Python,PyTorch,SQL',198,5,3],['Kabir','Web · Open source','React,Node,TypeScript',187,7,2],['Mei','Security · Systems','Linux,Rust,CTFs',212,4,4]];
 $('zprof').innerHTML=PR.map(p=>`<article><div class="zav">${p[0][0]}</div><h3>${p[0]}</h3><p class="zn">${p[1]}</p><div class="zt">${T(p[2].split(','))}</div><p class="zst2">${p[3]} challenges · ${p[4]} projects · ${p[5]} hackathons</p><div class="zk"><a class="zl" href="https://github.com/RujulaSharma/devharbour.in" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a class="zl" href="https://devharbour.in" target="_blank" rel="noopener noreferrer">Portfolio ↗</a></div></article>`).join('');
 /* community + leaderboard (existing L data, demo) */
-const LB=L['All-time'];
+const LB=[['Mei',212,18400],['Ayesha',198,17120],['Kabir',187,15900],['Nora',160,13300],['Lucas',151,12100]];
 $('zav').innerHTML=LB.map(u=>`<span class="zav" title="${u[0]}">${u[0][0].toUpperCase()}</span>`).join('');
 $('zlb').innerHTML=LB.map((u,i)=>`<div class="zlb"><b>${i+1}</b><span>${u[0]}</span><span>${u[1]}</span><span>${u[2].toLocaleString()} XP</span></div>`).join('');
 /* footer */
@@ -8065,7 +8131,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
     <form id="form-login" onsubmit="handleLogin(event)">
       <div class="dh-field">
         <label>Email or Username</label>
-        <input type="text" id="li-user" required placeholder="name@domain.com or username" autocomplete="username">
+        <input type="text" id="li-user" required placeholder="" autocomplete="username">
       </div>
       <div class="dh-field">
         <label>Password</label>
@@ -8079,15 +8145,15 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
     <form id="form-signup" onsubmit="handleSignup(event)" style="display:none;">
       <div class="dh-field">
         <label>Full Name</label>
-        <input type="text" id="su-name" required placeholder="e.g. Parth Sharma" autocomplete="name">
+        <input type="text" id="su-name" required placeholder="" autocomplete="name">
       </div>
       <div class="dh-field">
         <label>Email Address</label>
-        <input type="email" id="su-email" required placeholder="name@domain.com" autocomplete="email">
+        <input type="email" id="su-email" required placeholder="" autocomplete="email">
       </div>
       <div class="dh-field">
         <label>Username</label>
-        <input type="text" id="su-user" required placeholder="e.g. garaa" autocomplete="username">
+        <input type="text" id="su-user" required placeholder="" autocomplete="username">
       </div>
       <div class="dh-field">
         <label>Password (min 8 characters)</label>
@@ -8163,7 +8229,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       <div class="dh-prof-avatar" id="pm-avatar-letter">P</div>
       <div class="dh-prof-meta">
         <h3 id="pm-name">Developer</h3>
-        <p><span id="pm-user">@developer</span> · <span class="dh-badge-loc" id="pm-loc"><span class="dh-ast-star">✦</span> Navi Mumbai</span></p>
+        <p><span id="pm-user">@developer</span> · <span class="dh-badge-loc" id="pm-loc"></span></p>
       </div>
     </div>
     <div class="dh-stats-grid">
@@ -8178,7 +8244,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       </div>
       <div class="dh-field">
         <label>City / Location</label>
-        <input type="text" id="pe-loc" placeholder="e.g. Navi Mumbai, India">
+        <input type="text" id="pe-loc" placeholder="">
       </div>
       <div class="dh-field">
         <label>Bio</label>
@@ -9556,60 +9622,9 @@ async function submitPracticeCode() {
 }
 window.submitPracticeCode = submitPracticeCode;
 
-/* ===== REAL LEADERBOARD FETCHER ===== */
-let currentLeaderboardTimeframe = 'Weekly';
-async function rl(k) {
-  currentLeaderboardTimeframe = k || currentLeaderboardTimeframe;
-  const lbContainer = $('lb');
-  if (!lbContainer) return;
-
-  try {
-    const res = await fetch(`/api/leaderboard?timeframe=${encodeURIComponent(currentLeaderboardTimeframe)}&limit=15`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.rankings && data.rankings.length > 0) {
-        lbContainer.innerHTML = data.rankings.map((u, i) => {
-          const isMe = currentUser && (u.userId === currentUser.id || u.username === currentUser.username);
-          const name = u.fullName || u.username || 'Developer';
-          const uName = u.username ? `@${u.username}` : '';
-          const initial = (u.fullName || u.username || 'D')[0].toUpperCase();
-          const solvedText = `${u.challengesSolved || 0} solved`;
-          return `<div class="lr${isMe ? ' is-me' : ''}">
-            <b>${u.rank || (i + 1)}</b>
-            <span class="a" title="${esc(name)}">${initial}</span>
-            <span><b>${esc(name)}</b> ${uName ? `<small class="mut">${esc(uName)}</small>` : ''}<br><em>${solvedText}</em></span>
-            <span>${(u.xp || 0).toLocaleString()} XP</span>
-          </div>`;
-        }).join('');
-        return;
-      }
-    }
-  } catch(err) {
-    console.warn('Backend leaderboard fetch, using graceful fallback:', err);
-  }
-
-  // Graceful local users fallback
-  const localUsers = typeof LocalDB !== 'undefined' ? LocalDB.getUsers() : [];
-  if (localUsers.length > 0) {
-    const sorted = [...localUsers].sort((a, b) => (b.totalXp || 0) - (a.totalXp || 0));
-    lbContainer.innerHTML = sorted.slice(0, 10).map((u, i) => `
-      <div class="lr">
-        <b>${i + 1}</b>
-        <span class="a">${(u.fullName || u.username || 'D')[0].toUpperCase()}</span>
-        <span><b>${esc(u.fullName || u.username)}</b><br><em>${u.level ? `Lvl ${u.level}` : 'Active'}</em></span>
-        <span>${(u.totalXp || 50).toLocaleString()} XP</span>
-      </div>
-    `).join('');
-  } else {
-    lbContainer.innerHTML = L[currentLeaderboardTimeframe].map((u, i) => `
-      <div class="lr"><b>${i + 1}</b><span class="a"></span><span>${u[0]}<br><em>${u[1]} solved</em></span><span>${u[2]} XP</span></div>
-    `).join('');
-  }
-}
-
 /* ===== GOOGLE AUTHENTICATION ===== */
 window.handleGoogleAuth = async function() {
-  let email = prompt('Enter your Google Email (or test Gmail account):', (currentUser && currentUser.email) || 'developer@gmail.com');
+  let email = prompt('Enter your Google Email (or test Gmail account):', (currentUser && currentUser.email) || '');
   if (!email || !email.trim()) return;
   email = email.trim().toLowerCase();
   const name = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -9623,23 +9638,32 @@ window.handleGoogleAuth = async function() {
     const data = await res.json();
     if (res.ok && data.user) {
       currentUser = data.user;
-      if (data.token) localStorage.setItem('dh-auth-token', data.token);
+      const t = data.token || ('local-token-' + data.user.id);
+      localStorage.setItem('dh_token', t);
+      localStorage.setItem('dh-auth-token', t);
+      localStorage.setItem('dh_current_user', JSON.stringify(data.user));
       localStorage.setItem('dh-current-user', JSON.stringify(data.user));
+      localStorage.setItem('dh_last_username', data.user.username || '');
       updateAuthUI(data.user);
       closeAuthModal();
       toast(`Signed in with Google as ${data.user.fullName || data.user.username}!`);
-      rl(currentLeaderboardTimeframe);
+      if (typeof rl === 'function') rl(currentLeaderboardTimeframe);
     } else {
       toast(data.error || 'Google sign-in failed.');
     }
   } catch(err) {
     const user = LocalDB.signup({ fullName: name, username: email.split('@')[0], email, password: 'google_oauth_user' });
     currentUser = user;
+    const t = 'local-token-' + user.id;
+    localStorage.setItem('dh_token', t);
+    localStorage.setItem('dh-auth-token', t);
+    localStorage.setItem('dh_current_user', JSON.stringify(user));
     localStorage.setItem('dh-current-user', JSON.stringify(user));
+    localStorage.setItem('dh_last_username', user.username || '');
     updateAuthUI(user);
     closeAuthModal();
-    toast(`Signed in as ${user.fullName}!`);
-    rl(currentLeaderboardTimeframe);
+    toast(`Signed in with Google as ${user.fullName}!`);
+    if (typeof rl === 'function') rl(currentLeaderboardTimeframe);
   }
 };
 
