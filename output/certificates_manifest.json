@@ -2695,7 +2695,7 @@
     "participant_id": "300",
     "recipient_name": "TAUSHIK CHANDANA",
     "recipient_email": "tnex0734@gmail.com",
-    "recipient_organisation": "Nalla Narasimha Reddy Education Society\u2019s Group of Institutions, Telangana",
+    "recipient_organisation": "Nalla Narasimha Reddy Education Society’s Group of Institutions, Telangana",
     "credential_id": "DH-ORCA-2026-0300-482A",
     "display_credential_id": "ORC26-0300-482A"
   },
@@ -3775,7 +3775,7 @@
     "participant_id": "420",
     "recipient_name": "THEOPHANE STABAT",
     "recipient_email": "stabatheophane@gmail.com",
-    "recipient_organisation": "EPITA School of Engineering and Computer Science, Le Kremlin-Bic\u00eatre, France",
+    "recipient_organisation": "EPITA School of Engineering and Computer Science, Le Kremlin-Bicêtre, France",
     "credential_id": "DH-ORCA-2026-0420-5EC5",
     "display_credential_id": "ORC26-0420-5EC5"
   },
@@ -3784,7 +3784,7 @@
     "participant_id": "421",
     "recipient_name": "ALEXANDRE COLLIARD",
     "recipient_email": "alexandre@colliard.eu",
-    "recipient_organisation": "EPITA School of Engineering and Computer Science, Le Kremlin-Bic\u00eatre, France",
+    "recipient_organisation": "EPITA School of Engineering and Computer Science, Le Kremlin-Bicêtre, France",
     "credential_id": "DH-ORCA-2026-0421-7AA4",
     "display_credential_id": "ORC26-0421-7AA4"
   },
@@ -3793,7 +3793,7 @@
     "participant_id": "422",
     "recipient_name": "JACK LAWFORD",
     "recipient_email": "jack.lawford04@gmail.com",
-    "recipient_organisation": "EPITA School of Engineering and Computer Science, Le Kremlin-Bic\u00eatre, France",
+    "recipient_organisation": "EPITA School of Engineering and Computer Science, Le Kremlin-Bicêtre, France",
     "credential_id": "DH-ORCA-2026-0422-FE8E",
     "display_credential_id": "ORC26-0422-FE8E"
   },
@@ -6235,5 +6235,21 @@
     "recipient_organisation": "Rajasthan Institute of Engineering & Technology, Bhakrota, Jaipur",
     "credential_id": "DH-ORCA-2026-0693-0852",
     "display_credential_id": "ORC26-0693-0852"
+  },
+  {
+    "id": "694",
+    "name": "Suyash Sudhir Sonkamble",
+    "email": "suyashsonkambledpvn@gmail.com",
+    "org": "Participant",
+    "credential_id": "DH-ORCA-2026-0694-9A7E",
+    "verification_url": "/certificate/verify/DH-ORCA-2026-0694-9A7E"
+  },
+  {
+    "id": "695",
+    "name": "Aftab Shah",
+    "email": "rajguruaftabshah@gmail.com",
+    "org": "Participant",
+    "credential_id": "DH-ORCA-2026-0695-AC3E",
+    "verification_url": "/certificate/verify/DH-ORCA-2026-0695-AC3E"
   }
 ]
