@@ -109,6 +109,70 @@ router.post('/login', (req, res) => {
   });
 });
 
+// POST /api/auth/google (Continue with Google)
+router.post('/google', (req, res) => {
+  const { email, name, avatarUrl, googleId } = req.body;
+
+  if (!email || !validateEmail(email)) {
+    return res.status(400).json({ error: 'Valid email address is required for Google Sign-In.' });
+  }
+
+  let user = db.getUserByEmail(email);
+
+  if (!user) {
+    // Generate clean unique username from email
+    let baseUser = (email.split('@')[0] || 'dev').replace(/[^a-zA-Z0-9_]/g, '').slice(0, 20);
+    if (baseUser.length < 3) baseUser = 'user_' + baseUser;
+    let username = baseUser;
+    let counter = 1;
+    while (db.getUserByUsername(username)) {
+      username = `${baseUser}${counter++}`;
+    }
+
+    const { salt, hash } = hashPassword('google_oauth_' + (googleId || Date.now()));
+    user = db.createUser({
+      email,
+      username,
+      fullName: name && name.trim().length >= 2 ? name.trim() : username,
+      passwordHash: hash,
+      salt,
+      role: 'student',
+      location: 'India',
+      bio: 'Dev Harbour developer'
+    });
+
+    eventBus.broadcast({
+      type: 'user_joined',
+      username: user.username,
+      location: user.location || '',
+      message: `${user.username} signed up with Google!`
+    });
+  }
+
+  const { token, expiresAt } = db.createSession(user.id);
+  const totalXp = db.getUserTotalXp(user.id);
+  const streak = db.updateStreak(user.id);
+
+  res.json({
+    message: 'Successfully authenticated with Google.',
+    token,
+    expiresAt,
+    user: {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      fullName: user.full_name,
+      role: user.role,
+      avatarUrl: user.avatar_url || avatarUrl || '',
+      bio: user.bio,
+      location: user.location || '',
+      streakDays: streak,
+      totalXp,
+      level: db.calculateLevel(totalXp)
+    }
+  });
+});
+
 // POST /api/auth/logout
 router.post('/logout', requireAuth, (req, res) => {
   if (req.token) {
