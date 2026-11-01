@@ -3672,6 +3672,28 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 .dh-sec-btn{background:linear-gradient(135deg,#ff3b5c,#e60039);color:#fff;border:none;border-radius:12px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(255,59,92,0.4);transition:transform .15s,box-shadow .15s}
 .dh-sec-btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(255,59,92,0.6)}
 
+
+/* ===== COMPACT AUTH MODAL & GOOGLE SIGN-IN ===== */
+.dh-modal-card.dh-auth-compact{max-width:380px;padding:24px 26px;border-radius:22px;background:var(--card);box-shadow:0 24px 60px -15px rgba(0,0,0,0.4);border:1px solid var(--line)}
+.dh-auth-header{text-align:center;margin-bottom:16px}
+.dh-auth-logo{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:11px;letter-spacing:.14em;color:var(--mut);margin-bottom:8px}
+.dh-auth-logo img{width:18px;height:18px}
+.dh-auth-header h3{font-size:21px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+.dh-auth-header p{font-size:13px;margin:0}
+.dh-google-auth-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:11px;padding:11px 16px;border-radius:12px;font-weight:700;font-size:13.5px;background:var(--soft);color:var(--ink);border:1px solid var(--line);cursor:pointer;transition:all .2s ease;margin-bottom:14px}
+.dh-google-auth-btn:hover{background:var(--card);border-color:var(--ink);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.08)}
+.dh-auth-divider{display:flex;align-items:center;text-align:center;margin:12px 0 14px;color:var(--mut);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.dh-auth-divider:before,.dh-auth-divider:after{content:'';flex:1;border-bottom:1px solid var(--line)}
+.dh-auth-divider span{padding:0 10px}
+.dh-tabs-compact{margin-bottom:16px;padding:3px;border-radius:12px}
+.dh-tabs-compact .dh-tab-btn{padding:8px 12px;font-size:13px;border-radius:9px}
+
+/* ===== PRACTICE CODING STUDIO ===== */
+#dh-practice-studio-wrap{animation:wi .3s ease}
+.ps-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;border-radius:16px;background:var(--soft);border:1px solid var(--line);flex-wrap:wrap}
+.lr.is-me{background:rgba(110,68,255,0.12);border-radius:12px;padding:10px 10px;margin:2px -10px;box-shadow:inset 0 0 0 1px rgba(110,68,255,0.3)}
+.lr .a{display:grid;place-content:center;font-weight:800;font-size:12px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
+
 </style>
   <script>
 /* Embedded Authoritative Registry for 100% Offline Standalone Operation */
@@ -3934,8 +3956,80 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
   <div class="g" id="pg"></div>
 </section>
 
-<section class="view" id="v-practice"><div class="g"><div class="c s8"><div class="h"><h3>Popular Coding Challenges</h3></div><div class="fl" id="cf"></div><input class="srch" style="background:var(--soft)" id="cq" placeholder="Search challenges…" aria-label="Search challenges"><div id="cl"></div><p class="mut" style="margin-top:12px">Completion rates are sample values. Solve opens the workspace.</p></div>
- <div class="c k s4"><div class="h"><h3>Leaderboard</h3><span class="tag">Live</span></div><div class="fl" id="lt"></div><div id="lb"></div></div></div></section>
+<section class="view" id="v-practice">
+  <!-- 1. Challenges List & Leaderboard -->
+  <div id="dh-practice-list-wrap">
+    <div class="g">
+      <div class="c s8">
+        <div class="h"><h3>Popular Coding Challenges</h3></div>
+        <div class="fl" id="cf"></div>
+        <input class="srch" style="background:var(--soft)" id="cq" placeholder="Search challenges…" aria-label="Search challenges">
+        <div id="cl"></div>
+        <p class="mut" style="margin-top:12px">Practice algorithm challenges right in your browser. Solve & pass tests to earn +50 XP on the live leaderboard.</p>
+      </div>
+      <div class="c k s4">
+        <div class="h"><h3>Leaderboard</h3><span class="tag">Live</span></div>
+        <div class="fl" id="lt"></div>
+        <div id="lb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Integrated Practice Studio (Solves challenge directly in Practice view!) -->
+  <div id="dh-practice-studio-wrap" style="display:none;">
+    <div class="ps-header">
+      <button type="button" class="bt" onclick="closePracticeStudio()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;border-radius:99px;background:var(--card);color:var(--ink);border:1px solid var(--line);cursor:pointer;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span>Back to Challenges</span>
+      </button>
+      <div class="ps-meta" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <h3 id="ps-title" style="margin:0;font-size:19px;font-weight:800;">Two Sum</h3>
+        <span class="Easy" id="ps-diff" style="font-size:12px;padding:3px 9px;border-radius:99px;font-weight:700;">Easy</span>
+        <span class="tag" id="ps-cat" style="font-size:12px;">Arrays</span>
+      </div>
+      <div class="ps-actions" style="display:flex;align-items:center;gap:8px;">
+        <button type="button" class="bt" id="ps-reset-btn" onclick="resetPracticeCode()" style="padding:8px 14px;font-size:13px;border-radius:99px;background:var(--card);color:var(--ink);border:1px solid var(--line);cursor:pointer;">Reset</button>
+        <button type="button" class="run" id="ps-run-btn" onclick="runPracticeCode()" style="padding:9px 18px;font-size:13px;font-weight:700;border-radius:99px;background:var(--ink);color:var(--bg);cursor:pointer;">Run Code</button>
+        <button type="button" class="bt d" id="ps-submit-btn" onclick="submitPracticeCode()" style="padding:9px 18px;font-size:13px;font-weight:800;border-radius:99px;cursor:pointer;">Submit (+50 XP)</button>
+      </div>
+    </div>
+
+    <div class="g" style="margin-top:14px;">
+      <!-- Problem Info -->
+      <div class="c s5" style="display:flex;flex-direction:column;gap:12px;min-height:460px;background:var(--card);padding:20px;border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);">
+        <div class="h" style="padding-bottom:10px;border-bottom:1px solid var(--line);"><h4 style="margin:0;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);">Problem Statement</h4></div>
+        <div id="ps-desc" style="font-size:14px;line-height:1.6;color:var(--ink);font-weight:500;"></div>
+        <div class="h" style="margin-top:10px;padding-bottom:8px;border-bottom:1px solid var(--line);"><h4 style="margin:0;font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;">Sample Input</h4></div>
+        <pre id="ps-sample-box" style="background:var(--soft);padding:10px 14px;border-radius:12px;font-family:monospace;font-size:13px;margin:0;white-space:pre-wrap;border:1px solid var(--line);"></pre>
+        <div class="h" style="margin-top:10px;padding-bottom:8px;border-bottom:1px solid var(--line);"><h4 style="margin:0;font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;">Expected Output</h4></div>
+        <pre id="ps-expected-box" style="background:var(--soft);padding:10px 14px;border-radius:12px;font-family:monospace;font-size:13px;margin:0;white-space:pre-wrap;border:1px solid var(--line);"></pre>
+        <div id="ps-feedback" style="margin-top:auto;"></div>
+      </div>
+
+      <!-- Code Editor & Console Output -->
+      <div class="c s7" style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--card);padding:16px;border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;">JavaScript (ES6 Sandbox)</span>
+            <button type="button" onclick="copyPracticeCode()" style="background:none;border:none;color:var(--mut);font-size:12px;cursor:pointer;font-weight:700;">Copy Code</button>
+          </div>
+          <div class="ed" style="min-height:280px;position:relative;">
+            <pre id="ps-hl" aria-hidden="true"></pre>
+            <textarea id="ps-code" spellcheck="false" aria-label="Code editor"></textarea>
+          </div>
+        </div>
+
+        <div style="background:var(--card);padding:16px;border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--mut);text-transform:uppercase;">Execution Output</label>
+            <div class="rs" id="ps-res"></div>
+          </div>
+          <pre id="ps-out" style="min-height:60px;background:var(--soft);padding:10px 14px;border-radius:12px;font-family:monospace;font-size:13px;margin:0;border:1px solid var(--line);">Press Run Code to test your solution.</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- TIMER / FLIPPING CLOCK & STUDY COUNTDOWN -->
 <section class="view" id="v-timer">
@@ -4123,7 +4217,17 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
   </div>
 </section>
 
-<section class="view" id="v-projects"><div class="fl" id="pf"></div><div class="g" id="pj"></div><p class="mut" style="margin:14px 6px">Curated developer builds. Test live previews, inspect repos, and track submission criteria.</p></section>
+<section class="view" id="v-projects">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;">
+    <div class="fl" id="pf"></div>
+    <button type="button" class="bt d" onclick="openAddProjectModal()" style="display:inline-flex;align-items:center;gap:7px;padding:9px 18px;font-size:13px;font-weight:700;border-radius:99px;cursor:pointer;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      <span>Add Project</span>
+    </button>
+  </div>
+  <div class="g" id="pj"></div>
+  <p class="mut" style="margin:14px 6px">Curated developer builds. Test live previews, inspect repos, and vote for your favorites. Highest voted builds rank on top.</p>
+</section>
 
 <section class="view" id="v-hack"><div class="g"><div class="c k hb s8"><span class="tag" style="align-self:flex-start;position:relative" id="hT"></span><h2 id="hN" style="margin-top:14px"></h2><p id="hD"></p></div>
  <div class="c s4"><div class="h"><h3>Event details</h3></div><dl class="dl" id="hI"></dl><div class="btns"><a href="https://unstop.com/o/vON6wtS?lb=useupllP&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Parthhyg96055" target="_blank" rel="noopener noreferrer" class="bt d" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Register Now ↗</a><a href="https://unstop.com/o/vON6wtS?lb=useupllP&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Parthhyg96055" target="_blank" rel="noopener noreferrer" class="bt" style="background:var(--soft);display:flex;align-items:center;justify-content:center;text-decoration:none">View Details ↗</a></div></div></div></section>
@@ -5471,7 +5575,7 @@ if(!matchMedia('(prefers-reduced-motion:reduce)').matches)setTimeout(()=>['n1','
 /* filters */
 const cats=['All','Arrays','Strings','Hash Maps','Stacks','Queues','Trees','Graphs','Dynamic Programming'];let cat='All',pc='All';
 function pills(el,l,c,f){el.innerHTML=l.map(x=>`<button class="pill ${x==c?'on':''}" data-v="${x}">${x}</button>`).join('');el.onclick=e=>{const v=e.target.dataset.v;if(v){f(v);pills(el,l,v,f)}}}
-function rc(){const s=$('cq').value.toLowerCase(),l=C.map((c,i)=>[c,i]).filter(([c])=>(cat=='All'||c[2]==cat)&&c[0].toLowerCase().includes(s));$('cl').innerHTML=l.length?l.map(([c,i])=>`<div class="row"><b class="mut">0${i+1}</b><div><h4>${c[0]}</h4></div><small class="tp">${c[2]}</small><span class="${c[1]}">${c[1]}</span><button class="sv" onclick="load(${i})">Solve →</button></div>`).join(''):'<p class="mut" style="padding:20px 0">No challenges match yet.</p>'}
+function rc(){const s=$('cq').value.toLowerCase(),l=C.map((c,i)=>[c,i]).filter(([c])=>(cat=='All'||c[2]==cat)&&c[0].toLowerCase().includes(s));$('cl').innerHTML=l.length?l.map(([c,i])=>`<div class="row"><b class="mut">0${i+1}</b><div><h4>${c[0]}</h4></div><small class="tp">${c[2]}</small><span class="${c[1]}">${c[1]}</span><button class="sv" onclick="openPracticeStudio(${i})">Solve →</button></div>`).join(''):'<p class="mut" style="padding:20px 0">No challenges match yet.</p>'}
 pills($('cf'),cats,cat,v=>{cat=v;rc()});$('cq').oninput=rc;rc();
 const L={Weekly:[['ayesha',12,980],['kabir',10,860],['mei',9,790],['lucas',7,640],['nora',6,510]],'All-time':[['mei',212,18400],['ayesha',198,17120],['kabir',187,15900],['nora',160,13300],['lucas',151,12100]]};
 function rl(k){$('lb').innerHTML=L[k].map((u,i)=>`<div class="lr"><b>${i+1}</b><span class="a"></span><span>${u[0]}<br><em>${u[1]} solved</em></span><span>${u[2]} XP</span></div>`).join('')}
@@ -6174,7 +6278,7 @@ const code=$('code'),hl=$('hl');let cur=0;
 function paint(){hl.innerHTML=code.value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/(\/\/.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(function|const|let|var|return|for|if|else|class|new|while|of|null|true|false)\b|\b(\d+)\b/g,(m,c,s,k,n)=>c?`<span class="cm">${c}</span>`:s?`<span class="s2">${s}</span>`:k?`<span class="kw">${k}</span>`:`<span class="nm">${n}</span>`)+'\n';hl.scrollTop=code.scrollTop;hl.scrollLeft=code.scrollLeft}
 code.oninput=paint;code.onscroll=()=>{hl.scrollTop=code.scrollTop;hl.scrollLeft=code.scrollLeft};
 code.onkeydown=e=>{if(e.key=='Tab'){e.preventDefault();code.setRangeText('  ',code.selectionStart,code.selectionEnd,'end');paint()}};
-function load(i,go=true){cur=i;const c=C[i];code.value=c[4];$('inp').value=c[5];$('wt').textContent=c[0];$('out').textContent='Press Run Code.';$('out').className='';$('res').className='rs';paint();if(go)show('work')}
+function load(i,go=true){cur=i;openPracticeStudio(i);if(go)show('practice')}
 $('rst').onclick=()=>load(cur,false);
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(code.value);toast('Code copied')}catch(e){toast('Copy failed')}};
 let fr,to;
@@ -7941,55 +8045,118 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
 
 <div class="dh-modal-wrap" id="dh-auth-modal">
   <div class="dh-modal-overlay" onclick="closeAuthModal()"></div>
-  <div class="dh-modal-card">
+  <div class="dh-modal-card dh-auth-compact">
     <button type="button" class="dh-modal-close" onclick="closeAuthModal()" aria-label="Close">✕</button>
-    <div class="dh-tabs">
-      <button type="button" class="dh-tab-btn active" id="tab-btn-signup" onclick="switchAuthTab('signup')">Create Account</button>
-      <button type="button" class="dh-tab-btn" id="tab-btn-login" onclick="switchAuthTab('login')">Sign In</button>
+
+    <div class="dh-auth-header">
+      <div class="dh-auth-logo">
+        <img class="xli" data-logo alt="">
+        <span>DEV HARBOUR</span>
+      </div>
+      <h3 id="dh-auth-title">Welcome Back</h3>
+      <p class="mut" id="dh-auth-subtitle">Join the developer community or sign in</p>
     </div>
 
+    <!-- Continue with Google Button -->
+    <button type="button" class="dh-google-auth-btn" id="dh-google-btn" onclick="handleGoogleAuth()">
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+      </svg>
+      <span>Continue with Google</span>
+    </button>
+
+    <div class="dh-auth-divider">
+      <span>or continue with email</span>
+    </div>
+
+    <div class="dh-tabs dh-tabs-compact">
+      <button type="button" class="dh-tab-btn active" id="tab-btn-login" onclick="switchAuthTab('login')">Sign In</button>
+      <button type="button" class="dh-tab-btn" id="tab-btn-signup" onclick="switchAuthTab('signup')">Create Account</button>
+    </div>
+
+    <!-- SIGN IN FORM (Default) -->
+    <form id="form-login" onsubmit="handleLogin(event)">
+      <div class="dh-field">
+        <label>Email or Username</label>
+        <input type="text" id="li-user" required placeholder="name@domain.com or username" autocomplete="username">
+      </div>
+      <div class="dh-field">
+        <label>Password</label>
+        <input type="password" id="li-pass" required placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="dh-submit-btn" id="li-submit">Sign In →</button>
+      <div class="dh-status-msg" id="li-msg"></div>
+    </form>
+
     <!-- SIGN UP FORM -->
-    <form id="form-signup" onsubmit="handleSignup(event)">
+    <form id="form-signup" onsubmit="handleSignup(event)" style="display:none;">
       <div class="dh-field">
         <label>Full Name</label>
         <input type="text" id="su-name" required placeholder="e.g. Parth Sharma" autocomplete="name">
-      </div>
-      <div class="dh-field">
-        <label>Unique Username</label>
-        <input type="text" id="su-user" required placeholder="e.g. GARAA" autocomplete="username">
       </div>
       <div class="dh-field">
         <label>Email Address</label>
         <input type="email" id="su-email" required placeholder="name@domain.com" autocomplete="email">
       </div>
       <div class="dh-field">
-        <label>Password (min 8 chars)</label>
+        <label>Username</label>
+        <input type="text" id="su-user" required placeholder="e.g. garaa" autocomplete="username">
+      </div>
+      <div class="dh-field">
+        <label>Password (min 8 characters)</label>
         <input type="password" id="su-pass" required placeholder="••••••••" autocomplete="new-password">
       </div>
-      <div class="dh-field">
-        <label>City / Location</label>
-        <input type="text" id="su-loc" placeholder="e.g. Navi Mumbai, India" value="Navi Mumbai, India">
-      </div>
-      <div class="dh-field">
-        <label>Bio (Optional)</label>
-        <textarea id="su-bio" rows="2" placeholder="What are you building?"></textarea>
-      </div>
-      <button type="submit" class="dh-submit-btn" id="su-submit">Create Account <span class="dh-ast-star">✦</span></button>
+      <button type="submit" class="dh-submit-btn" id="su-submit">Create Account →</button>
       <div class="dh-status-msg" id="su-msg"></div>
     </form>
+  </div>
+</div>
 
-    <!-- SIGN IN FORM -->
-    <form id="form-login" onsubmit="handleLogin(event)" style="display:none;">
+<!-- ADD YOUR PROJECT MODAL -->
+<div class="dh-modal-wrap" id="dh-add-project-modal" style="display:none;">
+  <div class="dh-modal-overlay" onclick="closeAddProjectModal()"></div>
+  <div class="dh-modal-card dh-auth-compact" style="max-width:440px;">
+    <button type="button" class="dh-modal-close" onclick="closeAddProjectModal()" aria-label="Close">✕</button>
+    <div class="dh-auth-header">
+      <h3 style="margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.02em;">Add Your Project</h3>
+      <p class="mut" style="font-size:13px;">Showcase your build to the Dev Harbour developer community</p>
+    </div>
+    <form id="form-add-project" onsubmit="handleAddProjectSubmit(event)">
       <div class="dh-field">
-        <label>Email or Username</label>
-        <input type="text" id="li-user" required placeholder="GARAA or name@domain.com" autocomplete="username">
+        <label>Project Title</label>
+        <input type="text" id="ap-title" required placeholder="e.g. Pulse Analytics" autocomplete="off">
       </div>
       <div class="dh-field">
-        <label>Password</label>
-        <input type="password" id="li-pass" required placeholder="••••••••" autocomplete="current-password">
+        <label>Short Tagline / Description</label>
+        <input type="text" id="ap-tagline" required placeholder="What does your project do?" autocomplete="off">
       </div>
-      <button type="submit" class="dh-submit-btn" id="li-submit">Sign In <span class="dh-ast-star">✦</span></button>
-      <div class="dh-status-msg" id="li-msg"></div>
+      <div class="dh-field">
+        <label>Category</label>
+        <select id="ap-cat" style="width:100%;padding:9px 12px;border-radius:10px;background:var(--soft);color:var(--ink);border:1px solid var(--line);font-size:13px;font-weight:600;">
+          <option value="Web">Web Application</option>
+          <option value="Mobile">Mobile Application</option>
+          <option value="Security">Cybersecurity Tool</option>
+          <option value="AI">Artificial Intelligence / ML</option>
+          <option value="Game">Game Development</option>
+        </select>
+      </div>
+      <div class="dh-field">
+        <label>GitHub Repository URL</label>
+        <input type="url" id="ap-repo" required placeholder="https://github.com/username/project">
+      </div>
+      <div class="dh-field">
+        <label>Live Demo / Website URL</label>
+        <input type="url" id="ap-demo" required placeholder="https://myproject.vercel.app">
+      </div>
+      <div class="dh-field">
+        <label>Detailed Overview (Optional)</label>
+        <textarea id="ap-desc" rows="3" placeholder="Tell us about the features, architecture, and tech stack..."></textarea>
+      </div>
+      <button type="submit" class="dh-submit-btn" id="ap-submit" style="margin-top:10px;">Publish Project ✦</button>
+      <div class="dh-status-msg" id="ap-msg"></div>
     </form>
   </div>
 </div>
@@ -9239,6 +9406,339 @@ window.addEventListener('contextmenu', function(e) {
   showSecurityWarning('Right Click (Context Menu)');
   return false;
 }, true);
+
+/* ===== INTEGRATED PRACTICE STUDIO & REAL LEADERBOARD ENGINE ===== */
+let activeChallengeIdx = 0;
+const challengeDescriptions = [
+  'Find two numbers in the array that add up to the target number. Return their indices [i, j].\n\nExample:\nnums = [2, 7, 11, 15], target = 9\nOutput: [0, 1] because nums[0] + nums[1] === 9.',
+  'Given a string containing just the characters "(", ")", "{", "}", "[" and "]", determine if the input string is valid.\n\nOpen brackets must be closed by the same type of brackets in the correct order.\n\nExample: "()[]{}" -> true',
+  'Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.\n\nExample: [-2,1,-3,4,-1,2,1,-5,4] -> 6 ([4,-1,2,1])',
+  'Given the head of a singly linked list, reverse the list, and return the reversed list node values.\n\nExample: [1, 2, 3] -> [3, 2, 1]',
+  'Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return -1.\n\nExample: nums = [-1,0,3,5,9,12], target = 9 -> index 4',
+  'Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.'
+];
+
+function openPracticeStudio(idx) {
+  activeChallengeIdx = idx;
+  const c = C[idx];
+  if (!c) return;
+
+  const listWrap = document.getElementById('dh-practice-list-wrap');
+  const studioWrap = document.getElementById('dh-practice-studio-wrap');
+  if (listWrap) listWrap.style.display = 'none';
+  if (studioWrap) studioWrap.style.display = 'block';
+
+  document.getElementById('ps-title').textContent = c[0];
+  document.getElementById('ps-diff').textContent = c[1];
+  document.getElementById('ps-diff').className = c[1];
+  document.getElementById('ps-cat').textContent = c[2];
+  document.getElementById('ps-desc').innerHTML = (challengeDescriptions[idx] || c[0]).replace(/\n/g, '<br>');
+  document.getElementById('ps-sample-box').textContent = c[5];
+  document.getElementById('ps-expected-box').textContent = c[6];
+  document.getElementById('ps-code').value = c[4];
+  document.getElementById('ps-out').textContent = 'Press Run Code to test your function.';
+  document.getElementById('ps-res').className = 'rs';
+  document.getElementById('ps-res').textContent = '';
+
+  paintPracticeEditor();
+  show('practice');
+}
+window.openPracticeStudio = openPracticeStudio;
+
+function closePracticeStudio() {
+  const listWrap = document.getElementById('dh-practice-list-wrap');
+  const studioWrap = document.getElementById('dh-practice-studio-wrap');
+  if (listWrap) listWrap.style.display = 'block';
+  if (studioWrap) studioWrap.style.display = 'none';
+}
+window.closePracticeStudio = closePracticeStudio;
+
+function paintPracticeEditor() {
+  const cd = document.getElementById('ps-code'), hl = document.getElementById('ps-hl');
+  if (!cd || !hl) return;
+  hl.innerHTML = cd.value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/(\/\/.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(function|const|let|var|return|for|if|else|class|new|while|of|null|true|false)\b|\b(\d+)\b/g,(m,c,s,k,n)=>c?`<span class="cm">${c}</span>`:s?`<span class="s2">${s}</span>`:k?`<span class="kw">${k}</span>`:`<span class="nm">${n}</span>`)+'\n';
+  hl.scrollTop = cd.scrollTop;
+  hl.scrollLeft = cd.scrollLeft;
+}
+const psCd = document.getElementById('ps-code');
+if (psCd) {
+  psCd.oninput = paintPracticeEditor;
+  psCd.onscroll = () => { const h = document.getElementById('ps-hl'); if (h) { h.scrollTop = psCd.scrollTop; h.scrollLeft = psCd.scrollLeft; } };
+  psCd.onkeydown = e => { if (e.key === 'Tab') { e.preventDefault(); psCd.setRangeText('  ', psCd.selectionStart, psCd.selectionEnd, 'end'); paintPracticeEditor(); } };
+}
+
+function resetPracticeCode() {
+  if (C[activeChallengeIdx]) {
+    document.getElementById('ps-code').value = C[activeChallengeIdx][4];
+    paintPracticeEditor();
+    toast('Code reset to starter template.');
+  }
+}
+window.resetPracticeCode = resetPracticeCode;
+
+async function copyPracticeCode() {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('ps-code').value);
+    toast('Code copied to clipboard!');
+  } catch(e) {
+    toast('Copy failed');
+  }
+}
+window.copyPracticeCode = copyPracticeCode;
+
+let psFrame = null, psTimeout = null;
+function runPracticeCode() {
+  const out = document.getElementById('ps-out');
+  const res = document.getElementById('ps-res');
+  out.textContent = 'Running in sandbox…';
+  out.className = '';
+  res.className = 'rs';
+  res.textContent = '';
+
+  if (psFrame) psFrame.remove();
+  psFrame = document.createElement('iframe');
+  psFrame.sandbox = 'allow-scripts';
+  psFrame.style.display = 'none';
+
+  const c = C[activeChallengeIdx];
+  const js = JSON.stringify(document.getElementById('ps-code').value).replace(/</g,'\\u003c');
+  const inp = JSON.stringify(c[5]).replace(/</g,'\\u003c');
+
+  psFrame.srcdoc = '<script>const L=[],f=(...a)=>L.push(a.map(x=>typeof x==="object"?JSON.stringify(x):String(x)).join(" "));console.log=f;console.error=f;let e=null;try{const input='+inp+';eval('+js+')}catch(x){e=String(x)}parent.postMessage({L,e,isPractice:true},"*")<\/script>';
+  document.body.appendChild(psFrame);
+
+  clearTimeout(psTimeout);
+  psTimeout = setTimeout(() => {
+    out.className = 'er';
+    out.textContent = 'Execution timed out (3s). Check for infinite loops.';
+    if (psFrame) psFrame.remove();
+  }, 3000);
+}
+window.runPracticeCode = runPracticeCode;
+
+addEventListener('message', m => {
+  if (!m.data || !m.data.isPractice) return;
+  clearTimeout(psTimeout);
+  const d = m.data;
+  const out = document.getElementById('ps-out');
+  const res = document.getElementById('ps-res');
+  const t = d.L.join('\n');
+  out.className = d.e ? 'er' : '';
+  out.textContent = (t + (d.e ? '\nError: ' + d.e : '')) || '(no output)';
+
+  if (!d.e) {
+    const c = C[activeChallengeIdx];
+    const ok = t.trim() === c[6];
+    res.className = 'rs ' + (ok ? 'ok' : 'no');
+    res.textContent = ok ? '✓ Test Passed!' : '✕ Expected: ' + c[6];
+  }
+});
+
+async function submitPracticeCode() {
+  const c = C[activeChallengeIdx];
+  runPracticeCode();
+
+  setTimeout(async () => {
+    const res = document.getElementById('ps-res');
+    if (res && res.classList.contains('ok')) {
+      toast(`🎉 Challenge "${c[0]}" passed! +50 XP awarded!`);
+
+      // 1. Submit to server if authenticated
+      const token = localStorage.getItem('dh-auth-token');
+      try {
+        await fetch(`/api/challenges/${c[0].toLowerCase().replace(/\s+/g, '-')}/submit`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({ code: document.getElementById('ps-code').value, language: 'javascript' })
+        });
+      } catch(err) {}
+
+      // 2. Award local XP
+      if (currentUser) {
+        currentUser.totalXp = (currentUser.totalXp || 0) + 50;
+        localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
+        updateAuthUI(currentUser);
+      }
+
+      // 3. Refresh live leaderboard immediately
+      if (typeof rl === 'function') rl(currentLeaderboardTimeframe);
+    } else {
+      toast('Test not passing yet. Review the expected output and try again!');
+    }
+  }, 600);
+}
+window.submitPracticeCode = submitPracticeCode;
+
+/* ===== REAL LEADERBOARD FETCHER ===== */
+let currentLeaderboardTimeframe = 'Weekly';
+async function rl(k) {
+  currentLeaderboardTimeframe = k || currentLeaderboardTimeframe;
+  const lbContainer = $('lb');
+  if (!lbContainer) return;
+
+  try {
+    const res = await fetch(`/api/leaderboard?timeframe=${encodeURIComponent(currentLeaderboardTimeframe)}&limit=15`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.rankings && data.rankings.length > 0) {
+        lbContainer.innerHTML = data.rankings.map((u, i) => {
+          const isMe = currentUser && (u.userId === currentUser.id || u.username === currentUser.username);
+          const name = u.fullName || u.username || 'Developer';
+          const uName = u.username ? `@${u.username}` : '';
+          const initial = (u.fullName || u.username || 'D')[0].toUpperCase();
+          const solvedText = `${u.challengesSolved || 0} solved`;
+          return `<div class="lr${isMe ? ' is-me' : ''}">
+            <b>${u.rank || (i + 1)}</b>
+            <span class="a" title="${esc(name)}">${initial}</span>
+            <span><b>${esc(name)}</b> ${uName ? `<small class="mut">${esc(uName)}</small>` : ''}<br><em>${solvedText}</em></span>
+            <span>${(u.xp || 0).toLocaleString()} XP</span>
+          </div>`;
+        }).join('');
+        return;
+      }
+    }
+  } catch(err) {
+    console.warn('Backend leaderboard fetch, using graceful fallback:', err);
+  }
+
+  // Graceful local users fallback
+  const localUsers = typeof LocalDB !== 'undefined' ? LocalDB.getUsers() : [];
+  if (localUsers.length > 0) {
+    const sorted = [...localUsers].sort((a, b) => (b.totalXp || 0) - (a.totalXp || 0));
+    lbContainer.innerHTML = sorted.slice(0, 10).map((u, i) => `
+      <div class="lr">
+        <b>${i + 1}</b>
+        <span class="a">${(u.fullName || u.username || 'D')[0].toUpperCase()}</span>
+        <span><b>${esc(u.fullName || u.username)}</b><br><em>${u.level ? `Lvl ${u.level}` : 'Active'}</em></span>
+        <span>${(u.totalXp || 50).toLocaleString()} XP</span>
+      </div>
+    `).join('');
+  } else {
+    lbContainer.innerHTML = L[currentLeaderboardTimeframe].map((u, i) => `
+      <div class="lr"><b>${i + 1}</b><span class="a"></span><span>${u[0]}<br><em>${u[1]} solved</em></span><span>${u[2]} XP</span></div>
+    `).join('');
+  }
+}
+
+/* ===== GOOGLE AUTHENTICATION ===== */
+window.handleGoogleAuth = async function() {
+  let email = prompt('Enter your Google Email (or test Gmail account):', (currentUser && currentUser.email) || 'developer@gmail.com');
+  if (!email || !email.trim()) return;
+  email = email.trim().toLowerCase();
+  const name = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+  try {
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, googleId: 'g_' + Date.now() })
+    });
+    const data = await res.json();
+    if (res.ok && data.user) {
+      currentUser = data.user;
+      if (data.token) localStorage.setItem('dh-auth-token', data.token);
+      localStorage.setItem('dh-current-user', JSON.stringify(data.user));
+      updateAuthUI(data.user);
+      closeAuthModal();
+      toast(`Signed in with Google as ${data.user.fullName || data.user.username}!`);
+      rl(currentLeaderboardTimeframe);
+    } else {
+      toast(data.error || 'Google sign-in failed.');
+    }
+  } catch(err) {
+    const user = LocalDB.signup({ fullName: name, username: email.split('@')[0], email, password: 'google_oauth_user' });
+    currentUser = user;
+    localStorage.setItem('dh-current-user', JSON.stringify(user));
+    updateAuthUI(user);
+    closeAuthModal();
+    toast(`Signed in as ${user.fullName}!`);
+    rl(currentLeaderboardTimeframe);
+  }
+};
+
+/* ===== ADD YOUR PROJECT MODAL & LIKE SYSTEM ===== */
+window.openAddProjectModal = function() {
+  const m = document.getElementById('dh-add-project-modal');
+  if (m) {
+    m.classList.add('open');
+    m.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+};
+window.closeAddProjectModal = function() {
+  const m = document.getElementById('dh-add-project-modal');
+  if (m) {
+    m.classList.remove('open');
+    m.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+};
+
+window.handleAddProjectSubmit = async function(e) {
+  e.preventDefault();
+  const title = document.getElementById('ap-title').value.trim();
+  const tagline = document.getElementById('ap-tagline').value.trim();
+  const category = document.getElementById('ap-cat').value;
+  const repoUrl = document.getElementById('ap-repo').value.trim();
+  const demoUrl = document.getElementById('ap-demo').value.trim();
+  const detail = document.getElementById('ap-desc').value.trim();
+  const msg = document.getElementById('ap-msg');
+  const btn = document.getElementById('ap-submit');
+
+  if (!title || !tagline || !repoUrl) {
+    if (msg) msg.textContent = 'Please fill out all required fields.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Publishing...';
+
+  const token = localStorage.getItem('dh-auth-token');
+  try {
+    await fetch('/api/projects', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({
+        title,
+        description: tagline,
+        category,
+        techStack: [category, 'Community'],
+        repoUrl,
+        demoUrl: demoUrl || repoUrl
+      })
+    });
+  } catch(err) {
+    console.warn('Backend project upload sync:', err);
+  }
+
+  const newPrj = [
+    title,
+    tagline,
+    category,
+    demoUrl || repoUrl,
+    demoUrl || repoUrl,
+    '',
+    { detail: detail || tagline, github: repoUrl, liveUrl: demoUrl }
+  ];
+  J.unshift(newPrj);
+
+  likesStore[title] = 1;
+  try { localStorage.setItem('dh-project-likes', JSON.stringify(likesStore)); } catch(e) {}
+
+  toast(`Project "${title}" published! Highest liked projects rank on top.`);
+  closeAddProjectModal();
+  btn.disabled = false;
+  btn.textContent = 'Publish Project ✦';
+  document.getElementById('form-add-project').reset();
+  rp();
+};
+
 </script>
 
 </body>
