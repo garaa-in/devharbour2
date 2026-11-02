@@ -298,21 +298,4 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-/**
- * GET /api/certificates/admin/download-bundle
- * Protected endpoint for authorized administrators to access the compiled PDF archive.
- */
-router.get('/admin/download-bundle', requireAuth, (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Access denied. Administrator privileges required.' });
-  }
-
-  const filePath = path.join(__dirname, '..', '..', 'storage', 'certificates', 'orcathon_2026_all_certificates.pdf');
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ error: 'Certificate archive not found in secure storage.' });
-  }
-
-  res.download(filePath, 'orcathon_2026_all_certificates.pdf');
-});
-
 module.exports = router;

@@ -229,27 +229,23 @@ test('7. Certificate PII Protection & Email Masking', async () => {
   assert.ok(!verifyRes.data.credential.recipient_email.includes('poornika0406'), 'Verification endpoint must not leak full email');
 });
 
-test('8. Certificate PDF Bundle RBAC Protection & Public Exposure Elimination', async () => {
+test('8. Complete Removal of Bulk PDF Bundle & Obsolete Endpoint Elimination', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+
   // 1. Static public route must NOT serve the PDF
   const publicRes = await fetch(`${BASE_URL}/certificates/orcathon_2026_all_certificates.pdf`);
   assert.equal(publicRes.status, 404, 'Public static folder must NOT expose certificate bundle PDF');
 
-  // 2. Unauthenticated request to admin endpoint must be rejected
-  const unauthRes = await api('/certificates/admin/download-bundle');
-  assert.equal(unauthRes.status, 401, 'Unauthenticated access must be rejected with 401');
+  // 2. Physical workspace storage must NOT contain the bulk PDF
+  const storagePdfPath = path.join(__dirname, '..', 'storage', 'certificates', 'orcathon_2026_all_certificates.pdf');
+  const publicPdfPath = path.join(__dirname, '..', 'public', 'certificates', 'orcathon_2026_all_certificates.pdf');
+  assert.equal(fs.existsSync(storagePdfPath), false, 'storage/certificates/ bulk PDF must be deleted');
+  assert.equal(fs.existsSync(publicPdfPath), false, 'public/certificates/ bulk PDF must be deleted');
 
-  // 3. Authenticated student request must be rejected with 403
-  const student = {
-    email: `bundle_student_${Date.now()}@devharbour.in`,
-    username: `stud_${Date.now().toString().slice(-6)}`,
-    fullName: 'Student User',
-    password: 'Password123!'
-  };
-  const { data: { token } } = await api('/auth/signup', { method: 'POST', body: student });
-  const forbiddenRes = await api('/certificates/admin/download-bundle', {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  assert.equal(forbiddenRes.status, 403, 'Non-admin users must be rejected with 403');
+  // 3. Obsolete /certificates/admin/download-bundle endpoint must be removed (404)
+  const endpointRes = await api('/certificates/admin/download-bundle');
+  assert.equal(endpointRes.status, 404, 'Obsolete bulk download endpoint must return 404 Not Found');
 });
 
 test('9. Full Signup -> Email OTP -> Login -> Direct Certificate Access (Zero Extra OTP)', async () => {

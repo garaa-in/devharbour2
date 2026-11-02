@@ -172,13 +172,16 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
   let googleUser;
   try {
     const tokenInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential.trim())}`, {
-      signal: AbortSignal.timeout(8000)
+      signal: AbortSignal.timeout(5000)
     });
     if (!tokenInfoRes.ok) {
       return res.status(401).json({ error: 'Invalid Google credential token or expired session.' });
     }
     googleUser = await tokenInfoRes.json();
   } catch (err) {
+    if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+      return res.status(401).json({ error: 'Invalid Google credential token or expired session.' });
+    }
     return res.status(503).json({ error: 'Unable to verify credentials with Google. Please try again.' });
   }
 
