@@ -251,3 +251,155 @@ test('8. Certificate PDF Bundle RBAC Protection & Public Exposure Elimination', 
   });
   assert.equal(forbiddenRes.status, 403, 'Non-admin users must be rejected with 403');
 });
+
+test('9. Full Signup -> Email OTP -> Login -> Direct Certificate Access (Zero Extra OTP)', async () => {
+  // Step 1: Signup
+  const email = `cert_user_${Date.now()}@devharbour.in`;
+  const username = `certuser_${Date.now().toString().slice(-6)}`;
+  const fullName = `Student ${username}`;
+  const signupRes = await api('/auth/signup', {
+    method: 'POST',
+    body: {
+      email,
+      username,
+      fullName,
+      password: 'SecurePassword123!'
+    }
+  });
+  assert.equal(signupRes.status, 201);
+  assert.equal(signupRes.data.requiresVerification, true);
+  assert.equal(signupRes.data.user.emailVerified, false);
+
+  // Step 2: Attempt Login BEFORE verification -> MUST fail with 403
+  const prematureLogin = await api('/auth/login', {
+    method: 'POST',
+    body: { login: email, password: 'SecurePassword123!' }
+  });
+  assert.equal(prematureLogin.status, 403);
+  assert.equal(prematureLogin.data.requiresVerification, true);
+
+  // Step 3: Link an issued certificate to this user's email directly in DB
+  const participant = await db.insertParticipant({
+    eventSlug: 'orca-coders-orcathon-2026',
+    candidateName: fullName,
+    candidateEmail: email,
+    candidateOrganisation: 'Dev Harbour University',
+    isEligible: true
+  });
+
+  const cert = await db.issueCertificate({
+    participantId: participant.id,
+    recipientName: fullName,
+    recipientEmail: email,
+    recipientOrganisation: 'Dev Harbour University',
+    eventSlug: 'orca-coders-orcathon-2026',
+    certificateType: 'Participation',
+    issueDate: 'October 25, 2026'
+  });
+  const certId = cert.credential_id;
+
+  // Step 4: Verify Email OTP directly
+  const otp = '852963';
+  const challengeId = 'chal-signup-' + Date.now();
+  const codeHash = hashOtp(signupRes.data.user.id, challengeId, otp, process.env.EMAIL_VERIFICATION_SECRET || 'test_secret_key_1234567890abcdef');
+  await db.saveEmailVerification({
+    userId: signupRes.data.user.id,
+    email,
+    challengeId,
+    codeHash,
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  });
+
+  const verifyRes = await api('/auth/otp/verify', {
+    method: 'POST',
+    body: { email, otp }
+  });
+  assert.equal(verifyRes.status, 200);
+  assert.equal(verifyRes.data.success, true);
+  assert.ok(verifyRes.data.token);
+  assert.equal(verifyRes.data.user.emailVerified, true);
+
+  // Step 5: Login AFTER verification -> MUST succeed with 200
+  const loginRes = await api('/auth/login', {
+    method: 'POST',
+    body: { login: email, password: 'SecurePassword123!' }
+  });
+  assert.equal(loginRes.status, 200);
+  assert.ok(loginRes.data.token);
+  const authToken = loginRes.data.token;
+
+  // Step 6: Access certificates while authenticated -> DIRECT ACCESS WITHOUT EXTRA OTP!
+  const myCertsRes = await api('/certificates/my-certificates', {
+    headers: { 'Authorization': `Bearer ${authToken}` }
+  });
+  assert.equal(myCertsRes.status, 200);
+  assert.equal(myCertsRes.data.success, true);
+  assert.ok(Array.isArray(myCertsRes.data.certificates));
+  assert.ok(myCertsRes.data.certificates.some(c => c.recipient_email === email));
+
+  // Step 7: Download own certificate -> DIRECT DOWNLOAD WITHOUT EXTRA OTP!
+  const downloadRes = await api(`/certificates/download/${certId}`, {
+    headers: { 'Authorization': `Bearer ${authToken}` }
+  });
+  assert.equal(downloadRes.status, 200);
+  assert.equal(downloadRes.data.success, true);
+  assert.equal(downloadRes.data.credential.credential_id, certId);
+});
+
+test('10. Certificate Ownership Authorization: Users Cannot Access Others Private Certificates', async () => {
+  // User 1
+  const u1Email = `owner_${Date.now()}@devharbour.in`;
+  const u1Name = `owner_${Date.now().toString().slice(-6)}`;
+  const u1Signup = await api('/auth/signup', {
+    method: 'POST',
+    body: { email: u1Email, username: u1Name, fullName: 'Owner User', password: 'Password123!' }
+  });
+  await db.markEmailVerified(u1Signup.data.user.id);
+  const u1Login = await api('/auth/login', { method: 'POST', body: { login: u1Email, password: 'Password123!' } });
+  const u1Token = u1Login.data.token;
+
+  // Issue cert for User 1
+  const u1Part = await db.insertParticipant({
+    eventSlug: 'orca-coders-orcathon-2026',
+    candidateName: 'Owner User',
+    candidateEmail: u1Email,
+    candidateOrganisation: 'Owner Org',
+    isEligible: true
+  });
+  const u1Cert = await db.issueCertificate({
+    participantId: u1Part.id,
+    recipientName: 'Owner User',
+    recipientEmail: u1Email,
+    recipientOrganisation: 'Owner Org',
+    eventSlug: 'orca-coders-orcathon-2026',
+    certificateType: 'Participation',
+    issueDate: 'October 25, 2026'
+  });
+  const u1CertId = u1Cert.credential_id;
+
+  // User 2 (Intruder)
+  const u2Email = `intruder_${Date.now()}@devharbour.in`;
+  const u2Name = `intruder_${Date.now().toString().slice(-6)}`;
+  const u2Signup = await api('/auth/signup', {
+    method: 'POST',
+    body: { email: u2Email, username: u2Name, fullName: 'Intruder User', password: 'Password123!' }
+  });
+  await db.markEmailVerified(u2Signup.data.user.id);
+  const u2Login = await api('/auth/login', { method: 'POST', body: { login: u2Email, password: 'Password123!' } });
+  const u2Token = u2Login.data.token;
+
+  // Intruder tries to download User 1's certificate -> MUST BE REJECTED WITH 403
+  const stolenDownload = await api(`/certificates/download/${u1CertId}`, {
+    headers: { 'Authorization': `Bearer ${u2Token}` }
+  });
+  assert.equal(stolenDownload.status, 403);
+  assert.ok(stolenDownload.data.error.includes('Access denied'));
+
+  // Intruder tries to claim User 1's certificate -> MUST BE REJECTED WITH 403
+  const stolenClaim = await api('/certificates/claim', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${u2Token}` },
+    body: { email: u1Email }
+  });
+  assert.equal(stolenClaim.status, 403);
+});

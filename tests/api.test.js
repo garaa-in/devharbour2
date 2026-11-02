@@ -70,6 +70,8 @@ test('2. Authentication Flow: Signup, Login, Profile & Session Persistence', asy
   assert.strictEqual(signupRes.data.user.email, testUser.email.toLowerCase());
   assert.strictEqual(signupRes.data.user.role, 'student');
 
+  await db.markEmailVerified(signupRes.data.user.id);
+
   const token = signupRes.data.token;
 
   // Duplicate email registration prevention
@@ -119,6 +121,7 @@ test('4. Reading Mode & Anti-Duplicate XP Verification', async () => {
     password: 'Password123!'
   };
   const { data: { token, user } } = await api('/auth/signup', { method: 'POST', body: student });
+  await db.markEmailVerified(user.id);
 
   const lessonId = 'lesson-cs50-1';
 
@@ -192,7 +195,8 @@ test('6. Coding Challenge Submission & XP Ledger Credit', async () => {
     fullName: 'Code Challenger',
     password: 'Password123!'
   };
-  const { data: { token } } = await api('/auth/signup', { method: 'POST', body: student });
+  const { data: { token, user } } = await api('/auth/signup', { method: 'POST', body: student });
+  await db.markEmailVerified(user.id);
 
   const validCode = `
     function twoSum(nums, target) {
@@ -249,7 +253,8 @@ test('8. Featured Projects: Publishing, Voting, Bookmarks & Deletion Security', 
     fullName: 'Project Builder',
     password: 'Password123!'
   };
-  const { data: { token: authorToken } } = await api('/auth/signup', { method: 'POST', body: author });
+  const { data: { token: authorToken, user: authorUser } } = await api('/auth/signup', { method: 'POST', body: author });
+  await db.markEmailVerified(authorUser.id);
 
   // Create Project
   const prjData = {
@@ -303,7 +308,8 @@ test('8. Featured Projects: Publishing, Voting, Bookmarks & Deletion Security', 
     fullName: 'Other User',
     password: 'Password123!'
   };
-  const { data: { token: otherToken } } = await api('/auth/signup', { method: 'POST', body: otherStudent });
+  const { data: { token: otherToken, user: otherUser } } = await api('/auth/signup', { method: 'POST', body: otherStudent });
+  await db.markEmailVerified(otherUser.id);
 
   const unauthorizedDel = await api(`/projects/${projectId}`, {
     method: 'DELETE',
@@ -326,7 +332,8 @@ test('9. User Settings & Theme Synchronization', async () => {
     fullName: 'Settings User',
     password: 'Password123!'
   };
-  const { data: { token } } = await api('/auth/signup', { method: 'POST', body: student });
+  const { data: { token, user } } = await api('/auth/signup', { method: 'POST', body: student });
+  await db.markEmailVerified(user.id);
 
   // Update theme to mercury
   const updateRes = await api('/user/settings', {

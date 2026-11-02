@@ -8871,18 +8871,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
 let certLockCallback = null;
 
 function isCertificateUnlocked() {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('pass') === '916' || urlParams.get('passcode') === '916') {
-      sessionStorage.setItem('dh_cert_unlocked', '916');
-      return true;
-    }
-  } catch (e) {}
-  try {
-    return sessionStorage.getItem('dh_cert_unlocked') === '916';
-  } catch (e) {
-    return false;
-  }
+  return true;
 }
 
 function promptCertificatePasscode(callback) {

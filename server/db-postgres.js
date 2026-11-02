@@ -27,9 +27,11 @@ let pool = null;
 if (DATABASE_URL) {
   pool = new Pool({
     connectionString: DATABASE_URL,
-    max: 10,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 30000
+    max: 15,
+    idleTimeoutMillis: 15000,
+    connectionTimeoutMillis: 20000,
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 10000
   });
 
   // Handle errors on idle clients so unhandled ECONNRESET from pooler does not crash the process
@@ -43,7 +45,25 @@ if (DATABASE_URL) {
 
 async function query(text, params = []) {
   if (!pool) throw new Error('PostgreSQL pool is not initialized. Please configure DATABASE_URL in .env');
-  return await pool.query(text, params);
+  let retries = 2;
+  while (retries >= 0) {
+    try {
+      return await pool.query(text, params);
+    } catch (err) {
+      const isTransient = err.code === 'ECONNRESET' ||
+                          err.code === '57P01' ||
+                          err.code === 'EPIPE' ||
+                          err.code === 'ETIMEDOUT' ||
+                          (err.message && err.message.includes('ECONNRESET')) ||
+                          (err.message && err.message.includes('Connection terminated'));
+      if (isTransient && retries > 0) {
+        retries--;
+        await new Promise(r => setTimeout(r, 150));
+        continue;
+      }
+      throw err;
+    }
+  }
 }
 
 async function isConnected() {
@@ -839,29 +859,18 @@ async function getIssuedCertificateByEmailOrName(email, name, eventSlug = 'orca-
   const nClean = (name || '').trim().toLowerCase();
   if (!eClean && !nClean) return null;
 
-  if (eClean && nClean) {
-    const res = await query(`
-      SELECT * FROM issued_certificates
-      WHERE event_slug = $1
-        AND (LOWER(recipient_email) = $2 OR LOWER(recipient_name) = $3 OR LOWER(recipient_name) LIKE $4)
-      ORDER BY created_at DESC LIMIT 1;
-    `, [eventSlug, eClean, nClean, `%${nClean}%`]);
-    return res.rows[0] || null;
-  }
+  // Always prioritize exact email match when email is provided
   if (eClean) {
-    const res = await query(`
-      SELECT * FROM issued_certificates
-      WHERE event_slug = $1
-        AND (LOWER(recipient_email) = $2 OR LOWER(recipient_name) = $2 OR LOWER(recipient_name) LIKE $3)
-      ORDER BY created_at DESC LIMIT 1;
-    `, [eventSlug, eClean, `%${eClean}%`]);
-    return res.rows[0] || null;
+    const certByEmail = await getIssuedCertificateByEmail(eClean, eventSlug);
+    if (certByEmail) return certByEmail;
   }
+
+  // Fallback to name search only if email did not yield a result
   if (nClean) {
     const res = await query(`
       SELECT * FROM issued_certificates
       WHERE event_slug = $1
-        AND (LOWER(recipient_name) = $2 OR LOWER(recipient_name) LIKE $3 OR LOWER(recipient_email) = $2)
+        AND (LOWER(recipient_name) = $2 OR LOWER(recipient_name) LIKE $3)
       ORDER BY created_at DESC LIMIT 1;
     `, [eventSlug, nClean, `%${nClean}%`]);
     return res.rows[0] || null;
@@ -870,8 +879,13 @@ async function getIssuedCertificateByEmailOrName(email, name, eventSlug = 'orca-
 }
 
 async function issueCertificate({ participantId, recipientName, recipientEmail, recipientOrganisation, eventSlug = 'orca-coders-orcathon-2026', certificateType = 'Participation', issueDate = 'October 25, 2026', status = 'Valid' }) {
-  const existing = await getIssuedCertificateByEmailOrName(recipientEmail, recipientName, eventSlug);
-  if (existing) return existing;
+  if (recipientEmail) {
+    const existing = await getIssuedCertificateByEmail(recipientEmail, eventSlug);
+    if (existing) return existing;
+  } else if (recipientName) {
+    const existing = await getIssuedCertificateByEmailOrName(null, recipientName, eventSlug);
+    if (existing) return existing;
+  }
 
   const num = String(participantId || '1').padStart(4, '0');
   let hash = 0;
@@ -883,6 +897,8 @@ async function issueCertificate({ participantId, recipientName, recipientEmail, 
   const hex = Math.abs(hash).toString(16).toUpperCase().padStart(4, '0').slice(-4);
   const credentialId = `DH-ORCA-2026-${num}-${hex}`;
 
+  const pId = participantId ? String(participantId).trim() : null;
+
   const res = await query(`
     INSERT INTO issued_certificates (
       credential_id, event_slug, participant_id, recipient_name,
@@ -890,19 +906,21 @@ async function issueCertificate({ participantId, recipientName, recipientEmail, 
     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
     ON CONFLICT (credential_id) DO UPDATE SET status = EXCLUDED.status
     RETURNING *;
-  `, [credentialId, eventSlug, String(participantId || ''), recipientName.trim(), recipientEmail.toLowerCase().trim(), (recipientOrganisation || 'Participant').trim(), certificateType, issueDate, status]);
+  `, [credentialId, eventSlug, pId, recipientName.trim(), recipientEmail.toLowerCase().trim(), (recipientOrganisation || 'Participant').trim(), certificateType, issueDate, status]);
 
   return res.rows[0];
 }
 
 async function insertParticipant(candidate) {
+  const id = candidate.id || ('part-' + crypto.randomUUID().slice(0, 8));
   const res = await query(`
     INSERT INTO event_participants (
-      event_slug, team_id, team_name, candidate_role, candidate_name,
+      id, event_slug, team_id, team_name, candidate_role, candidate_name,
       candidate_email, candidate_mobile, candidate_location, candidate_organisation, is_eligible, created_at
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW())
     RETURNING *;
   `, [
+    id,
     candidate.eventSlug || 'orca-coders-orcathon-2026',
     candidate.teamId || '',
     candidate.teamName || '',
@@ -912,7 +930,7 @@ async function insertParticipant(candidate) {
     candidate.candidateMobile || '',
     candidate.candidateLocation || '',
     candidate.candidateOrganisation || '',
-    candidate.isEligible !== undefined ? candidate.isEligible : 1
+    (candidate.isEligible === false || candidate.isEligible === 0) ? 0 : 1
   ]);
   return res.rows[0];
 }
@@ -1024,6 +1042,24 @@ async function getUserSummaryStats(userId) {
   };
 }
 
+async function isEmailVerified(userId) {
+  if (!userId) return false;
+  const res = await query("SELECT state, verified_at FROM email_verifications WHERE user_id = $1 LIMIT 1;", [userId]);
+  if (!res.rows[0]) return false;
+  return res.rows[0].state === 'verified' && res.rows[0].verified_at !== null;
+}
+
+async function getUserCertificates(email) {
+  if (!email) return [];
+  const cleanEmail = email.trim().toLowerCase();
+  const res = await query(`
+    SELECT * FROM issued_certificates
+    WHERE LOWER(recipient_email) = $1
+    ORDER BY created_at DESC;
+  `, [cleanEmail]);
+  return res.rows;
+}
+
 async function getUserProjects(userId, status = 'approved') {
   const res = await query(
     'SELECT id, title, description, category, tech_stack_json, repo_url, demo_url, votes_count FROM projects WHERE user_id = $1 AND status = $2',
@@ -1109,5 +1145,7 @@ module.exports = {
   recordOtpAttempt,
   updateUserPassword,
   getUserSummaryStats,
-  getUserProjects
+  getUserProjects,
+  isEmailVerified,
+  getUserCertificates
 };

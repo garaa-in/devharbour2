@@ -11,29 +11,7 @@ const path = require('path');
 
 const db = require('../db');
 const { requireAuth } = require('../auth');
-
-// In-memory rate limiting for certificate endpoints
-const rateLimits = new Map();
-function rateLimit({ windowMs = 60000, max = 30, message = 'Too many certificate verification requests. Please try again shortly.' }) {
-  return (req, res, next) => {
-    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
-    const key = `certs:${ip}`;
-    const now = Date.now();
-    let record = rateLimits.get(key);
-    if (!record || now > record.resetTime) {
-      record = { count: 1, resetTime: now + windowMs };
-      rateLimits.set(key, record);
-      return next();
-    }
-    record.count++;
-    if (record.count > max) {
-      const retryAfter = Math.ceil((record.resetTime - now) / 1000);
-      res.setHeader('Retry-After', retryAfter);
-      return res.status(429).json({ error: message, retryAfter });
-    }
-    next();
-  };
-}
+const { rateLimit } = require('../rate-limiter');
 
 /**
  * Mask email address to protect participant privacy in public endpoints
@@ -48,16 +26,115 @@ function maskEmail(email) {
 }
 
 /**
+ * GET /api/certificates/my-certificates
+ * Authenticated user endpoint to view all credentials registered to their verified email.
+ * Requires NO additional OTP once email verification is complete.
+ */
+router.get('/my-certificates', requireAuth, async (req, res) => {
+  try {
+    const userEmail = req.user.email.toLowerCase();
+    const certs = await db.getUserCertificates(userEmail);
+
+    return res.json({
+      success: true,
+      database: 'Supabase PostgreSQL',
+      userEmail,
+      count: (certs || []).length,
+      certificates: (certs || []).map(c => ({
+        credential_id: c.credential_id,
+        recipient_name: c.recipient_name,
+        recipient_email: c.recipient_email,
+        recipient_organisation: c.recipient_organisation || 'Participant',
+        event_name: 'ORCA CODERS: ORCATHON 2026',
+        event_slug: c.event_slug,
+        certificate_type: c.certificate_type,
+        issue_date: c.issue_date,
+        status: c.status,
+        team_name: c.team_name || '',
+        verification_url: `/certificate/verify/${c.credential_id}`,
+        download_url: `/api/certificates/download/${c.credential_id}`
+      }))
+    });
+  } catch (err) {
+    console.error('[MY CERTIFICATES ERROR]:', err);
+    return res.status(500).json({ error: 'Failed to retrieve your certificates.' });
+  }
+});
+
+/**
+ * GET /api/certificates/download/:credentialId
+ * Authenticated download endpoint with ownership enforcement.
+ * Users can only download their own certificates without any additional OTP.
+ */
+router.get('/download/:credentialId', requireAuth, async (req, res) => {
+  try {
+    const { credentialId } = req.params;
+    if (!credentialId || !credentialId.trim()) {
+      return res.status(400).json({ error: 'Valid credential ID is required.' });
+    }
+
+    const cert = await db.getIssuedCertificateById(credentialId.trim());
+    if (!cert) {
+      return res.status(404).json({ error: 'Certificate not found in registry.' });
+    }
+
+    // Ownership Enforcement: User must own the certificate or be an admin
+    const certEmail = (cert.recipient_email || '').toLowerCase().trim();
+    const userEmail = (req.user.email || '').toLowerCase().trim();
+    if (req.user.role !== 'admin' && certEmail !== userEmail) {
+      return res.status(403).json({
+        error: 'Access denied: You do not have permission to download this certificate.'
+      });
+    }
+
+    return res.json({
+      success: true,
+      database: 'Supabase PostgreSQL',
+      message: 'Certificate access authorized without additional OTP.',
+      credential: {
+        credential_id: cert.credential_id,
+        recipient_name: cert.recipient_name,
+        recipient_email: cert.recipient_email,
+        recipient_organisation: cert.recipient_organisation || 'Participant',
+        event_name: 'ORCA CODERS: ORCATHON 2026',
+        event_slug: cert.event_slug,
+        certificate_type: cert.certificate_type,
+        issue_date: cert.issue_date,
+        status: cert.status,
+        verification_url: `/certificate/verify/${cert.credential_id}`
+      }
+    });
+  } catch (err) {
+    console.error('[CERTIFICATE DOWNLOAD ERROR]:', err);
+    return res.status(500).json({ error: 'Failed to authorize certificate download.' });
+  }
+});
+
+/**
  * POST /api/certificates/claim
  * Validates participant registration against authoritative event registry and issues/retrieves credential.
  * Supports lookup by email, candidate name, or both via Supabase PostgreSQL.
+ * If authenticated, automatically matches verified user account without requiring any OTP.
  */
 router.post('/claim', rateLimit({ windowMs: 60000, max: 30 }), async (req, res) => {
   try {
-    const { email, name, eventSlug = 'orca-coders-orcathon-2026' } = req.body || {};
+    let { email, name, eventSlug = 'orca-coders-orcathon-2026' } = req.body || {};
 
-    const cleanEmail = (email || '').trim().toLowerCase();
+    // Auto-populate from authenticated user if present
+    if (req.user) {
+      email = email || req.user.email;
+      name = name || req.user.full_name || req.user.username;
+    }
+
+    let cleanEmail = (email || '').trim().toLowerCase();
     const cleanName = (name || '').trim();
+
+    // Prevent authenticated user from claiming another user's certificate
+    if (req.user && req.user.role !== 'admin' && cleanEmail && cleanEmail !== req.user.email.toLowerCase()) {
+      return res.status(403).json({
+        error: 'Access denied: You may only claim certificates associated with your verified account email.'
+      });
+    }
 
     if (!cleanEmail && !cleanName) {
       return res.status(400).json({ error: 'Please enter your registered email address or name.' });
@@ -67,7 +144,8 @@ router.post('/claim', rateLimit({ windowMs: 60000, max: 30 }), async (req, res) 
     let existingCert = await db.getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
 
     if (existingCert) {
-      const safeEmail = cleanEmail ? existingCert.recipient_email : maskEmail(existingCert.recipient_email);
+      const isOwner = req.user ? req.user.email.toLowerCase() === (existingCert.recipient_email || '').toLowerCase() : false;
+      const safeEmail = (cleanEmail || isOwner) ? existingCert.recipient_email : maskEmail(existingCert.recipient_email);
       return res.json({
         success: true,
         alreadyIssued: true,
@@ -84,7 +162,8 @@ router.post('/claim', rateLimit({ windowMs: 60000, max: 30 }), async (req, res) 
           issue_date: existingCert.issue_date,
           status: existingCert.status,
           team_name: existingCert.team_name || '',
-          verification_url: `/certificate/verify/${existingCert.credential_id}`
+          verification_url: `/certificate/verify/${existingCert.credential_id}`,
+          download_url: `/api/certificates/download/${existingCert.credential_id}`
         }
       });
     }
@@ -120,7 +199,8 @@ router.post('/claim', rateLimit({ windowMs: 60000, max: 30 }), async (req, res) 
       issueDate: 'October 25, 2026'
     });
 
-    const safeNewEmail = cleanEmail ? (newCert.recipient_email || recipientEmail) : maskEmail(newCert.recipient_email || recipientEmail);
+    const isOwner = req.user ? req.user.email.toLowerCase() === (newCert.recipient_email || recipientEmail).toLowerCase() : false;
+    const safeNewEmail = (cleanEmail || isOwner) ? (newCert.recipient_email || recipientEmail) : maskEmail(newCert.recipient_email || recipientEmail);
 
     return res.status(201).json({
       success: true,
@@ -138,7 +218,8 @@ router.post('/claim', rateLimit({ windowMs: 60000, max: 30 }), async (req, res) 
         issue_date: newCert.issue_date,
         status: newCert.status,
         team_name: participant.team_name || '',
-        verification_url: `/certificate/verify/${newCert.credential_id}`
+        verification_url: `/certificate/verify/${newCert.credential_id}`,
+        download_url: `/api/certificates/download/${newCert.credential_id}`
       }
     });
   } catch (err) {
