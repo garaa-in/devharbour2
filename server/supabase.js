@@ -44,6 +44,11 @@ if (!pgPool && DATABASE_URL) {
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000
     });
+    pgPool.on('error', (err) => {
+      if (err.code !== 'ECONNRESET' && err.code !== '57P01') {
+        console.warn('[Supabase PG Pool Warning]:', err.message);
+      }
+    });
     const hostInfo = DATABASE_URL.split('@')[1] ? DATABASE_URL.split('@')[1].split('/')[0] : 'connected';
     console.log('⚡ Connected to Supabase PostgreSQL pool:', hostInfo);
   } catch (err) {

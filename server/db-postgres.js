@@ -29,18 +29,21 @@ if (DATABASE_URL) {
     connectionString: DATABASE_URL,
     max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000
+    connectionTimeoutMillis: 30000
+  });
+
+  // Handle errors on idle clients so unhandled ECONNRESET from pooler does not crash the process
+  pool.on('error', (err) => {
+    // Supabase connection pooler frequently terminates idle sessions
+    if (err.code !== 'ECONNRESET' && err.code !== '57P01') {
+      console.warn('[PostgreSQL Pool Warning]:', err.message);
+    }
   });
 }
 
 async function query(text, params = []) {
   if (!pool) throw new Error('PostgreSQL pool is not initialized. Please configure DATABASE_URL in .env');
-  const client = await pool.connect();
-  try {
-    return await client.query(text, params);
-  } finally {
-    client.release();
-  }
+  return await pool.query(text, params);
 }
 
 async function isConnected() {
@@ -171,21 +174,34 @@ async function awardXp(userId, amount, sourceType, referenceId, note = '') {
   const id = 'xp-' + crypto.randomUUID().slice(0, 8);
   const now = new Date().toISOString();
 
-  await query(`
-    INSERT INTO xp_ledger (id, user_id, amount, source_type, reference_id, note, created_at)
-    VALUES ($1, $2, $3, $4, $5, $6, $7);
-  `, [id, userId, amount, sourceType, referenceId, note, now]);
+  try {
+    await query(`
+      INSERT INTO xp_ledger (id, user_id, amount, source_type, reference_id, note, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7);
+    `, [id, userId, amount, sourceType, referenceId, note, now]);
 
-  const totalXp = await getUserTotalXp(userId);
-  await updateStreak(userId);
-  await checkAndUnlockAchievements(userId);
+    const totalXp = await getUserTotalXp(userId);
+    await updateStreak(userId);
+    await checkAndUnlockAchievements(userId);
 
-  return {
-    awarded: true,
-    amount,
-    currentXp: totalXp,
-    level: calculateLevel(totalXp)
-  };
+    return {
+      awarded: true,
+      amount,
+      currentXp: totalXp,
+      level: calculateLevel(totalXp)
+    };
+  } catch (err) {
+    if (err.code === '23505' || (err.message && err.message.toLowerCase().includes('unique'))) {
+      const totalXp = await getUserTotalXp(userId);
+      return {
+        awarded: false,
+        reason: 'Already awarded for this activity',
+        currentXp: totalXp,
+        level: calculateLevel(totalXp)
+      };
+    }
+    throw err;
+  }
 }
 
 async function getUserTotalXp(userId) {
@@ -256,15 +272,16 @@ async function getCourses(category = 'All') {
 async function getCourseById(id) {
   if (!id) return null;
   const cleanId = id.trim().toLowerCase();
-  // Support both exact ID (course-cs50) and frontend slug (cs50, fullstack)
+  // Support both exact ID (course-cs50), frontend slug (cs50, fullstack), and partial matching
   const res = await query(`
     SELECT * FROM courses
     WHERE id = $1
        OR id = $2
-       OR LOWER(category) = $3
-       OR LOWER(title) LIKE $4
+       OR LOWER(id) LIKE $3
+       OR LOWER(category) = $4
+       OR LOWER(title) LIKE $5
     LIMIT 1;
-  `, [id, `course-${cleanId}`, cleanId, `%${cleanId}%`]);
+  `, [id, `course-${cleanId}`, `%${cleanId}%`, cleanId, `%${cleanId}%`]);
   return res.rows[0] || null;
 }
 
@@ -306,6 +323,9 @@ async function saveLessonProgress(userId, lessonId, readingSeconds = 10, complet
 
   if (completed && (!existing || existing.status !== 'completed')) {
     xpResult = await awardXp(userId, 10, 'lesson_complete', lessonId, 'Completed reading lesson');
+  } else {
+    const totalXp = await getUserTotalXp(userId);
+    xpResult = { awarded: false, amount: 0, currentXp: totalXp, level: calculateLevel(totalXp) };
   }
 
   const updated = await getLessonProgress(userId, lessonId);
@@ -376,6 +396,9 @@ async function recordSubmission({ userId, challengeId, code, language, status, e
       const challenge = await getChallengeById(challengeId);
       const reward = challenge ? challenge.xpReward : 25;
       xpResult = await awardXp(userId, reward, 'challenge_pass', challengeId, `Solved challenge: ${challenge ? challenge.title : challengeId}`);
+    } else {
+      const totalXp = await getUserTotalXp(userId);
+      xpResult = { awarded: false, amount: 0, reason: 'Already awarded for this activity', currentXp: totalXp, level: calculateLevel(totalXp) };
     }
   }
 
@@ -444,7 +467,7 @@ async function createProject({ userId, title, description, category, techStack, 
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, 0, 'approved', $9, $10);
   `, [id, userId, title, description, category, JSON.stringify(techStack || []), repoUrl, demoUrl || '', now, now]);
 
-  await awardXp(userId, 50, 'project_publish', id, `Published project: ${title}`);
+  await awardXp(userId, 50, 'project_submit', id, `Published project: ${title}`);
   return getProjectById(id);
 }
 
@@ -872,6 +895,28 @@ async function issueCertificate({ participantId, recipientName, recipientEmail, 
   return res.rows[0];
 }
 
+async function insertParticipant(candidate) {
+  const res = await query(`
+    INSERT INTO event_participants (
+      event_slug, team_id, team_name, candidate_role, candidate_name,
+      candidate_email, candidate_mobile, candidate_location, candidate_organisation, is_eligible, created_at
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
+    RETURNING *;
+  `, [
+    candidate.eventSlug || 'orca-coders-orcathon-2026',
+    candidate.teamId || '',
+    candidate.teamName || '',
+    candidate.candidateRole || 'Participant',
+    candidate.candidateName,
+    candidate.candidateEmail.trim().toLowerCase(),
+    candidate.candidateMobile || '',
+    candidate.candidateLocation || '',
+    candidate.candidateOrganisation || '',
+    candidate.isEligible !== undefined ? candidate.isEligible : 1
+  ]);
+  return res.rows[0];
+}
+
 async function countParticipants(eventSlug = 'orca-coders-orcathon-2026') {
   const res = await query('SELECT COUNT(*)::int as count FROM event_participants WHERE event_slug = $1;', [eventSlug]);
   return res.rows[0] ? res.rows[0].count : 0;
@@ -888,9 +933,19 @@ async function getEmailVerification(userId) {
   return res.rows[0] || null;
 }
 
-async function saveEmailVerification(userId, email, challengeId, codeHash, expiresAt) {
+async function saveEmailVerification(userIdOrObj, email, challengeId, codeHash, expiresAt) {
+  const data = typeof userIdOrObj === 'object' && userIdOrObj !== null
+    ? userIdOrObj
+    : { userId: userIdOrObj, email, challengeId, codeHash, expiresAt };
+
+  const uId = data.userId || data.user_id;
+  const em = (data.email || '').toLowerCase().trim();
+  const chId = data.challengeId || data.challenge_id;
+  const cHash = data.codeHash || data.code_hash;
+  const expAt = data.expiresAt || data.expires_at;
+
   const now = new Date().toISOString();
-  const existing = await getEmailVerification(userId);
+  const existing = await getEmailVerification(uId);
 
   let sendCount = 1;
   let hourStartedAt = now;
@@ -915,11 +970,12 @@ async function saveEmailVerification(userId, email, challengeId, codeHash, expir
       sent_at = EXCLUDED.sent_at,
       attempts = 0,
       state = 'pending',
+      verified_at = NULL,
       hour_started_at = EXCLUDED.hour_started_at,
       send_count = EXCLUDED.send_count;
-  `, [userId, email.toLowerCase().trim(), challengeId, codeHash, expiresAt, now, hourStartedAt, sendCount]);
+  `, [uId, em, chId, cHash, expAt, now, hourStartedAt, sendCount]);
 
-  return getEmailVerification(userId);
+  return getEmailVerification(uId);
 }
 
 async function markEmailVerified(userId) {
@@ -984,6 +1040,7 @@ module.exports = {
   pool,
   query,
   isConnected,
+  isPostgres: () => true,
   calculateLevel,
   getUserById,
   getUserByEmail,
@@ -1043,6 +1100,7 @@ module.exports = {
   getIssuedCertificateByEmail,
   getIssuedCertificateByEmailOrName,
   issueCertificate,
+  insertParticipant,
   countParticipants,
   countIssuedCertificates,
   getEmailVerification,

@@ -1,0 +1,417 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String            @id @default(dbgenerated("gen_random_uuid()::text"))
+  email            String            @unique
+  username         String            @unique
+  fullName         String            @map("full_name")
+  passwordHash     String            @map("password_hash")
+  salt             String
+  role             String            @default("student")
+  avatarUrl        String?           @default("") @map("avatar_url")
+  bio              String?           @default("")
+  githubUrl        String?           @default("") @map("github_url")
+  portfolioUrl     String?           @default("") @map("portfolio_url")
+  location         String?           @default("")
+  streakDays       Int?              @default(0) @map("streak_days")
+  lastActiveDate   DateTime?         @map("last_active_date") @db.Date
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  sessions         Session[]
+  settings         UserSettings?
+  lessonProgress   LessonProgress[]
+  submissions      Submission[]
+  xpLedger         XpLedger[]
+  userAchievements UserAchievement[]
+  projects         Project[]
+  projectVotes     ProjectVote[]
+  projectBookmarks ProjectBookmark[]
+  tasks            WorkspaceTask[]
+  notes            WorkspaceNote[]
+  assignments      WorkspaceAssignment[]
+  snippets         WorkspaceSnippet[]
+  bookmarks        WorkspaceBookmark[]
+  emailVerification EmailVerification?
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at") @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("sessions")
+}
+
+model UserSettings {
+  userId             String   @id @map("user_id")
+  theme              String?  @default("light")
+  emailNotifications Boolean? @default(true) @map("email_notifications")
+  profilePublic      Boolean? @default(true) @map("profile_public")
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+model Course {
+  id          String   @id
+  title       String
+  description String
+  category    String
+  provider    String
+  level       String?  @default("Beginner")
+  duration    String?
+  rating      Float?   @default(4.8)
+  students    Int?     @default(0)
+  lessonsCount Int?    @default(0) @map("lessons_count")
+  externalUrl String   @map("external_url")
+  tags        String?  @default("[]")
+  featured    Boolean? @default(false)
+  badge       String?  @default("")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  lessons     Lesson[]
+
+  @@map("courses")
+}
+
+model Lesson {
+  id              String   @id
+  courseId        String   @map("course_id")
+  title           String
+  slug            String
+  readingTimeMins Int?     @default(10) @map("reading_time_mins")
+  orderIndex      Int      @default(1) @map("order_index")
+  summary         String?  @default("")
+  content         String
+  keyTakeaways    String?  @default("[]") @map("key_takeaways")
+  externalDocUrl  String?  @default("") @map("external_doc_url")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress        LessonProgress[]
+
+  @@index([courseId])
+  @@index([slug])
+  @@map("lessons")
+}
+
+model LessonProgress {
+  id             String    @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId         String    @map("user_id")
+  lessonId       String    @map("lesson_id")
+  status         String    @default("in_progress")
+  readingSeconds Int?      @default(0) @map("reading_seconds")
+  completedAt    DateTime? @map("completed_at") @db.Timestamptz
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson         Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+model Challenge {
+  id             String   @id
+  title          String
+  slug           String   @unique
+  category       String
+  difficulty     String   @default("Medium")
+  xpReward       Int      @default(25) @map("xp_reward")
+  description    String
+  examples       String?  @default("[]")
+  constraints    String?  @default("[]")
+  starterCode    String?  @default("{}") @map("starter_code")
+  publicTests    String?  @default("[]") @map("public_tests")
+  hiddenTests    String?  @default("[]") @map("hidden_tests")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  submissions    Submission[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([difficulty])
+  @@map("challenges")
+}
+
+model Submission {
+  id              String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId          String   @map("user_id")
+  challengeId     String   @map("challenge_id")
+  code            String
+  language        String   @default("javascript")
+  status          String   @default("pending")
+  executionTimeMs Int?     @default(0) @map("execution_time_ms")
+  passedTests     Int?     @default(0) @map("passed_tests")
+  totalTests      Int?     @default(0) @map("total_tests")
+  errorMessage    String?  @default("") @map("error_message")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge       Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([challengeId])
+  @@index([status])
+  @@map("submissions")
+}
+
+model Project {
+  id          String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId      String   @map("user_id")
+  title       String
+  description String
+  category    String
+  techStack   String?  @default("[]") @map("tech_stack")
+  repoUrl     String?  @default("") @map("repo_url")
+  demoUrl     String?  @default("") @map("demo_url")
+  status      String   @default("approved")
+  votesCount  Int?     @default(0) @map("votes_count")
+  viewsCount  Int?     @default(0) @map("views_count")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  votes       ProjectVote[]
+  bookmarks   ProjectBookmark[]
+
+  @@index([userId])
+  @@index([category])
+  @@index([status])
+  @@map("projects")
+}
+
+model ProjectVote {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String   @map("user_id")
+  projectId String   @map("project_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("project_votes")
+}
+
+model ProjectBookmark {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String   @map("user_id")
+  projectId String   @map("project_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("project_bookmarks")
+}
+
+model Achievement {
+  id          String   @id
+  title       String
+  description String
+  icon        String
+  badgeType   String   @default("bronze") @map("badge_type")
+  xpReward    Int      @default(50) @map("xp_reward")
+  criteria    String   @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  unlocks     UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId        String   @map("user_id")
+  achievementId String   @map("achievement_id")
+  unlockedAt    DateTime @default(now()) @map("unlocked_at") @db.Timestamptz
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model XpLedger {
+  id          String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId      String   @map("user_id")
+  amount      Int
+  sourceType  String   @map("source_type")
+  referenceId String?  @map("reference_id")
+  note        String?  @default("")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sourceType, referenceId])
+  @@index([userId])
+  @@index([sourceType])
+  @@map("xp_ledger")
+}
+
+model EventParticipant {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  eventSlug             String   @map("event_slug")
+  candidateName         String   @map("candidate_name")
+  candidateEmail        String   @map("candidate_email")
+  candidateOrganisation String?  @default("") @map("candidate_organisation")
+  teamName              String?  @default("") @map("team_name")
+  teamRole              String?  @default("Participant") @map("team_role")
+  isEligible            Boolean? @default(true) @map("is_eligible")
+  registeredAt          DateTime @default(now()) @map("registered_at") @db.Timestamptz
+
+  certificates          IssuedCertificate[]
+
+  @@unique([eventSlug, candidateEmail])
+  @@index([eventSlug])
+  @@index([candidateEmail])
+  @@index([candidateName])
+  @@map("event_participants")
+}
+
+model IssuedCertificate {
+  credentialId          String   @id @map("credential_id")
+  participantId         String?  @map("participant_id")
+  recipientName         String   @map("recipient_name")
+  recipientEmail        String   @map("recipient_email")
+  recipientOrganisation String?  @default("") @map("recipient_organisation")
+  eventSlug             String   @map("event_slug")
+  certificateType       String   @default("Participation") @map("certificate_type")
+  issueDate             String   @map("issue_date")
+  status                String   @default("Valid")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  participant           EventParticipant? @relation(fields: [participantId], references: [id], onDelete: SetNull)
+
+  @@index([eventSlug])
+  @@index([recipientEmail])
+  @@index([recipientName])
+  @@map("issued_certificates")
+}
+
+model CertificateOtp {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  email     String
+  eventSlug String   @map("event_slug")
+  codeHash  String   @map("code_hash")
+  attempts  Int?     @default(0)
+  expiresAt DateTime @map("expires_at") @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([email, eventSlug])
+  @@map("certificate_otps")
+}
+
+model EmailVerification {
+  userId        String    @id @map("user_id")
+  email         String
+  challengeId   String    @unique @map("challenge_id")
+  codeHash      String?   @map("code_hash")
+  expiresAt     DateTime? @map("expires_at") @db.Timestamptz
+  sentAt        DateTime? @map("sent_at") @db.Timestamptz
+  attempts      Int?      @default(0)
+  state         String    @default("pending")
+  verifiedAt    DateTime? @map("verified_at") @db.Timestamptz
+  hourStartedAt DateTime? @map("hour_started_at") @db.Timestamptz
+  sendCount     Int?      @default(1) @map("send_count")
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@index([challengeId])
+  @@map("email_verifications")
+}
+
+model WorkspaceTask {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String   @map("user_id")
+  title     String
+  completed Boolean? @default(false)
+  priority  String?  @default("medium")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("workspace_tasks")
+}
+
+model WorkspaceNote {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String   @map("user_id")
+  title     String
+  content   String?  @default("")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("workspace_notes")
+}
+
+model WorkspaceAssignment {
+  id        String    @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String    @map("user_id")
+  title     String
+  courseId  String?   @map("course_id")
+  dueDate   DateTime? @map("due_date") @db.Date
+  status    String?   @default("pending")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("workspace_assignments")
+}
+
+model WorkspaceSnippet {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String   @map("user_id")
+  title     String
+  language  String   @default("javascript")
+  code      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("workspace_snippets")
+}
+
+model WorkspaceBookmark {
+  id        String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  userId    String   @map("user_id")
+  title     String
+  url       String
+  category  String?  @default("Resource")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("workspace_bookmarks")
+}
