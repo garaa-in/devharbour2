@@ -38,3 +38,14 @@ coverage/
 # Deliverables & generated archives
 output/*.zip
 output/*.pdf
+
+# Sensitive participant PII files & event registries
+data/orcathon_participants.*
+assets/orcathon_participants.*
+server/data/
+
+# Secure private file storage & sensitive archives
+storage/
+private/
+public/certificates/*.pdf
+public/certificates/*.zip

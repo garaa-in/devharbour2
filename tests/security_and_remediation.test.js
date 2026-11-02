@@ -211,3 +211,43 @@ test('6. Complete End-to-End OTP Verification & Password Reset Flow', async () =
   assert.ok(newLoginRes.data.token);
   assert.equal(newLoginRes.data.user.email, email);
 });
+
+test('7. Certificate PII Protection & Email Masking', async () => {
+  // Query Poornika's credential by name alone
+  const claimRes = await api('/certificates/claim', {
+    method: 'POST',
+    body: { name: 'Poornika R' }
+  });
+  assert.ok(claimRes.status === 200 || claimRes.status === 201);
+  assert.ok(claimRes.data.credential.recipient_email.includes('*'), 'Claiming by name alone must mask email');
+  assert.ok(!claimRes.data.credential.recipient_email.includes('poornika0406'), 'Claiming by name alone must not leak full email');
+
+  const credId = claimRes.data.credential.credential_id;
+  const verifyRes = await api(`/certificates/verify/${credId}`);
+  assert.equal(verifyRes.status, 200);
+  assert.ok(verifyRes.data.credential.recipient_email.includes('*'), 'Verification endpoint must mask email');
+  assert.ok(!verifyRes.data.credential.recipient_email.includes('poornika0406'), 'Verification endpoint must not leak full email');
+});
+
+test('8. Certificate PDF Bundle RBAC Protection & Public Exposure Elimination', async () => {
+  // 1. Static public route must NOT serve the PDF
+  const publicRes = await fetch(`${BASE_URL}/certificates/orcathon_2026_all_certificates.pdf`);
+  assert.equal(publicRes.status, 404, 'Public static folder must NOT expose certificate bundle PDF');
+
+  // 2. Unauthenticated request to admin endpoint must be rejected
+  const unauthRes = await api('/certificates/admin/download-bundle');
+  assert.equal(unauthRes.status, 401, 'Unauthenticated access must be rejected with 401');
+
+  // 3. Authenticated student request must be rejected with 403
+  const student = {
+    email: `bundle_student_${Date.now()}@devharbour.in`,
+    username: `stud_${Date.now().toString().slice(-6)}`,
+    fullName: 'Student User',
+    password: 'Password123!'
+  };
+  const { data: { token } } = await api('/auth/signup', { method: 'POST', body: student });
+  const forbiddenRes = await api('/certificates/admin/download-bundle', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  assert.equal(forbiddenRes.status, 403, 'Non-admin users must be rejected with 403');
+});
