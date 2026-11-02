@@ -5,35 +5,53 @@
 <meta name="google-gis-client-id" id="google-gis-client-id" content="">
 <script>
 (function(){
-  // Lazily load Google GIS SDK when auth modal opens.
-  // Set the meta content or window.__GOOGLE_CLIENT_ID to your OAuth Client ID.
-  // Fetch non-secret public config from server to get GOOGLE_CLIENT_ID
+  // Google Identity Services (GIS) Initializer with FedCM & Account Chooser Support
+  window.__initGIS = function() {
+    var cid = (document.getElementById('google-gis-client-id')||{}).content || window.__GOOGLE_CLIENT_ID || '';
+    if (!cid || !window.google || !window.google.accounts || !window.google.accounts.id) return;
+    try {
+      google.accounts.id.initialize({
+        client_id: cid,
+        callback: window.onGoogleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        itp_support: true,
+        use_fedcm_for_prompt: true
+      });
+      window.__gisInitialized = true;
+      if (typeof window.__renderGoogleButtons === 'function') {
+        window.__renderGoogleButtons();
+      }
+      if (typeof window.__triggerGoogleOneTap === 'function') {
+        window.__triggerGoogleOneTap();
+      }
+    } catch (e) {
+      console.warn('Google Identity Services initialization notice:', e);
+    }
+  };
+
+  // Fetch non-secret public config from server to retrieve configured GOOGLE_CLIENT_ID
   fetch('/api/config/public').then(function(r){return r.json()}).then(function(cfg){
     if (cfg && cfg.googleClientId) {
       var el = document.getElementById('google-gis-client-id');
       if (el) el.content = cfg.googleClientId;
       window.__GOOGLE_CLIENT_ID = cfg.googleClientId;
+      if (window.google && window.google.accounts) {
+        window.__initGIS();
+      }
     }
   }).catch(function(){});
 
-  window.__loadGIS = function() {
-    var cid = (document.getElementById('google-gis-client-id')||{}).content || window.__GOOGLE_CLIENT_ID || '';
-    if (!cid || window.__gisLoading || (window.google && window.google.accounts)) return;
-    window.__gisLoading = true;
-    var s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.async = true; s.defer = true;
-    s.onload = function() {
-      if (!window.google || !cid) return;
-      google.accounts.id.initialize({
-        client_id: cid,
-        callback: window.onGoogleCredentialResponse,
-        auto_select: false,
-        cancel_on_tap_outside: true
-      });
-    };
-    document.head.appendChild(s);
+  // Eagerly inject Google Identity Services SDK
+  var s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.async = true; s.defer = true;
+  s.onload = function() {
+    if (window.__GOOGLE_CLIENT_ID || (document.getElementById('google-gis-client-id')||{}).content) {
+      window.__initGIS();
+    }
   };
+  document.head.appendChild(s);
 })();
 </script>
 <!-- Google tag (gtag.js) -->
@@ -5830,6 +5848,9 @@ function openAuthModal(tab = 'signup') {
   if (m) {
     m.classList.add('open');
     switchAuthTab(tab);
+    if (typeof window.__renderGoogleButtons === 'function') {
+      window.__renderGoogleButtons();
+    }
   }
 }
 window.openAuthModal = openAuthModal;
@@ -8161,7 +8182,10 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
     </div>
 
     <!-- Continue with Google Button -->
-    <button type="button" class="dh-google-auth-btn" id="dh-google-btn" onclick="handleGoogleAuth()">
+    <!-- Continue with Google (Official Account Chooser & One Tap) -->
+    <div id="dh-google-btn-container" style="width:100%;margin-bottom:14px;display:flex;flex-direction:column;align-items:center;">
+      <div id="dh-google-btn-slot" style="display:none;width:100%;justify-content:center;"></div>
+      <button type="button" class="dh-google-auth-btn" id="dh-google-btn" onclick="handleGoogleAuth()" style="width:100%;margin-bottom:0;">
       <svg width="18" height="18" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
         <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
@@ -8170,6 +8194,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       </svg>
       <span>Continue with Google</span>
     </button>
+    </div>
 
     <div class="dh-auth-divider">
       <span>or continue with email</span>
@@ -9665,21 +9690,72 @@ async function submitPracticeCode() {
 window.submitPracticeCode = submitPracticeCode;
 
 /* ===== GOOGLE AUTHENTICATION (Cryptographically Secured) ===== */
+/* ===== GOOGLE AUTHENTICATION (Account Chooser & One Tap with FedCM) ===== */
+window.__renderGoogleButtons = function() {
+  if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
+  var slot = document.getElementById('dh-google-btn-slot');
+  var fallbackBtn = document.getElementById('dh-google-btn');
+  if (slot) {
+    try {
+      var isDark = document.documentElement.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark');
+      slot.innerHTML = '';
+      google.accounts.id.renderButton(slot, {
+        type: 'standard',
+        shape: 'rectangular',
+        theme: isDark ? 'filled_black' : 'outline',
+        text: 'continue_with',
+        size: 'large',
+        logo_alignment: 'left',
+        width: Math.min(360, (slot.parentElement ? slot.parentElement.offsetWidth : 360) || 360)
+      });
+      if (slot.children.length > 0 && fallbackBtn) {
+        fallbackBtn.style.display = 'none';
+        slot.style.display = 'flex';
+      }
+    } catch (e) {
+      console.warn('Google button render notice:', e);
+    }
+  }
+};
+
+window.__triggerGoogleOneTap = function() {
+  if (localStorage.getItem('dh_token') || localStorage.getItem('dh-auth-token')) return;
+  if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
+  if (window.__oneTapPromptActive) return;
+  window.__oneTapPromptActive = true;
+
+  try {
+    google.accounts.id.prompt(function(notification) {
+      if (notification.isNotDisplayed()) {
+        console.debug('One Tap not displayed:', notification.getNotDisplayedReason());
+      } else if (notification.isSkippedMoment()) {
+        console.debug('One Tap skipped:', notification.getSkippedReason());
+      } else if (notification.isDismissedMoment()) {
+        console.debug('One Tap dismissed:', notification.getDismissedReason());
+      }
+    });
+  } catch (e) {
+    console.debug('One Tap notice:', e);
+  }
+};
+
 window.handleGoogleAuth = async function() {
-  // Trigger lazy GIS load on first click
-  if (typeof window.__loadGIS === 'function') window.__loadGIS();
-  // Small delay to allow GIS to initialise if just loaded
-  await new Promise(r => setTimeout(r, 300));
+  if (typeof window.__initGIS === 'function') window.__initGIS();
   if (window.google && window.google.accounts && window.google.accounts.id) {
-    google.accounts.id.prompt();
+    window.__oneTapPromptActive = false;
+    window.__triggerGoogleOneTap();
     return;
   }
   toast('Google Sign-In requires GOOGLE_CLIENT_ID to be configured. Please sign in with email and password.');
 };
 
 window.onGoogleCredentialResponse = async function(response) {
-  if (!response || !response.credential) return;
+  if (!response || !response.credential) {
+    toast('No Google credentials returned. Please try again.');
+    return;
+  }
   try {
+    toast('Authenticating with Google...');
     const res = await fetch('/api/auth/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -9699,10 +9775,10 @@ window.onGoogleCredentialResponse = async function(response) {
       toast(`Signed in with Google as ${data.user.fullName || data.user.username}!`);
       if (typeof rl === 'function') rl(currentLeaderboardTimeframe);
     } else {
-      toast(data.error || 'Google sign-in failed.');
+      toast(data.error || 'Google sign-in failed. Please try again.');
     }
   } catch (err) {
-    toast('Network error during Google sign-in.');
+    toast('Network error during Google sign-in. Please try again.');
   }
 };
 

@@ -185,6 +185,17 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
     return res.status(503).json({ error: 'Unable to verify credentials with Google. Please try again.' });
   }
 
+  // Verify issuer
+  if (googleUser.iss && googleUser.iss !== 'accounts.google.com' && googleUser.iss !== 'https://accounts.google.com') {
+    return res.status(401).json({ error: 'Invalid Google token issuer.' });
+  }
+
+  // Verify expiration
+  const now = Math.floor(Date.now() / 1000);
+  if (googleUser.exp && parseInt(googleUser.exp, 10) < now) {
+    return res.status(401).json({ error: 'Google credential token has expired.' });
+  }
+
   if (!googleUser || !googleUser.email || (googleUser.email_verified !== true && googleUser.email_verified !== 'true')) {
     return res.status(401).json({ error: 'Google account email must be verified.' });
   }
@@ -197,6 +208,7 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
   const email = googleUser.email.toLowerCase().trim();
   const name = (googleUser.name || googleUser.given_name || email.split('@')[0]).trim();
   const avatarUrl = googleUser.picture || '';
+  const googleSub = googleUser.sub || '';
 
   try {
     let user = await db.getUserByEmail(email);
@@ -210,16 +222,17 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
         username = `${baseUser}${counter++}`;
       }
 
-      const { salt, hash } = hashPassword('google_oauth_' + (googleUser.sub || crypto.randomUUID()));
+      const { salt, hash } = hashPassword('google_oauth_' + (googleSub || crypto.randomUUID()));
       user = await db.createUser({
         email,
         username,
         fullName: name && name.length >= 2 ? name : username,
         passwordHash: hash,
-        salt,
+        salt: googleSub ? `google:${googleSub}` : salt,
         role: 'student',
         location: 'India',
-        bio: 'Dev Harbour developer'
+        bio: 'Dev Harbour developer',
+        avatarUrl
       });
 
       eventBus.broadcast({
@@ -228,6 +241,10 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
         location: user.location || '',
         message: `${user.username} signed up with Google!`
       });
+    } else if (!user.avatar_url && avatarUrl) {
+      // Safely update avatar URL for returning user if previously unset
+      await db.updateUserAvatar(user.id, avatarUrl);
+      user.avatar_url = avatarUrl;
     }
 
     await db.markEmailVerified(user.id);

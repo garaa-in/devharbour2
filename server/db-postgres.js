@@ -98,13 +98,13 @@ async function getUserByUsername(username) {
   return res.rows[0] || null;
 }
 
-async function createUser({ email, username, fullName, passwordHash, salt, role = 'student', location = '', bio = '' }) {
+async function createUser({ email, username, fullName, passwordHash, salt, role = 'student', location = '', bio = '', avatarUrl = '' }) {
   const id = 'usr-' + crypto.randomUUID().slice(0, 8);
   const now = new Date().toISOString();
   await query(`
-    INSERT INTO users (id, email, username, full_name, password_hash, salt, role, location, bio, created_at, updated_at)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
-  `, [id, email.toLowerCase().trim(), username.toLowerCase().trim(), fullName.trim(), passwordHash, salt, role, location, bio, now, now]);
+    INSERT INTO users (id, email, username, full_name, password_hash, salt, role, location, bio, created_at, updated_at, avatar_url)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+  `, [id, email.toLowerCase().trim(), username.toLowerCase().trim(), fullName.trim(), passwordHash, salt, role, location, bio, now, now, avatarUrl || '']);
 
   await query(`
     INSERT INTO user_settings (user_id, theme, email_notifications, profile_public, updated_at)
@@ -113,6 +113,11 @@ async function createUser({ email, username, fullName, passwordHash, salt, role 
   `, [id, now]);
 
   return getUserById(id);
+}
+
+async function updateUserAvatar(userId, avatarUrl) {
+  if (!userId || !avatarUrl) return;
+  await query('UPDATE users SET avatar_url = $1, updated_at = NOW() WHERE id = $2;', [avatarUrl, userId]);
 }
 
 async function updateUserProfile(id, { fullName, bio, githubUrl, portfolioUrl, location, avatarUrl }) {
@@ -998,11 +1003,19 @@ async function saveEmailVerification(userIdOrObj, email, challengeId, codeHash, 
 
 async function markEmailVerified(userId) {
   const now = new Date().toISOString();
+  const user = await getUserById(userId);
+  const userEmail = user ? user.email : '';
+  const challengeId = crypto.randomUUID();
   await query(`
-    UPDATE email_verifications
-    SET state = 'verified', verified_at = $1, code_hash = NULL, expires_at = NULL
-    WHERE user_id = $2;
-  `, [now, userId]);
+    INSERT INTO email_verifications (user_id, email, challenge_id, code_hash, expires_at, sent_at, attempts, state, verified_at, hour_started_at, send_count)
+    VALUES ($1, $2, $3, NULL, NULL, $4, 0, 'verified', $4, $4, 1)
+    ON CONFLICT (user_id)
+    DO UPDATE SET
+      state = 'verified',
+      verified_at = EXCLUDED.verified_at,
+      code_hash = NULL,
+      expires_at = NULL;
+  `, [userId, userEmail, challengeId, now]);
   return getEmailVerification(userId);
 }
 
@@ -1147,5 +1160,6 @@ module.exports = {
   getUserSummaryStats,
   getUserProjects,
   isEmailVerified,
-  getUserCertificates
+  getUserCertificates,
+  updateUserAvatar
 };

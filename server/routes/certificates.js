@@ -30,7 +30,7 @@ function maskEmail(email) {
  * Authenticated user endpoint to view all credentials registered to their verified email.
  * Requires NO additional OTP once email verification is complete.
  */
-router.get('/my-certificates', requireAuth, async (req, res) => {
+router.get(['/my-certificates', '/me'], requireAuth, async (req, res) => {
   try {
     const userEmail = req.user.email.toLowerCase();
     const certs = await db.getUserCertificates(userEmail);
