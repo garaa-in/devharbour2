@@ -28,6 +28,10 @@ module.exports = async (req, res) => {
       database: 'Supabase PostgreSQL'
     });
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to retrieve certificate registry stats.' });
+    console.error('[STATS ERROR]:', err);
+    return res.status(500).json({
+      error: 'Failed to retrieve certificate registry stats: ' + (err.message || 'database error'),
+      hasDbUrl: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DIRECT_URL)
+    });
   }
 };

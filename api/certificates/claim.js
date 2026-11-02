@@ -26,7 +26,13 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { email, name, eventSlug = 'orca-coders-orcathon-2026' } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) { body = {}; }
+    }
+    body = body || {};
+
+    const { email, name, eventSlug = 'orca-coders-orcathon-2026' } = body;
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanName = (name || '').trim();
 
@@ -113,6 +119,10 @@ module.exports = async (req, res) => {
       }
     });
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to process certificate claim.' });
+    console.error('[CERTIFICATE CLAIM ERROR]:', err);
+    return res.status(500).json({
+      error: err.message || 'Failed to process certificate claim.',
+      hasDbUrl: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DIRECT_URL)
+    });
   }
 };
