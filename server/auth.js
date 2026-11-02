@@ -49,8 +49,10 @@ async function authMiddleware(req, res, next) {
         const user = await db.getUserById(session.user_id);
         if (user) {
           const totalXp = await db.getUserTotalXp(user.id);
+          const isVerified = await db.isEmailVerified(user.id);
           req.user = {
             ...user,
+            emailVerified: isVerified,
             totalXp: totalXp || 0,
             level: db.calculateLevel(totalXp || 0)
           };
@@ -69,6 +71,13 @@ async function authMiddleware(req, res, next) {
 function requireAuth(req, res, next) {
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required. Please sign in.' });
+  }
+  if (req.user.emailVerified === false) {
+    return res.status(403).json({
+      error: 'Email address not verified. Please verify your email before accessing this feature.',
+      requiresVerification: true,
+      email: req.user.email
+    });
   }
   next();
 }

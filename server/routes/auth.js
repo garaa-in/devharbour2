@@ -4,31 +4,8 @@ const crypto = require('node:crypto');
 const db = require('../db');
 const { hashPassword, verifyPassword, validateEmail, validateUsername, validatePassword, requireAuth } = require('../auth');
 const { generateOtp, hashOtp, verifyOtpHash, sendVerificationOtpEmail } = require('../email');
+const { rateLimit } = require('../rate-limiter');
 const eventBus = require('../events');
-
-// In-Memory Rate Limiter for Authentication and OTP Endpoints
-const rateLimits = new Map();
-
-function rateLimit({ windowMs = 60000, max = 10, message = 'Too many requests. Please try again later.' }) {
-  return (req, res, next) => {
-    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
-    const key = `${req.baseUrl}${req.path}:${ip}`;
-    const now = Date.now();
-    let record = rateLimits.get(key);
-    if (!record || now > record.resetTime) {
-      record = { count: 1, resetTime: now + windowMs };
-      rateLimits.set(key, record);
-      return next();
-    }
-    record.count++;
-    if (record.count > max) {
-      const retryAfter = Math.ceil((record.resetTime - now) / 1000);
-      res.setHeader('Retry-After', retryAfter);
-      return res.status(429).json({ error: message, retryAfter });
-    }
-    next();
-  };
-}
 
 // POST /api/auth/signup
 router.post('/signup', rateLimit({ windowMs: 60000, max: 10 }), async (req, res) => {
@@ -70,7 +47,32 @@ router.post('/signup', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
       bio: bio || ''
     });
 
-    const { token, expiresAt } = await db.createSession(user.id);
+    // Generate cryptographically secure 6-digit OTP for Email Verification
+    const otp = generateOtp();
+    const challengeId = crypto.randomUUID();
+    const codeHash = hashOtp(user.id, challengeId, otp);
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+    await db.saveEmailVerification({
+      userId: user.id,
+      email: user.email,
+      challengeId,
+      codeHash,
+      expiresAt
+    });
+
+    try {
+      await sendVerificationOtpEmail({
+        email: user.email,
+        code: otp,
+        challengeId,
+        purpose: 'signup_verification'
+      });
+    } catch (err) {
+      console.error('[SIGNUP OTP EMAIL ERROR]:', err.message);
+    }
+
+    const { token, expiresAt: sessionExpiresAt } = await db.createSession(user.id);
 
     // Broadcast real-time user signup
     eventBus.broadcast({
@@ -81,11 +83,13 @@ router.post('/signup', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
     });
 
     res.status(201).json({
-      message: 'Account successfully registered.',
+      message: 'Account successfully registered! A 6-digit verification code has been dispatched to your email.',
+      requiresVerification: true,
       token,
-      expiresAt,
+      expiresAt: sessionExpiresAt,
       user: {
         ...user,
+        emailVerified: false,
         totalXp: 0,
         level: 1
       }
@@ -116,6 +120,15 @@ router.post('/login', rateLimit({ windowMs: 60000, max: 15 }), async (req, res) 
       return res.status(401).json({ error: 'Invalid credentials. Please verify your email/username and password.' });
     }
 
+    const isVerified = await db.isEmailVerified(user.id);
+    if (!isVerified) {
+      return res.status(403).json({
+        error: 'Please verify your email address before signing in. Check your inbox for the 6-digit verification code.',
+        requiresVerification: true,
+        email: user.email
+      });
+    }
+
     const { token, expiresAt } = await db.createSession(user.id);
     const totalXp = await db.getUserTotalXp(user.id);
     const streak = await db.updateStreak(user.id);
@@ -136,6 +149,7 @@ router.post('/login', rateLimit({ windowMs: 60000, max: 15 }), async (req, res) 
         githubUrl: user.github_url,
         portfolioUrl: user.portfolio_url,
         streakDays: streak,
+        emailVerified: true,
         totalXp: totalXp || 0,
         level: db.calculateLevel(totalXp || 0)
       }
@@ -213,6 +227,8 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
       });
     }
 
+    await db.markEmailVerified(user.id);
+
     const { token, expiresAt } = await db.createSession(user.id);
     const totalXp = await db.getUserTotalXp(user.id);
     const streak = await db.updateStreak(user.id);
@@ -231,6 +247,7 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
         bio: user.bio,
         location: user.location || '',
         streakDays: streak,
+        emailVerified: true,
         totalXp: totalXp || 0,
         level: db.calculateLevel(totalXp || 0)
       }
@@ -354,9 +371,31 @@ router.post('/otp/verify', rateLimit({ windowMs: 60000, max: 10 }), async (req, 
 
     await db.recordOtpAttempt(user.id, true);
 
+    const { token, expiresAt } = await db.createSession(user.id);
+    const totalXp = await db.getUserTotalXp(user.id);
+    const streak = await db.updateStreak(user.id);
+
     res.json({
       success: true,
-      message: 'Email address successfully verified!'
+      message: 'Email address successfully verified! Your account is active.',
+      token,
+      expiresAt,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        fullName: user.full_name,
+        role: user.role,
+        avatarUrl: user.avatar_url,
+        bio: user.bio,
+        location: user.location || '',
+        githubUrl: user.github_url,
+        portfolioUrl: user.portfolio_url,
+        streakDays: streak,
+        emailVerified: true,
+        totalXp: totalXp || 0,
+        level: db.calculateLevel(totalXp || 0)
+      }
     });
   } catch (err) {
     res.status(500).json({ error: 'Failed to verify code.' });
