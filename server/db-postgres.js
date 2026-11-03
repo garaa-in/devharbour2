@@ -34,6 +34,9 @@ CMTyZKG3XEu5Ghl1LEnI3QmEKsqaCLv12BnVjbkSeZsMnevJPs1Ye6TjjJwdik5P
 o/bKiIz+Fq8=
 -----END CERTIFICATE-----`;
 
+// Default Supabase transaction pooler fallback URI for serverless runtime
+const FALLBACK_DATABASE_URL = 'postgresql://REDACTED';
+
 // Read from all standard database environment variable names
 let rawDatabaseUrl = process.env.DATABASE_URL ||
                      process.env.POSTGRES_URL ||
@@ -41,7 +44,7 @@ let rawDatabaseUrl = process.env.DATABASE_URL ||
                      process.env.DIRECT_URL ||
                      process.env.SUPABASE_DATABASE_URL ||
                      process.env.POSTGRES_URL_NON_POOLING ||
-                     '';
+                     FALLBACK_DATABASE_URL;
 
 // Strip any filesystem-dependent sslrootcert or sslmode query parameters that break in Linux / Vercel
 let cleanDatabaseUrl = rawDatabaseUrl

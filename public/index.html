@@ -4708,12 +4708,6 @@ function show(id, fromUserAction){
       document.documentElement.style.overflow = '';
     }
   }
-  if (id === 'certificate' && typeof window.isCertificateUnlocked === 'function' && !window.isCertificateUnlocked()) {
-    window.promptCertificatePasscode(function() {
-      show('certificate');
-    });
-    return;
-  }
   document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+id));
   document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));
   scrollTo({top:0,behavior:'smooth'});
@@ -8893,97 +8887,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
 // DEV HARBOUR OFFICIAL CERTIFICATE ENGINE
 // ==========================================
 
-let certLockCallback = null;
-
-function isCertificateUnlocked() {
-  return true;
-}
-
-function promptCertificatePasscode(callback) {
-  certLockCallback = callback || null;
-  const introEl = document.getElementById('intro');
-  if (introEl && !introEl.classList.contains('out')) {
-    introEl.classList.add('out');
-  }
-  const modal = document.getElementById('dh-cert-lock-modal');
-  const input = document.getElementById('dh-cert-pass-input');
-  const err = document.getElementById('dh-cert-pass-err');
-  if (err) err.style.display = 'none';
-  if (input) {
-    input.value = '';
-    input.style.borderColor = 'rgba(110,80,200,0.3)';
-  }
-  if (modal) {
-    modal.style.display = 'flex';
-    setTimeout(function() {
-      if (input) input.focus();
-    }, 50);
-  }
-}
-
-function closeCertLockModal() {
-  const modal = document.getElementById('dh-cert-lock-modal');
-  if (modal) modal.style.display = 'none';
-  const err = document.getElementById('dh-cert-pass-err');
-  if (err) err.style.display = 'none';
-  certLockCallback = null;
-}
-
-function verifyCertPasscode() {
-  const input = document.getElementById('dh-cert-pass-input');
-  const err = document.getElementById('dh-cert-pass-err');
-  const val = (input ? input.value : '').trim();
-  if (val === '916') {
-    try {
-      sessionStorage.setItem('dh_cert_unlocked', '916');
-    } catch (e) {}
-    const cb = certLockCallback;
-    closeCertLockModal();
-    if (typeof cb === 'function') {
-      cb();
-    } else {
-      show('certificate');
-    }
-  } else {
-    if (err) err.style.display = 'block';
-    if (input) {
-      input.style.borderColor = '#e11d48';
-      input.focus();
-      input.select();
-    }
-  }
-}
-
-window.isCertificateUnlocked = isCertificateUnlocked;
-window.promptCertificatePasscode = promptCertificatePasscode;
-window.closeCertLockModal = closeCertLockModal;
-window.verifyCertPasscode = verifyCertPasscode;
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    const modal = document.getElementById('dh-cert-lock-modal');
-    if (modal && modal.style.display === 'flex') {
-      closeCertLockModal();
-    }
-  }
-});
-
 window.openCertificateFromHero = function() {
-  if (!isCertificateUnlocked()) {
-    promptCertificatePasscode(function() {
-      const introEl = document.getElementById('intro');
-      if (introEl && !introEl.classList.contains('out')) {
-        if (typeof window.go === 'function') {
-          window.go(undefined, undefined, true);
-        } else {
-          introEl.classList.add('out');
-          document.body.style.overflow = '';
-        }
-      }
-      show('certificate');
-    });
-    return;
-  }
   const introEl = document.getElementById('intro');
   if (introEl && !introEl.classList.contains('out')) {
     if (typeof window.go === 'function') {
@@ -9408,46 +9312,15 @@ async function loadCertificateVerification(credentialId) {
   const h = window.location.hash || '';
   if (p.startsWith('/certificate/verify/') || h.startsWith('#verify/')) {
     const cid = p.startsWith('/certificate/verify/') ? p.replace('/certificate/verify/', '') : h.replace('#verify/', '');
-    if (!isCertificateUnlocked()) {
-      promptCertificatePasscode(function() {
-        show('certificate');
-        loadCertificateVerification(cid);
-      });
-      return;
-    }
     show('certificate');
     loadCertificateVerification(cid);
   } else if (p === '/certificate' || h === '#v-certificate' || h === '#certificate') {
-    if (!isCertificateUnlocked()) {
-      promptCertificatePasscode(function() {
-        show('certificate');
-      });
-      return;
-    }
     show('certificate');
   }
 })();
 
 </script>
-<!-- Certificate Portal Passcode Lock Modal (Passcode: 916) -->
-<div id="dh-cert-lock-modal" onclick="if(event.target===this)closeCertLockModal()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(15,10,30,0.72);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:16px;">
-  <div style="max-width:380px;width:100%;background:var(--card,#ffffff);border-radius:24px;padding:32px 26px;text-align:center;box-shadow:0 24px 60px rgba(20,10,45,0.4);border:1px solid rgba(130,100,220,0.3);position:relative;">
-    <button type="button" onclick="closeCertLockModal()" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--soft,#f0ebf8);border:none;cursor:pointer;font-size:18px;line-height:1;color:var(--mut,#666);display:grid;place-items:center;" aria-label="Close">&times;</button>
-    <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#ede6fc,#d5c4f7);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:#5b38b8;box-shadow:0 8px 20px rgba(91,56,184,0.2);">
-      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-    </div>
-    <h3 style="font-size:20px;font-weight:800;color:var(--ink,#1a1528);margin-bottom:6px;">Certificate Access</h3>
-    <p style="font-size:13px;color:var(--mut,#6d6682);margin-bottom:20px;line-height:1.45;">This portal is currently locked. Enter the access passcode to continue.</p>
-    <form id="dh-cert-lock-form" onsubmit="event.preventDefault();verifyCertPasscode();">
-      <input type="password" id="dh-cert-pass-input" maxlength="10" placeholder="Passcode" autocomplete="off" style="width:100%;box-sizing:border-box;padding:12px 16px;border-radius:14px;border:1.8px solid rgba(110,80,200,0.3);background:var(--bg,#f6f3fc);font-size:22px;letter-spacing:6px;text-align:center;font-weight:800;color:var(--ink,#1a1528);outline:none;margin-bottom:12px;">
-      <div id="dh-cert-pass-err" style="display:none;color:#e11d48;font-size:12px;font-weight:700;margin-bottom:12px;">Incorrect passcode. Please try again.</div>
-      <button type="submit" style="width:100%;padding:13px;border-radius:14px;background:linear-gradient(135deg,#7c5cff,#5a3bd9);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(124,92,255,0.35);">Unlock Portal &rarr;</button>
-    </form>
-  </div>
-</div>
+
 
 <script>
 // --- Anti-Spying & Source Protection System ---

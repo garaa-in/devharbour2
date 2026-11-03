@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
   "rewrites": [
     { "source": "/api/leaderboard", "destination": "/api/leaderboard.js" },
     { "source": "/api/certificates/claim", "destination": "/api/certificates/claim.js" },

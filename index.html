@@ -5,34 +5,53 @@
 <meta name="google-gis-client-id" id="google-gis-client-id" content="">
 <script>
 (function(){
-  // Lazily load Google GIS SDK when auth modal opens.
-  // Set the meta content or window.__GOOGLE_CLIENT_ID to your OAuth Client ID.
+  // Google Identity Services (GIS) Initializer with FedCM & Account Chooser Support
+  window.__initGIS = function() {
+    var cid = (document.getElementById('google-gis-client-id')||{}).content || window.__GOOGLE_CLIENT_ID || '';
+    if (!cid || !window.google || !window.google.accounts || !window.google.accounts.id) return;
+    try {
+      google.accounts.id.initialize({
+        client_id: cid,
+        callback: window.onGoogleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        itp_support: true,
+        use_fedcm_for_prompt: true
+      });
+      window.__gisInitialized = true;
+      if (typeof window.__renderGoogleButtons === 'function') {
+        window.__renderGoogleButtons();
+      }
+      if (typeof window.__triggerGoogleOneTap === 'function') {
+        window.__triggerGoogleOneTap();
+      }
+    } catch (e) {
+      console.warn('Google Identity Services initialization notice:', e);
+    }
+  };
+
+  // Fetch non-secret public config from server to retrieve configured GOOGLE_CLIENT_ID
   fetch('/api/config/public').then(function(r){return r.json()}).then(function(cfg){
     if (cfg && cfg.googleClientId) {
       var el = document.getElementById('google-gis-client-id');
       if (el) el.content = cfg.googleClientId;
       window.__GOOGLE_CLIENT_ID = cfg.googleClientId;
+      if (window.google && window.google.accounts) {
+        window.__initGIS();
+      }
     }
   }).catch(function(){});
 
-  window.__loadGIS = function() {
-    var cid = (document.getElementById('google-gis-client-id')||{}).content || window.__GOOGLE_CLIENT_ID || '';
-    if (!cid || window.__gisLoading || (window.google && window.google.accounts)) return;
-    window.__gisLoading = true;
-    var s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.async = true; s.defer = true;
-    s.onload = function() {
-      if (!window.google || !cid) return;
-      google.accounts.id.initialize({
-        client_id: cid,
-        callback: window.onGoogleCredentialResponse,
-        auto_select: false,
-        cancel_on_tap_outside: true
-      });
-    };
-    document.head.appendChild(s);
+  // Eagerly inject Google Identity Services SDK
+  var s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.async = true; s.defer = true;
+  s.onload = function() {
+    if (window.__GOOGLE_CLIENT_ID || (document.getElementById('google-gis-client-id')||{}).content) {
+      window.__initGIS();
+    }
   };
+  document.head.appendChild(s);
 })();
 </script>
 <!-- Google tag (gtag.js) -->
@@ -4689,12 +4708,6 @@ function show(id, fromUserAction){
       document.documentElement.style.overflow = '';
     }
   }
-  if (id === 'certificate' && typeof window.isCertificateUnlocked === 'function' && !window.isCertificateUnlocked()) {
-    window.promptCertificatePasscode(function() {
-      show('certificate');
-    });
-    return;
-  }
   document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+id));
   document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));
   scrollTo({top:0,behavior:'smooth'});
@@ -5829,6 +5842,9 @@ function openAuthModal(tab = 'signup') {
   if (m) {
     m.classList.add('open');
     switchAuthTab(tab);
+    if (typeof window.__renderGoogleButtons === 'function') {
+      window.__renderGoogleButtons();
+    }
   }
 }
 window.openAuthModal = openAuthModal;
@@ -8160,7 +8176,10 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
     </div>
 
     <!-- Continue with Google Button -->
-    <button type="button" class="dh-google-auth-btn" id="dh-google-btn" onclick="handleGoogleAuth()">
+    <!-- Continue with Google (Official Account Chooser & One Tap) -->
+    <div id="dh-google-btn-container" style="width:100%;margin-bottom:14px;display:flex;flex-direction:column;align-items:center;">
+      <div id="dh-google-btn-slot" style="display:none;width:100%;justify-content:center;"></div>
+      <button type="button" class="dh-google-auth-btn" id="dh-google-btn" onclick="handleGoogleAuth()" style="width:100%;margin-bottom:0;">
       <svg width="18" height="18" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
         <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
@@ -8169,6 +8188,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
       </svg>
       <span>Continue with Google</span>
     </button>
+    </div>
 
     <div class="dh-auth-divider">
       <span>or continue with email</span>
@@ -8867,108 +8887,7 @@ new MutationObserver(()=>{P.querySelectorAll('span').forEach(up);R.querySelector
 // DEV HARBOUR OFFICIAL CERTIFICATE ENGINE
 // ==========================================
 
-let certLockCallback = null;
-
-function isCertificateUnlocked() {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('pass') === '916' || urlParams.get('passcode') === '916') {
-      sessionStorage.setItem('dh_cert_unlocked', '916');
-      return true;
-    }
-  } catch (e) {}
-  try {
-    return sessionStorage.getItem('dh_cert_unlocked') === '916';
-  } catch (e) {
-    return false;
-  }
-}
-
-function promptCertificatePasscode(callback) {
-  certLockCallback = callback || null;
-  const introEl = document.getElementById('intro');
-  if (introEl && !introEl.classList.contains('out')) {
-    introEl.classList.add('out');
-  }
-  const modal = document.getElementById('dh-cert-lock-modal');
-  const input = document.getElementById('dh-cert-pass-input');
-  const err = document.getElementById('dh-cert-pass-err');
-  if (err) err.style.display = 'none';
-  if (input) {
-    input.value = '';
-    input.style.borderColor = 'rgba(110,80,200,0.3)';
-  }
-  if (modal) {
-    modal.style.display = 'flex';
-    setTimeout(function() {
-      if (input) input.focus();
-    }, 50);
-  }
-}
-
-function closeCertLockModal() {
-  const modal = document.getElementById('dh-cert-lock-modal');
-  if (modal) modal.style.display = 'none';
-  const err = document.getElementById('dh-cert-pass-err');
-  if (err) err.style.display = 'none';
-  certLockCallback = null;
-}
-
-function verifyCertPasscode() {
-  const input = document.getElementById('dh-cert-pass-input');
-  const err = document.getElementById('dh-cert-pass-err');
-  const val = (input ? input.value : '').trim();
-  if (val === '916') {
-    try {
-      sessionStorage.setItem('dh_cert_unlocked', '916');
-    } catch (e) {}
-    const cb = certLockCallback;
-    closeCertLockModal();
-    if (typeof cb === 'function') {
-      cb();
-    } else {
-      show('certificate');
-    }
-  } else {
-    if (err) err.style.display = 'block';
-    if (input) {
-      input.style.borderColor = '#e11d48';
-      input.focus();
-      input.select();
-    }
-  }
-}
-
-window.isCertificateUnlocked = isCertificateUnlocked;
-window.promptCertificatePasscode = promptCertificatePasscode;
-window.closeCertLockModal = closeCertLockModal;
-window.verifyCertPasscode = verifyCertPasscode;
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    const modal = document.getElementById('dh-cert-lock-modal');
-    if (modal && modal.style.display === 'flex') {
-      closeCertLockModal();
-    }
-  }
-});
-
 window.openCertificateFromHero = function() {
-  if (!isCertificateUnlocked()) {
-    promptCertificatePasscode(function() {
-      const introEl = document.getElementById('intro');
-      if (introEl && !introEl.classList.contains('out')) {
-        if (typeof window.go === 'function') {
-          window.go(undefined, undefined, true);
-        } else {
-          introEl.classList.add('out');
-          document.body.style.overflow = '';
-        }
-      }
-      show('certificate');
-    });
-    return;
-  }
   const introEl = document.getElementById('intro');
   if (introEl && !introEl.classList.contains('out')) {
     if (typeof window.go === 'function') {
@@ -9393,46 +9312,15 @@ async function loadCertificateVerification(credentialId) {
   const h = window.location.hash || '';
   if (p.startsWith('/certificate/verify/') || h.startsWith('#verify/')) {
     const cid = p.startsWith('/certificate/verify/') ? p.replace('/certificate/verify/', '') : h.replace('#verify/', '');
-    if (!isCertificateUnlocked()) {
-      promptCertificatePasscode(function() {
-        show('certificate');
-        loadCertificateVerification(cid);
-      });
-      return;
-    }
     show('certificate');
     loadCertificateVerification(cid);
   } else if (p === '/certificate' || h === '#v-certificate' || h === '#certificate') {
-    if (!isCertificateUnlocked()) {
-      promptCertificatePasscode(function() {
-        show('certificate');
-      });
-      return;
-    }
     show('certificate');
   }
 })();
 
 </script>
-<!-- Certificate Portal Passcode Lock Modal (Passcode: 916) -->
-<div id="dh-cert-lock-modal" onclick="if(event.target===this)closeCertLockModal()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(15,10,30,0.72);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:16px;">
-  <div style="max-width:380px;width:100%;background:var(--card,#ffffff);border-radius:24px;padding:32px 26px;text-align:center;box-shadow:0 24px 60px rgba(20,10,45,0.4);border:1px solid rgba(130,100,220,0.3);position:relative;">
-    <button type="button" onclick="closeCertLockModal()" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--soft,#f0ebf8);border:none;cursor:pointer;font-size:18px;line-height:1;color:var(--mut,#666);display:grid;place-items:center;" aria-label="Close">&times;</button>
-    <div style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#ede6fc,#d5c4f7);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:#5b38b8;box-shadow:0 8px 20px rgba(91,56,184,0.2);">
-      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-    </div>
-    <h3 style="font-size:20px;font-weight:800;color:var(--ink,#1a1528);margin-bottom:6px;">Certificate Access</h3>
-    <p style="font-size:13px;color:var(--mut,#6d6682);margin-bottom:20px;line-height:1.45;">This portal is currently locked. Enter the access passcode to continue.</p>
-    <form id="dh-cert-lock-form" onsubmit="event.preventDefault();verifyCertPasscode();">
-      <input type="password" id="dh-cert-pass-input" maxlength="10" placeholder="Passcode" autocomplete="off" style="width:100%;box-sizing:border-box;padding:12px 16px;border-radius:14px;border:1.8px solid rgba(110,80,200,0.3);background:var(--bg,#f6f3fc);font-size:22px;letter-spacing:6px;text-align:center;font-weight:800;color:var(--ink,#1a1528);outline:none;margin-bottom:12px;">
-      <div id="dh-cert-pass-err" style="display:none;color:#e11d48;font-size:12px;font-weight:700;margin-bottom:12px;">Incorrect passcode. Please try again.</div>
-      <button type="submit" style="width:100%;padding:13px;border-radius:14px;background:linear-gradient(135deg,#7c5cff,#5a3bd9);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(124,92,255,0.35);">Unlock Portal &rarr;</button>
-    </form>
-  </div>
-</div>
+
 
 <script>
 // --- Anti-Spying & Source Protection System ---
@@ -9675,19 +9563,72 @@ async function submitPracticeCode() {
 window.submitPracticeCode = submitPracticeCode;
 
 /* ===== GOOGLE AUTHENTICATION (Cryptographically Secured) ===== */
+/* ===== GOOGLE AUTHENTICATION (Account Chooser & One Tap with FedCM) ===== */
+window.__renderGoogleButtons = function() {
+  if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
+  var slot = document.getElementById('dh-google-btn-slot');
+  var fallbackBtn = document.getElementById('dh-google-btn');
+  if (slot) {
+    try {
+      var isDark = document.documentElement.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark');
+      slot.innerHTML = '';
+      google.accounts.id.renderButton(slot, {
+        type: 'standard',
+        shape: 'rectangular',
+        theme: isDark ? 'filled_black' : 'outline',
+        text: 'continue_with',
+        size: 'large',
+        logo_alignment: 'left',
+        width: Math.min(360, (slot.parentElement ? slot.parentElement.offsetWidth : 360) || 360)
+      });
+      if (slot.children.length > 0 && fallbackBtn) {
+        fallbackBtn.style.display = 'none';
+        slot.style.display = 'flex';
+      }
+    } catch (e) {
+      console.warn('Google button render notice:', e);
+    }
+  }
+};
+
+window.__triggerGoogleOneTap = function() {
+  if (localStorage.getItem('dh_token') || localStorage.getItem('dh-auth-token')) return;
+  if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
+  if (window.__oneTapPromptActive) return;
+  window.__oneTapPromptActive = true;
+
+  try {
+    google.accounts.id.prompt(function(notification) {
+      if (notification.isNotDisplayed()) {
+        console.debug('One Tap not displayed:', notification.getNotDisplayedReason());
+      } else if (notification.isSkippedMoment()) {
+        console.debug('One Tap skipped:', notification.getSkippedReason());
+      } else if (notification.isDismissedMoment()) {
+        console.debug('One Tap dismissed:', notification.getDismissedReason());
+      }
+    });
+  } catch (e) {
+    console.debug('One Tap notice:', e);
+  }
+};
+
 window.handleGoogleAuth = async function() {
-  if (typeof window.__loadGIS === 'function') window.__loadGIS();
-  await new Promise(r => setTimeout(r, 300));
+  if (typeof window.__initGIS === 'function') window.__initGIS();
   if (window.google && window.google.accounts && window.google.accounts.id) {
-    google.accounts.id.prompt();
+    window.__oneTapPromptActive = false;
+    window.__triggerGoogleOneTap();
     return;
   }
   toast('Google Sign-In requires GOOGLE_CLIENT_ID to be configured. Please sign in with email and password.');
 };
 
 window.onGoogleCredentialResponse = async function(response) {
-  if (!response || !response.credential) return;
+  if (!response || !response.credential) {
+    toast('No Google credentials returned. Please try again.');
+    return;
+  }
   try {
+    toast('Authenticating with Google...');
     const res = await fetch('/api/auth/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -9707,10 +9648,10 @@ window.onGoogleCredentialResponse = async function(response) {
       toast(`Signed in with Google as ${data.user.fullName || data.user.username}!`);
       if (typeof rl === 'function') rl(currentLeaderboardTimeframe);
     } else {
-      toast(data.error || 'Google sign-in failed.');
+      toast(data.error || 'Google sign-in failed. Please try again.');
     }
   } catch (err) {
-    toast('Network error during Google sign-in.');
+    toast('Network error during Google sign-in. Please try again.');
   }
 };
 

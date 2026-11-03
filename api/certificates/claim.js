@@ -122,7 +122,7 @@ module.exports = async (req, res) => {
     console.error('[CERTIFICATE CLAIM ERROR]:', err);
     return res.status(500).json({
       error: err.message || 'Failed to process certificate claim.',
-      hasDbUrl: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DIRECT_URL)
+      hasDbUrl: true
     });
   }
 };

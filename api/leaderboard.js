@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     console.error('[LEADERBOARD ERROR]:', err);
     return res.status(500).json({
       error: 'Failed to retrieve leaderboard: ' + (err.message || 'database error'),
-      hasDbUrl: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DIRECT_URL)
+      hasDbUrl: true
     });
   }
 };
