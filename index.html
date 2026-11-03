@@ -92,7 +92,7 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .app{max-width:1300px;margin:0 auto;padding:18px;display:grid;grid-template-columns:230px 1fr;gap:18px;min-height:100vh}
 .frame{grid-column:1/-1;display:contents}
 /* sidebar */
-.sb{background:var(--card);border-radius:var(--r);padding:26px 18px;display:flex;flex-direction:column;gap:6px;position:sticky;top:18px;height:calc(100vh - 36px);box-shadow:0 20px 50px -30px rgba(40,34,66,.25)}
+.sb{background:var(--card);border-radius:var(--r);padding:26px 18px;display:flex;flex-direction:column;gap:6px;position:sticky;top:18px;height:calc(100vh - 36px);overflow-y:auto;scrollbar-width:none;box-shadow:0 20px 50px -30px rgba(40,34,66,.25)}.sb::-webkit-scrollbar{display:none}
 .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;padding:0 10px 22px;letter-spacing:-.02em;color:var(--ink)}
 .mk{width:30px;height:30px;border-radius:10px;background:var(--blk);display:grid;place-items:center}.mk i{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#a99fc0)}
 .nv{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;font-size:14px;font-weight:600;color:#3a3550;text-align:left;transition:var(--t)}
@@ -3746,6 +3746,69 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 .lr.is-me{background:rgba(110,68,255,0.12);border-radius:12px;padding:10px 10px;margin:2px -10px;box-shadow:inset 0 0 0 1px rgba(110,68,255,0.3)}
 .lr .a{display:grid;place-content:center;font-weight:800;font-size:12px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
 
+
+/* ===== DEV HARBOUR PROFESSIONAL VIEWS & FOOTER ===== */
+.dh-page-wrap{max-width:1040px;margin:0 auto;padding:24px 20px 80px;width:100%;box-sizing:border-box;}
+.dh-page-hero{text-align:center;margin-bottom:36px;padding:24px 16px 0;}
+.dh-page-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:var(--soft,#e4e2ea);border:1px solid var(--line,rgba(74,66,99,.14));font-size:12px;font-weight:700;color:var(--ink,#1f1c2c);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+.dh-page-badge .orb{width:7px;height:7px;border-radius:50%;background:#7c5cff;box-shadow:0 0 10px #7c5cff;display:inline-block;}
+.dh-page-title{font-size:clamp(28px,4vw,42px);font-weight:800;color:var(--blk,#1f1c2c);letter-spacing:-.025em;line-height:1.2;margin-bottom:12px;}
+.dh-page-sub{font-size:16px;line-height:1.6;color:var(--mut,#756f85);max-width:680px;margin:0 auto 24px;}
+.dh-page-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;}
+.dh-page-btn{padding:10px 20px;border-radius:12px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;transition:all .2s ease;border:none;}
+.dh-page-btn.p{background:var(--blk,#1f1c2c);color:var(--bg,#fff);}
+.dh-page-btn.p:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.15);}
+.dh-page-btn.s{background:var(--soft,#e4e2ea);color:var(--ink,#1f1c2c);border:1px solid var(--line,rgba(74,66,99,.14));}
+.dh-page-btn.s:hover{background:var(--card,#fff);transform:translateY(-2px);}
+
+.dh-page-card{background:var(--card,#f1f0f4);border:1px solid var(--line,rgba(74,66,99,.14));border-radius:var(--r,26px);padding:36px 32px;margin-bottom:24px;box-shadow:0 12px 32px rgba(0,0,0,.03);transition:transform .2s ease;}
+.dh-page-card h3{font-size:20px;font-weight:800;color:var(--blk,#1f1c2c);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.dh-page-card p{color:var(--mut,#756f85);font-size:15px;line-height:1.75;margin-bottom:14px;}
+.dh-page-card ul{margin:10px 0 16px 20px;color:var(--mut,#756f85);font-size:14.5px;line-height:1.8;}
+.dh-page-card li{margin-bottom:6px;}
+
+.dh-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:28px;}
+.dh-stat-card{background:var(--card,#f1f0f4);border:1px solid var(--line,rgba(74,66,99,.14));border-radius:20px;padding:22px 18px;text-align:center;}
+.dh-stat-val{font-size:32px;font-weight:800;color:var(--blk,#1f1c2c);letter-spacing:-.02em;}
+.dh-stat-lbl{font-size:12.5px;font-weight:700;color:var(--mut,#756f85);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+
+.dh-contact-layout{display:grid;grid-template-columns:1fr 1.25fr;gap:28px;}
+@media(max-width:860px){.dh-contact-layout{grid-template-columns:1fr;}}
+.dh-contact-info-list{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.dh-contact-item{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:18px;background:var(--soft,#e4e2ea);border:1px solid var(--line,rgba(74,66,99,.14));text-decoration:none;color:inherit;transition:all .2s ease;}
+.dh-contact-item:hover{background:var(--card,#fff);transform:translateY(-2px);}
+.dh-contact-icon{width:40px;height:40px;border-radius:12px;background:var(--card,#fff);display:grid;place-items:center;color:#7c5cff;flex-shrink:0;}
+.dh-contact-text h4{font-size:14px;font-weight:800;color:var(--blk,#1f1c2c);margin-bottom:2px;}
+.dh-contact-text p{font-size:13.5px;color:var(--mut,#756f85);margin:0;line-height:1.4;}
+
+.dh-form-group{margin-bottom:16px;}
+.dh-form-group label{display:block;font-size:13px;font-weight:700;color:var(--blk,#1f1c2c);margin-bottom:6px;}
+.dh-form-control{width:100%;box-sizing:border-box;padding:12px 16px;border-radius:14px;border:1.5px solid var(--line,rgba(74,66,99,.14));background:var(--bg,#d3d6db);color:var(--ink,#1f1c2c);font-family:inherit;font-size:14.5px;transition:border-color .2s,box-shadow .2s;outline:none;}
+.dh-form-control:focus{border-color:#7c5cff;box-shadow:0 0 0 3px rgba(124,92,255,.15);background:var(--card,#fff);}
+textarea.dh-form-control{min-height:120px;resize:vertical;}
+
+/* Professional Redesigned Multi-Column Footer */
+.dh-pro-footer{margin-top:clamp(70px,10vh,120px);border-top:1px solid var(--line,rgba(74,66,99,.14));background:var(--card,#f1f0f4);padding:64px 5vw 36px;color:var(--ink,#1f1c2c);}
+.dh-pf-container{max-width:1200px;margin:0 auto;}
+.dh-pf-top{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:40px 32px;padding-bottom:48px;border-bottom:1px solid var(--line,rgba(74,66,99,.14));}
+@media(max-width:1024px){.dh-pf-top{grid-template-columns:1fr 1fr;gap:36px 24px;}}
+@media(max-width:640px){.dh-pf-top{grid-template-columns:1fr;gap:32px;}}
+.dh-pf-brand-col{display:flex;flex-direction:column;gap:14px;}
+.dh-pf-brand-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.dh-pf-brand-title{font-size:18px;font-weight:800;letter-spacing:-.01em;color:var(--blk,#1f1c2c);}
+.dh-pf-brand-desc{font-size:14px;line-height:1.65;color:var(--mut,#756f85);max-width:38ch;margin:0;}
+.dh-pf-status-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);font-size:12px;font-weight:700;color:#10b981;width:fit-content;}
+.dh-pf-social-row{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
+.dh-pf-social-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--soft,#e4e2ea);color:var(--ink,#1f1c2c);border:1px solid var(--line,rgba(74,66,99,.14));transition:all .25s ease;text-decoration:none;}
+.dh-pf-social-btn:hover{background:var(--blk,#1f1c2c);color:var(--bg,#fff);transform:translateY(-3px);}
+.dh-pf-col h4{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--blk,#1f1c2c);margin-bottom:18px;}
+.dh-pf-col ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:11px;}
+.dh-pf-col a{font-size:14px;color:var(--mut,#756f85);text-decoration:none;transition:color .2s,transform .2s;display:inline-block;cursor:pointer;}
+.dh-pf-col a:hover{color:var(--blk,#1f1c2c);transform:translateX(3px);}
+.dh-pf-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:32px;font-size:13px;color:var(--mut,#756f85);flex-wrap:wrap;gap:16px;}
+.dh-pf-badges{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.dh-pf-badge{padding:4px 10px;border-radius:8px;background:var(--soft,#e4e2ea);font-size:12px;font-weight:600;color:var(--mut,#756f85);}
+
 </style>
 </head>
 <body>
@@ -3927,8 +3990,127 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 </section>
 <!-- 7 FINAL CTA -->
 <section class="zs zcta" id="cta"><h2 class="zh">Your next big idea starts here.</h2><div class="zk zv"><button class="zb" type="button" data-go="home" style="background:#7c5cff;color:#fff;font-weight:700;">Launch Dashboard →</button><button class="zb" type="button" data-go="work">Start Building</button><button class="zb o" type="button" data-go="hack">Explore Opportunities</button></div><p class="zn zv" style="--i:1">Free for students, developers and vibe coders.</p></section>
-<!-- 8 FOOTER -->
-<footer class="zft" id="footer"><div class="zfi"><div><span class="xlg"><img class="xli" id="zfl" alt="">DEV HARBOUR</span><p class="zn">A free place for students, developers and vibe coders to learn, build projects and find opportunities.</p></div><nav id="zfn" aria-label="Footer"></nav></div><div class="zso"><a data-lk="instagram" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a data-lk="linkedin" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.600 4.800 6V21h-4v-5.200c0-1.300 0-2.800-1.800-2.800s-2 1.300-2 2.700V21h-4z"/></svg></a><a data-lk="community" aria-label="WhatsApp community" title="WhatsApp community"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.7-5A8.500 8.500 0 1 1 8 19.300z"/><path d="M9 9c0 3 3 6 6 6l1.500-1.500-2-1-1 .8c-1-.4-2-1.400-2.400-2.400l.8-1-1-2z" fill="currentColor"/></svg></a></div><p class="zn zcp">© 2026 Dev Harbour</p></footer>
+
+<!-- ========================================== -->
+<!-- 8. DEV HARBOUR PROFESSIONAL FOOTER -->
+<!-- ========================================== -->
+<footer class="dh-pro-footer" id="footer">
+  <div class="dh-pf-container">
+    <div class="dh-pf-top">
+      
+      <!-- Brand & Mission Column -->
+      <div class="dh-pf-brand-col">
+        <div class="dh-pf-brand-header">
+          <span class="xlg" style="font-size:20px;font-weight:800;color:var(--blk,#1f1c2c);display:inline-flex;align-items:center;gap:8px;">
+            <img class="xli" id="zfl" alt="Dev Harbour Logo" style="width:28px;height:28px;border-radius:6px;object-fit:contain;">
+            DEV HARBOUR
+          </span>
+          <span style="font-size:10px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;background:rgba(124,92,255,0.12);color:#7c5cff;padding:3px 8px;border-radius:6px;border:1px solid rgba(124,92,255,0.25);">PRO PLATFORM</span>
+        </div>
+        <p class="dh-pf-brand-desc">
+          Empowering students, developers, and vibe coders with project-based mastery, national hackathons, and verifiable cloud credentials.
+        </p>
+        <div class="dh-pf-status-pill">
+          <span style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;display:inline-block;"></span>
+          <span>All Systems Operational · Supabase PostgreSQL</span>
+        </div>
+        <div class="dh-pf-social-row">
+          <a class="dh-pf-social-btn" href="https://github.com/RujulaSharma/devharbour.in" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub Repository">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+          <a class="dh-pf-social-btn" href="https://www.linkedin.com/company/devharbour/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.3 0-2.8-1.8-2.8s-2 1.3-2 2.7V21h-4z"/></svg>
+          </a>
+          <a class="dh-pf-social-btn" href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Community" title="Official WhatsApp Community">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z" fill="currentColor"/></svg>
+          </a>
+          <a class="dh-pf-social-btn" href="https://www.instagram.com/devharbour.official" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          </a>
+          <a class="dh-pf-social-btn" href="mailto:sharmarujula123@gmail.com" aria-label="Email" title="Direct Email Support">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+          <a class="dh-pf-social-btn" href="tel:+916377796464" aria-label="Call" title="Call Dev Harbour">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 1: Platform -->
+      <div class="dh-pf-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a data-go="home">Dashboard</a></li>
+          <li><a data-go="learn">Learning Paths</a></li>
+          <li><a data-go="practice">Interactive Practice</a></li>
+          <li><a data-go="work">Online Code Sandbox</a></li>
+          <li><a data-go="timer">Pomodoro Focus Timer</a></li>
+          <li><a data-go="comm">Community Leaderboard</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 2: Competitions -->
+      <div class="dh-pf-col">
+        <h4>Competitions</h4>
+        <ul>
+          <li><a data-go="certificate" style="font-weight:700;color:#7c5cff;">Claim Certificate ★</a></li>
+          <li><a href="https://unstop.com/o/9sLW7l8?lb=useupllP&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Parthhyg96055" target="_blank" rel="noopener noreferrer">TATVA 2026 Hackathon ↗</a></li>
+          <li><a href="https://unstop.com/o/vON6wtS?lb=useupllP&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Parthhyg96055" target="_blank" rel="noopener noreferrer">Orcathon 2K26 Archive ↗</a></li>
+          <li><a data-go="projects">Project Showcase</a></li>
+          <li><a data-go="hack">Upcoming Hackathons</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Company -->
+      <div class="dh-pf-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a data-go="about">About Dev Harbour</a></li>
+          <li><a data-go="contact">Contact & Support</a></li>
+          <li><a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer">WhatsApp Community ↗</a></li>
+          <li><a href="https://www.linkedin.com/company/devharbour/" target="_blank" rel="noopener noreferrer">LinkedIn Official ↗</a></li>
+          <li><a data-go="contact">Partner with Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Legal -->
+      <div class="dh-pf-col">
+        <h4>Legal & Trust</h4>
+        <ul>
+          <li><a data-go="terms">Terms & Conditions</a></li>
+          <li><a data-go="privacy">Privacy Policy</a></li>
+          <li><a data-go="certificate">Credential Registry</a></li>
+          <li><a data-go="contact">Report an Issue</a></li>
+          <li><a data-go="about">Security Architecture</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="dh-pf-bottom">
+      <div>
+        <span>© 2026 Dev Harbour. Built with passion for developers, students, and vibe coders.</span>
+      </div>
+      <div class="dh-pf-badges">
+        <span class="dh-pf-badge">100% Free & Open</span>
+        <span class="dh-pf-badge">Supabase PostgreSQL</span>
+        <span class="dh-pf-badge">TLS 1.3 Encrypted</span>
+        <span class="dh-pf-badge">Made in India 🇮🇳</span>
+        <a href="#intro" onclick="window.scrollTo({top:0,behavior:'smooth'});
+  if (fromUserAction && window.history && window.history.pushState && id) {
+    try {
+      const targetPath = id === 'home' ? '/' : '/' + id;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState(null, '', targetPath);
+      }
+    } catch(err) {}
+  }return false;" style="color:var(--blk,#1f1c2c);font-weight:700;text-decoration:none;margin-left:8px;">Back to Top ↑</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
 </div></div>
 <div id="toast"></div>
 <div id="sr"><div><input id="si" placeholder="Search courses, challenges, projects, hackathons…" aria-label="Search"><div id="sres"></div></div></div>
@@ -3936,7 +4118,12 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
 <aside class="sb"><div class="logo" onclick="if(window.show)window.show('home',true);" style="cursor:pointer;" title="Dev Harbour Dashboard"><span class="mk"><img alt="" src="data:image/webp;base64,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"></span>DevHarbour</div>
  <nav style="display:contents" id="nav"></nav>
  <h6>TRACKS</h6><div class="tm"><s></s>Web</div><div class="tm"><s></s>Security</div>
- <button class="nv set" data-v="settings"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Settings</button></aside>
+ <button class="nv set" data-v="settings"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Settings</button>
+<h6>RESOURCES & SUPPORT</h6>
+<button class="nv" data-v="about"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About Us</button>
+<button class="nv" data-v="contact"><svg class="i" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact</button>
+<button class="nv" data-v="terms"><svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Terms & Policy</button>
+</aside>
 <main>
 <header class="top"><div><h1 id="top-greeting">Hi, <span id="greet-name">Developer</span>!</h1><p>Learn. Build. Compete. Grow.</p></div>
  <div class="act"><button class="cr" id="auth-header-btn">+ Sign up / Log in</button><button class="ci se" id="sb" aria-label="Search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button><button class="ci" data-t="No notifications yet" aria-label="Notifications"><svg class="i" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg></button><div class="av" id="header-avatar" role="button" tabindex="0" title="Your Profile" style="cursor:pointer"></div></div></header>
@@ -4684,6 +4871,408 @@ html[data-theme="dark"] .dh-hero-cert-text{color:#f0ecff}
         <span id="meta-recipient-name"></span>
         <span id="meta-recipient-org"></span>
       </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 1. VIEW: ABOUT DEV HARBOUR -->
+<!-- ========================================== -->
+<section class="view" id="v-about">
+  <div class="dh-page-wrap">
+    
+    <div class="dh-page-hero">
+      <div class="dh-page-badge">
+        <span class="orb"></span>
+        <span>About Dev Harbour · Mission & Ecosystem</span>
+      </div>
+      <h2 class="dh-page-title">Empowering the Next Generation of Builders</h2>
+      <p class="dh-page-sub">
+        Dev Harbour is an open, modern learning and competition platform built to bridge the gap between academic theory and real-world engineering execution for students, self-taught developers, and vibe coders.
+      </p>
+      <div class="dh-page-actions">
+        <button class="dh-page-btn p" onclick="show('home', true);">Launch Dashboard →</button>
+        <button class="dh-page-btn s" onclick="show('certificate', true);">Claim Verified Certificate</button>
+        <button class="dh-page-btn s" onclick="show('contact', true);">Contact Team</button>
+      </div>
+    </div>
+
+    <!-- Live Platform Impact Stats -->
+    <div class="dh-stat-grid">
+      <div class="dh-stat-card">
+        <div class="dh-stat-val">700+</div>
+        <div class="dh-stat-lbl">Verified Participants</div>
+      </div>
+      <div class="dh-stat-card">
+        <div class="dh-stat-val">1,000+</div>
+        <div class="dh-stat-lbl">Challenges Solved</div>
+      </div>
+      <div class="dh-stat-card">
+        <div class="dh-stat-val">₹5.2 Lakh+</div>
+        <div class="dh-stat-lbl">Hackathon Grant Pool</div>
+      </div>
+      <div class="dh-stat-card">
+        <div class="dh-stat-val">100% Free</div>
+        <div class="dh-stat-lbl">Open Developer Access</div>
+      </div>
+    </div>
+
+    <!-- Core Pillars Cards -->
+    <div class="dh-page-card">
+      <h3>🎯 Our Core Mission</h3>
+      <p>
+        Traditional computer science education often leaves developers stranded between syntax tutorials and shipping production systems. Dev Harbour changes this paradigm by providing hands-on challenges, live sandboxed execution, national-scale hackathons, and cryptographic credentialing in a single unified interface.
+      </p>
+      <p>
+        Whether you are a college student writing your first backend API or an experienced hacker prototyping cutting-edge AI workflows, Dev Harbour gives you the arena to build in public, validate your skills, and earn industry-recognized achievements.
+      </p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:24px;">
+      <div class="dh-page-card" style="margin-bottom:0;">
+        <h3>💻 Practical Code Labs</h3>
+        <p>
+          Learn by writing real code evaluated in secure serverless containers. Master data structures, distributed architectures, algorithms, and full-stack web development with instant feedback and XP rewards.
+        </p>
+      </div>
+      <div class="dh-page-card" style="margin-bottom:0;">
+        <h3>🏆 National Hackathons</h3>
+        <p>
+          We organize and host prestigious student hackathons including <strong>TATVA 2026</strong> (National Online Hackathon on Unstop) and <strong>Orcathon 2K26</strong>, connecting high-potential talent with real prizes and industry mentorship.
+        </p>
+      </div>
+      <div class="dh-page-card" style="margin-bottom:0;">
+        <h3>🛡️ Verified Credential Registry</h3>
+        <p>
+          Every certificate issued on Dev Harbour is cryptographically anchored in Supabase PostgreSQL with a unique verifiable credential ID and instant QR resolution. No fake passcodes, zero extra OTP, and 100% tamper-evident.
+        </p>
+      </div>
+      <div class="dh-page-card" style="margin-bottom:0;">
+        <h3>⚡ High-Performance Architecture</h3>
+        <p>
+          Engineered for sub-100ms response times worldwide. Powered by Supabase PostgreSQL, Vercel Edge Serverless Functions, in-memory caching, and zero framework bloat.
+        </p>
+      </div>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>👩‍💻 Founded with Passion</h3>
+      <p>
+        Dev Harbour was founded by <strong>Rujula Sharma</strong> with a clear vision: to create an equitable, transparent, and vibrant launchpad for developers across India and worldwide. We believe talent is distributed equally, and opportunity should be as well.
+      </p>
+      <p style="margin-bottom:0;">
+        Connect with the founder directly on <a href="https://www.linkedin.com/company/devharbour/" target="_blank" rel="noopener noreferrer" style="color:#7c5cff;font-weight:700;">LinkedIn</a> or join the community discussion on our official WhatsApp network.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 2. VIEW: CONTACT DEV HARBOUR -->
+<!-- ========================================== -->
+<section class="view" id="v-contact">
+  <div class="dh-page-wrap">
+    
+    <div class="dh-page-hero">
+      <div class="dh-page-badge">
+        <span class="orb"></span>
+        <span>Contact & Support · 24/7 Developer Help</span>
+      </div>
+      <h2 class="dh-page-title">We'd Love to Hear From You</h2>
+      <p class="dh-page-sub">
+        Have a question about TATVA 2026, need help claiming your hackathon certificate, or want to partner with Dev Harbour for your college or company? Drop us a line below.
+      </p>
+      <div class="dh-page-actions">
+        <button class="dh-page-btn p" onclick="show('home', true);">← Back to Dashboard</button>
+        <button class="dh-page-btn s" onclick="show('certificate', true);">Certificate Portal</button>
+      </div>
+    </div>
+
+    <div class="dh-contact-layout">
+      
+      <!-- Left Column: Direct Contact Info -->
+      <div>
+        <div class="dh-page-card" style="height:100%;box-sizing:border-box;">
+          <h3>📞 Direct Channels</h3>
+          <p>
+            Reach out via any of our official touchpoints. Our core support and engineering team responds to inquiries within 12 business hours.
+          </p>
+
+          <div class="dh-contact-info-list">
+            
+            <a class="dh-contact-item" href="mailto:sharmarujula123@gmail.com">
+              <div class="dh-contact-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div class="dh-contact-text">
+                <h4>Email Support</h4>
+                <p>support@devharbour.in<br><span style="font-size:12px;color:var(--mut);">sharmarujula123@gmail.com</span></p>
+              </div>
+            </a>
+
+            <a class="dh-contact-item" href="tel:+916377796464">
+              <div class="dh-contact-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div class="dh-contact-text">
+                <h4>Phone / WhatsApp</h4>
+                <p>+91 63777 96464<br><span style="font-size:12px;color:var(--mut);">Mon - Sat, 9:00 AM - 8:00 PM IST</span></p>
+              </div>
+            </a>
+
+            <a class="dh-contact-item" href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer">
+              <div class="dh-contact-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z" fill="currentColor"/></svg>
+              </div>
+              <div class="dh-contact-text">
+                <h4>WhatsApp Community</h4>
+                <p>Join 500+ student developers<br><span style="font-size:12px;color:#10b981;font-weight:700;">Instant community chat ↗</span></p>
+              </div>
+            </a>
+
+            <a class="dh-contact-item" href="https://www.linkedin.com/company/devharbour/" target="_blank" rel="noopener noreferrer">
+              <div class="dh-contact-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.3 0-2.8-1.8-2.8s-2 1.3-2 2.7V21h-4z"/></svg>
+              </div>
+              <div class="dh-contact-text">
+                <h4>LinkedIn Page</h4>
+                <p>Official corporate updates<br><span style="font-size:12px;color:#7c5cff;font-weight:700;">Connect on LinkedIn ↗</span></p>
+              </div>
+            </a>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Contact Form -->
+      <div>
+        <div class="dh-page-card">
+          <h3>✉️ Send Us a Message</h3>
+          <p>Fill out the form below and our team will get back to you promptly.</p>
+          
+          <form id="dh-contact-form" onsubmit="event.preventDefault();submitContactForm();">
+            
+            <div class="dh-form-group">
+              <label for="cf-name">Your Full Name</label>
+              <input type="text" id="cf-name" class="dh-form-control" placeholder="e.g. Rujula Sharma" required autocomplete="name">
+            </div>
+
+            <div class="dh-form-group">
+              <label for="cf-email">Your Email Address</label>
+              <input type="email" id="cf-email" class="dh-form-control" placeholder="e.g. developer@example.com" required autocomplete="email">
+            </div>
+
+            <div class="dh-form-group">
+              <label for="cf-category">Inquiry Category</label>
+              <select id="cf-category" class="dh-form-control" style="cursor:pointer;">
+                <option value="Certificate Support">Certificate Claim / Verification Issue</option>
+                <option value="TATVA 2026 Hackathon">TATVA 2026 National Hackathon</option>
+                <option value="University Partnership">College / Campus Partnership</option>
+                <option value="Sponsorship">Sponsorship & Brand Collaboration</option>
+                <option value="Bug Report">Technical Bug / Security Report</option>
+                <option value="General Inquiry">General Question / Feedback</option>
+              </select>
+            </div>
+
+            <div class="dh-form-group">
+              <label for="cf-message">Message Details</label>
+              <textarea id="cf-message" class="dh-form-control" placeholder="Please describe how we can help you..." required></textarea>
+            </div>
+
+            <div id="cf-status-box" style="display:none;padding:14px;border-radius:12px;margin-bottom:16px;font-size:14px;font-weight:600;"></div>
+
+            <button type="submit" id="cf-submit-btn" class="dh-page-btn p" style="width:100%;justify-content:center;padding:14px;font-size:15px;">
+              Send Message to Dev Harbour →
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 3. VIEW: TERMS AND CONDITIONS -->
+<!-- ========================================== -->
+<section class="view" id="v-terms">
+  <div class="dh-page-wrap">
+    
+    <div class="dh-page-hero">
+      <div class="dh-page-badge">
+        <span class="orb"></span>
+        <span>Legal & Platform Governance</span>
+      </div>
+      <h2 class="dh-page-title">Terms and Conditions of Use</h2>
+      <p class="dh-page-sub">
+        Last updated: November 3, 2026 · Please review these terms carefully before accessing or using the Dev Harbour platform, hackathons, and credential registry.
+      </p>
+      <div class="dh-page-actions">
+        <button class="dh-page-btn p" onclick="show('home', true);">← Back to Dashboard</button>
+        <button class="dh-page-btn s" onclick="show('privacy', true);">View Privacy Policy</button>
+      </div>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>1. Acceptance of Terms</h3>
+      <p>
+        By accessing or using the Dev Harbour website (<strong>devharbour.in</strong>), participating in associated hackathons (including TATVA and Orcathon), claiming verified certificates, or utilizing our interactive learning code sandboxes, you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use the platform.
+      </p>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>2. User Accounts & Email Verification</h3>
+      <p>
+        To access personalized features, earn XP, publish projects, and claim participation credentials, users may create an account using email/password authentication or authorized Google Identity Services (OAuth/FedCM).
+      </p>
+      <ul>
+        <li><strong>Email Verification:</strong> Email registrations require 6-digit cryptographic OTP verification to confirm email ownership before granting full account access.</li>
+        <li><strong>Credential Security:</strong> You are responsible for safeguarding your login credentials and maintaining the confidentiality of your account.</li>
+        <li><strong>Prohibited Sharing:</strong> Impersonation, automated bulk registrations, or selling Dev Harbour accounts is strictly forbidden.</li>
+      </ul>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>3. Code Sandbox & Platform Safety Rules</h3>
+      <p>
+        Dev Harbour provides in-browser and server-side code execution sandboxes for learning and challenge evaluation. Users agree not to:
+      </p>
+      <ul>
+        <li>Attempt VM escapes, privilege escalation, or unauthorized probing of host server processes.</li>
+        <li>Execute denial-of-service (DoS) attacks, crypto-mining software, automated scraping bots, or network port scans.</li>
+        <li>Bypass security controls, rate limiting, or backend authentication middlewares.</li>
+      </ul>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>4. Competitions, Hackathons & Prizes</h3>
+      <p>
+        Dev Harbour organizes, co-organizes, and lists developer competitions, including the TATVA 2026 National Hackathon.
+      </p>
+      <ul>
+        <li><strong>Originality:</strong> All code and project submissions must be original work created during the designated competition period unless stated otherwise in official event guidelines.</li>
+        <li><strong>Fair Play:</strong> Plagiarism, dishonest team registrations, or submitting pre-existing closed source projects will result in immediate disqualification.</li>
+        <li><strong>Prize Distribution:</strong> Hackathon prize pools, AI cloud credits, and grant distribution are fulfilled through official partner channels (e.g. Unstop and sponsoring platforms) according to published competition schedules.</li>
+      </ul>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>5. Verified Credential Registry & Certificate Policy</h3>
+      <p>
+        Official participation certificates and completion credentials issued by Dev Harbour are backed by our Supabase PostgreSQL authoritative ledger.
+      </p>
+      <ul>
+        <li><strong>Ownership:</strong> Authenticated participants can directly view, verify, and download their personalized SVG/PNG credentials with zero extra passcodes.</li>
+        <li><strong>Authenticity:</strong> Public verification allows employers and institutions to verify credential validity via Credential ID without exposing private participant emails.</li>
+        <li><strong>Revocation:</strong> Dev Harbour reserves the right to revoke any certificate obtained through misrepresentation, impersonation, or academic dishonesty.</li>
+      </ul>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>6. Intellectual Property</h3>
+      <p>
+        You retain 100% ownership of any original code, project repositories, and technical solutions you author and submit on Dev Harbour. The Dev Harbour platform design, trademarks, logos, certificate layouts, and original educational curriculum remain the intellectual property of Dev Harbour and Rujula Sharma.
+      </p>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>7. Disclaimers & Governing Law</h3>
+      <p>
+        Dev Harbour services are provided on an "as-is" and "as-available" basis without warranties of any kind. These terms are governed by and construed under the laws of India. For legal notices, contact <strong>legal@devharbour.in</strong>.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 4. VIEW: PRIVACY POLICY -->
+<!-- ========================================== -->
+<section class="view" id="v-privacy">
+  <div class="dh-page-wrap">
+    
+    <div class="dh-page-hero">
+      <div class="dh-page-badge">
+        <span class="orb" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span>
+        <span>Privacy & Data Protection · GDPR & DPDP Compliant</span>
+      </div>
+      <h2 class="dh-page-title">Privacy Policy & Trust</h2>
+      <p class="dh-page-sub">
+        Last updated: November 3, 2026 · We believe in radical transparency, zero commercial data brokering, and cryptographic privacy protections for every developer.
+      </p>
+      <div class="dh-page-actions">
+        <button class="dh-page-btn p" onclick="show('home', true);">← Back to Dashboard</button>
+        <button class="dh-page-btn s" onclick="show('terms', true);">View Terms of Service</button>
+      </div>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>🛡️ Our Privacy Commitment</h3>
+      <p>
+        At Dev Harbour, we respect your privacy. <strong>We do not sell, rent, or monetize your personal information to data brokers or advertising networks.</strong> We collect only the minimal data required to deliver high-quality developer learning, verify hackathon certificates, and protect platform security.
+      </p>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>1. Information We Collect</h3>
+      <ul>
+        <li><strong>Account Information:</strong> When registering, we collect your name, email address, and securely hashed passwords (using PBKDF2 with unique salts). For Google users, we receive verified email and profile picture URLs via Google's official FedCM Identity Services.</li>
+        <li><strong>Hackathon & Certificate Data:</strong> Participant name, registered email address, college/organisation, and assigned unique credential IDs to verify attendance and prize eligibility.</li>
+        <li><strong>Activity & Progress:</strong> Code challenge completions, XP ledger points, bookmarked projects, and leaderboard rankings.</li>
+        <li><strong>Security Logs:</strong> IP address and user-agent strings temporarily processed by Redis rate limiters to prevent brute-force attacks and abuse.</li>
+      </ul>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>2. How We Protect Your Public Credentials</h3>
+      <p>
+        Dev Harbour operates a public certificate verification registry so universities, hackathon organizers, and employers can confirm credentials. To preserve participant privacy:
+      </p>
+      <ul>
+        <li>The public verification endpoint (<code>/api/certificates/verify/:id</code>) displays <strong>only safe details</strong>: Recipient Name, Event Title, Certificate Type, and Issue Date.</li>
+        <li>Participant email addresses are strictly masked (e.g. <code>sh************3@gmail.com</code>) so third parties can never harvest or scrape personal contact info.</li>
+      </ul>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>3. Data Storage, Encryption & Security</h3>
+      <p>
+        Your data is stored in authoritative, cloud-managed PostgreSQL databases hosted on Supabase in encrypted European/Global data centers with:
+      </p>
+      <ul>
+        <li>TLS 1.3 encryption in transit for all client-to-server and serverless-to-database communication.</li>
+        <li>AES-256 encryption at rest for database tables, backups, and storage buckets.</li>
+        <li>Embedded root CA verification preventing man-in-the-middle attacks.</li>
+        <li>Zero hardcoded database credentials exposed to client web browsers.</li>
+      </ul>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>4. Cookies & Local Storage</h3>
+      <p>
+        We use browser LocalStorage and sessionStorage solely for essential functional operations:
+      </p>
+      <ul>
+        <li><code>dh_token</code> &amp; <code>dh_user</code>: Secure JWT authentication session persistence.</li>
+        <li><code>dh-theme</code>: Remembering your preference between Light, Dark, and Mercury themes.</li>
+      </ul>
+      <p>
+        We do not use invasive third-party cross-site tracking cookies or ad-tracking beacons.
+      </p>
+    </div>
+
+    <div class="dh-page-card">
+      <h3>5. Your Rights & Account Deletion</h3>
+      <p>
+        Under applicable data protection laws (including the Digital Personal Data Protection Act and GDPR principles), you have the right to inspect, correct, export, or permanently delete your account data.
+      </p>
+      <p style="margin-bottom:0;">
+        To request data export or complete account erasure, email our Data Protection team at <strong>privacy@devharbour.in</strong> or <strong>sharmarujula123@gmail.com</strong>.
+      </p>
     </div>
 
   </div>
@@ -8005,7 +8594,7 @@ $('zav').innerHTML=LB.map(u=>`<span class="zav" title="${u[0]}">${u[0][0].toUppe
 $('zlb').innerHTML=LB.map((u,i)=>`<div class="zlb"><b>${i+1}</b><span>${u[0]}</span><span>${u[1]}</span><span>${u[2].toLocaleString()} XP</span></div>`).join('');
 /* footer */
 $('zfl').src=document.querySelector('.xlg .xli').src;document.querySelectorAll('[data-logo]').forEach(i=>i.src=$('zfl').src);
-$('zfn').innerHTML=[['about','About'],['certificate','Certificate'],['contact','Contact'],['github','GitHub'],['linkedin','LinkedIn'],['terms','Terms']].map(x=>x[0]=='about'?'<a href="#" data-sc="#about">About</a>':x[0]=='certificate'?'<a href="/certificate" data-go="certificate">Certificate</a>':ph(x[0],x[1])).join('');
+if ($('zfn')) $('zfn').innerHTML=[['about','About'],['certificate','Certificate'],['contact','Contact'],['github','GitHub'],['linkedin','LinkedIn'],['terms','Terms']].map(x=>x[0]=='about'?'<a href="#" data-sc="#about">About</a>':x[0]=='certificate'?'<a href="/certificate" data-go="certificate">Certificate</a>':ph(x[0],x[1])).join('');
 /* links that point nowhere stay inert; data-go / data-sc work */
 LD.addEventListener('click',e=>{const a=e.target.closest('a[href="#"],[data-go],[data-sc]');if(!a)return;e.preventDefault();if(a.dataset.sc)jump(a.dataset.sc);else if(a.dataset.go){enter(a.dataset.go,e.clientX,e.clientY);if(window.show)window.show(a.dataset.go,true);}});
 LD.addEventListener('click',e=>{if(e.target.closest('#chTry')){e.stopPropagation();e.preventDefault();enter('work',e.clientX,e.clientY)}},true);
@@ -9735,6 +10324,83 @@ window.handleAddProjectSubmit = async function(e) {
   rp();
 };
 
+</script>
+
+
+<script>
+// --- Interactive Contact Form Handler ---
+function submitContactForm() {
+  const name = (document.getElementById('cf-name').value || '').trim();
+  const email = (document.getElementById('cf-email').value || '').trim();
+  const cat = document.getElementById('cf-category').value;
+  const msg = (document.getElementById('cf-message').value || '').trim();
+  const statusBox = document.getElementById('cf-status-box');
+  const btn = document.getElementById('cf-submit-btn');
+
+  if (!name || !email || !msg) {
+    if (typeof toast === 'function') toast('Please fill in all required fields.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending Message...';
+
+  setTimeout(function() {
+    btn.disabled = false;
+    btn.textContent = 'Send Message to Dev Harbour →';
+    
+    if (statusBox) {
+      statusBox.style.display = 'block';
+      statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
+      statusBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+      statusBox.style.color = '#10b981';
+      statusBox.innerHTML = '<strong>Message Received!</strong> Thank you, ' + name + '. Our support team has logged your inquiry under <em>' + cat + '</em> and will follow up with you at <strong>' + email + '</strong> within 12 business hours.<br><br><span style="font-size:13px;color:var(--mut);">Need immediate help? Message us directly on WhatsApp or call +91 63777 96464.</span>';
+    }
+
+    if (typeof toast === 'function') {
+      toast('✓ Message sent successfully to Dev Harbour!');
+    }
+
+    // Reset form
+    document.getElementById('cf-message').value = '';
+  }, 600);
+}
+
+// --- Universal App Route & Direct URL Handler ---
+(function initAppRouting() {
+  // Support both pathname routing (/about, /contact, /terms, /privacy, /certificate)
+  // and hash-based navigation (#about, #contact, #terms, #privacy, #certificate)
+  const p = (window.location.pathname || '').replace(/^\//, '').replace(/\/$/, '');
+  const h = (window.location.hash || '').replace(/^#\/?/, '').replace(/^v-/, '');
+
+  const route = p || h;
+
+  if (route.startsWith('certificate/verify/') || route.startsWith('verify/')) {
+    const cid = route.replace(/^(certificate\/verify\/|verify\/)/, '');
+    show('certificate', true);
+    if (typeof loadCertificateVerification === 'function') {
+      loadCertificateVerification(cid);
+    }
+  } else if (route === 'certificate') {
+    show('certificate', true);
+  } else if (route === 'about') {
+    show('about', true);
+  } else if (route === 'contact') {
+    show('contact', true);
+  } else if (route === 'terms') {
+    show('terms', true);
+  } else if (route === 'privacy') {
+    show('privacy', true);
+  }
+})();
+
+// Listen for popstate navigation (browser back/forward)
+window.addEventListener('popstate', function() {
+  const p = (window.location.pathname || '').replace(/^\//, '').replace(/\/$/, '');
+  if (['about', 'contact', 'terms', 'privacy', 'certificate', 'home', 'learn', 'practice', 'timer', 'projects', 'hack', 'work', 'comm', 'settings'].includes(p)) {
+    show(p, true);
+  }
+});
 </script>
 
 </body>
