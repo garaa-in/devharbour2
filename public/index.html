@@ -99,10 +99,15 @@ body:has(#intro:not(.out)) .sb{visibility:hidden}
 .app[data-sidebar-collapsed] .sidebar-toolbar{grid-template-columns:minmax(0,1fr)}
 .app[data-sidebar-collapsed] .sidebar-toolbar [data-v="home"]{display:none}
 .sidebar-links{display:flex;flex-direction:column;gap:4px;min-height:0;padding:0 7px 8px;overflow:auto;scrollbar-width:none}
+.sidebar-links > nav,.sidebar-resources{display:contents}
+.app[data-sidebar-collapsed] .sidebar-links{flex:1;overflow:hidden}
+.app[data-sidebar-collapsed] .sidebar-links > nav{display:flex;flex-direction:column;gap:4px;min-height:0;overflow:auto;scrollbar-width:none}
+.app[data-sidebar-collapsed] .sidebar-links > .set{margin-top:auto}
 .sb .nv{min-height:42px;flex:none;padding:10px 13px;white-space:nowrap}
 .sidebar-label{min-width:0;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s ease}
 .app[data-sidebar-collapsed] .sidebar-label{opacity:0}
 .app[data-sidebar-collapsed] .sidebar-section-title,
+.app[data-sidebar-collapsed] .sidebar-resources,
 .app[data-sidebar-collapsed] .sb .tm,
 .app[data-sidebar-collapsed] .sb .nv.on::after{display:none}
 .sb button:focus-visible{outline:2px solid var(--accent,#7c5cff);outline-offset:-2px}
@@ -4162,13 +4167,15 @@ body{padding-top:var(--site-nav-height)}
   <button type="button" class="sidebar-toggle" id="sidebar-toggle" aria-label="Collapse sidebar" aria-controls="sidebar-links" aria-expanded="true"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
  </div>
  <div class="sidebar-links" id="sidebar-links">
- <nav style="display:contents" id="nav"></nav>
+ <nav id="nav" aria-label="Dashboard sections"></nav>
  <h6 class="sidebar-section-title">TRACKS</h6><div class="tm"><s></s>Web</div><div class="tm"><s></s>Security</div>
  <button class="nv set" data-v="settings"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg><span class="sidebar-label">Settings</span></button>
+<div class="sidebar-resources">
 <h6 class="sidebar-section-title">RESOURCES & SUPPORT</h6>
 <button class="nv" data-v="about"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span class="sidebar-label">About Us</span></button>
 <button class="nv" data-v="contact"><svg class="i" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span class="sidebar-label">Contact</span></button>
 <button class="nv" data-v="terms"><svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="sidebar-label">Terms & Policy</span></button>
+</div>
  </div>
 </aside>
 <main>
