@@ -3782,10 +3782,36 @@ body{padding-top:var(--site-nav-height)}
 .nav-dropdown-heading{
   padding:6px 10px;color:var(--mut);font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
 }
-#site-navbar .nav-dropdown-links a{
+#site-navbar .nav-dropdown-links a,#site-navbar .nav-dropdown-links button,.nav-option-planned{
   display:grid;gap:2px;padding:9px 10px;border-radius:8px;white-space:normal;
 }
 .nav-option-title{font-size:13px;font-weight:750}
+#site-navbar .nav-dropdown-links button{width:100%;text-align:left;color:inherit}
+#site-navbar .nav-dropdown-links button:hover{background:var(--soft)}
+.nav-option-planned{color:var(--mut)}
+.nav-option-status{
+  justify-self:start;margin-top:3px;padding:1px 7px;border:1px solid var(--line);
+  border-radius:999px;color:var(--mut);font-size:10px;font-weight:700;
+}
+.nav-dropdown-links{width:300px}
+.nav-account .nav-dropdown-links{left:auto;right:0}
+#site-navbar .nav-account summary{border:1px solid var(--line);background:var(--soft)}
+#site-navbar .nav-account .av{width:23px;height:23px;color:white;font-size:12px;font-weight:800}
+.nav-account-xp{color:var(--accent,#7c5cff);font-weight:800;white-space:nowrap}
+#pg,#practice-challenges,#practice-leaderboard,#community-discussion,
+#community-teammates,#community-mentorship,#ws-panel-scratchpad,#ws-panel-overview{scroll-margin-top:calc(var(--site-nav-height) + 12px)}
+.sitemap-shell{max-width:1100px;margin:0 auto;padding:14px 0}
+.sitemap-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.sitemap-header p{color:var(--mut);margin-top:4px}
+.sitemap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));align-items:start;gap:12px}
+.sitemap-grid details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.sitemap-grid summary{padding:6px;cursor:pointer;font-weight:800}
+.sitemap-grid summary small{margin-left:6px;color:var(--mut);font-size:11px;font-weight:600}
+.sitemap-grid ul{margin:0;padding:0;list-style:none}
+.sitemap-grid li :is(a,button,.nav-option-planned){
+  display:grid;gap:3px;width:100%;padding:8px;border-radius:7px;color:inherit;text-align:left;text-decoration:none;
+}
+.sitemap-grid li :is(a,button):hover{background:var(--soft)}
 .nav-option-description{color:var(--mut);font-size:12px;font-weight:500;line-height:1.35}
 #site-navbar .nav-dropdown-links a:hover,#site-navbar .nav-dropdown-links a[aria-current="page"]{background:var(--soft)}
 #site-navbar .nav-dropdown-links a:focus-visible{outline-offset:-2px}
@@ -3799,15 +3825,22 @@ body{padding-top:var(--site-nav-height)}
 #intro{top:var(--site-nav-height)}
 .sidebar-toggle{display:grid;place-items:center;flex:none;width:44px;height:var(--sidebar-row);border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
 .sidebar-toggle:hover,.sidebar-toggle[aria-expanded="true"]{background:var(--soft)}
-@media(max-width:1100px){
+@media(max-width:1260px){
  :root{--site-nav-height:88px}
  #site-navbar{flex-wrap:wrap;gap:4px 10px;padding:6px 16px}
  #site-navbar .xm{order:3;width:100%;justify-content:center;gap:2px}
  .nav-dropdown-links{
    position:fixed;inset:calc(var(--site-nav-height) + 4px) 10px auto;width:auto;
+ }
+ .nav-account .nav-dropdown-links{left:10px;right:10px
    max-height:calc(100dvh - var(--site-nav-height) - 14px);overflow:auto;
  }
  #site-navbar .site-nav-actions{margin-left:auto}
+}
+@media(max-width:620px){
+ :root{--site-nav-height:114px}
+ #site-navbar .xm{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px}
+ #site-navbar .xm .nav-link,#site-navbar .xm summary{justify-content:center}
 }
 @media(max-width:560px){
  #site-navbar{padding-inline:10px;column-gap:6px}
@@ -3816,6 +3849,7 @@ body{padding-top:var(--site-nav-height)}
  #site-navbar .xli{width:30px;height:30px}
  .site-nav-actions{gap:4px}
  .site-nav-actions .ci,.site-nav-actions .av{width:32px;height:32px}
+ #site-navbar .nav-account:has(.av:not([hidden])) .nav-account-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
  .site-nav-actions .mercury-pill{padding:4px}
  .site-nav-actions .mercury-orb,.site-nav-actions .mercury-name,.site-nav-actions .mercury-sep{display:none}
 }
@@ -3848,89 +3882,82 @@ body{padding-top:var(--site-nav-height)}
 </div>
 
 <nav class="xn" id="site-navbar" aria-label="Main navigation"><a class="xlg" href="/" aria-label="Dev Harbour home"><img class="xli" alt="" src="data:image/webp;base64,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">DEV HARBOUR</a><div class="xm">
-  <a class="nav-link" href="/home" data-page="home">Dashboard</a>
   <details class="nav-dropdown" name="site-navbar-menu">
     <summary>Learn</summary>
     <ul class="nav-dropdown-links">
-      <li class="nav-dropdown-heading" aria-hidden="true">Study & practice</li>
-      <li>
-        <a href="/learn" data-page="learn">
-          <span class="nav-option-title">Learning Paths</span>
-          <span class="nav-option-description">Follow a guided path from the basics.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/practice" data-page="practice">
-          <span class="nav-option-title">DSA Practice</span>
-          <span class="nav-option-description">Solve coding problems and sharpen your skills.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/timer" data-page="timer">
-          <span class="nav-option-title">Focus Timer</span>
-          <span class="nav-option-description">Set up a Pomodoro or timed study session.</span>
-        </a>
-      </li>
+      <li class="nav-dropdown-heading" aria-hidden="true">Develop your skills</li>
+      <li><a href="/learn#pg" data-page="learn"><span class="nav-option-title">Courses</span><span class="nav-option-description">Browse the developer course catalog.</span></a></li>
+      <li><a href="/learn#pg" data-page="learn"><span class="nav-option-title">Developer Roadmaps</span><span class="nav-option-description">Explore roadmaps in the engineering tracks.</span></a></li>
+      <li><a href="/learn" data-page="learn"><span class="nav-option-title">Learning Paths</span><span class="nav-option-description">Follow structured beginner-to-advanced tracks.</span></a></li>
+      <li><a href="/learn#pg" data-page="learn"><span class="nav-option-title">Tutorials &amp; Resources</span><span class="nav-option-description">Find guides and documentation inside each track.</span></a></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">My Learning</span><span class="nav-option-description">Enrolled courses and progress.</span><span class="nav-option-status">Coming soon</span></div></li>
+    </ul>
+  </details>
+  <details class="nav-dropdown" name="site-navbar-menu">
+    <summary>Practice</summary>
+    <ul class="nav-dropdown-links">
+      <li class="nav-dropdown-heading" aria-hidden="true">Get hands-on</li>
+      <li><a href="/practice" data-page="practice"><span class="nav-option-title">DSA Practice</span><span class="nav-option-description">Practice data structures and algorithms.</span></a></li>
+      <li><a href="/practice#practice-challenges" data-page="practice"><span class="nav-option-title">Coding Challenges</span><span class="nav-option-description">Browse problems by topic.</span></a></li>
+      <li><a href="/#challenge"><span class="nav-option-title">Daily Challenge</span><span class="nav-option-description">Try today's featured challenge.</span></a></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">Interview Preparation</span><span class="nav-option-description">Technical questions and mock interviews.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">My Submissions</span><span class="nav-option-description">Review your solutions and results.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><a href="/practice#practice-leaderboard" data-page="practice"><span class="nav-option-title">Practice Leaderboard</span><span class="nav-option-description">Compare your ranking with other developers.</span></a></li>
+    </ul>
+  </details>
+  <details class="nav-dropdown" name="site-navbar-menu">
+    <summary>Compete</summary>
+    <ul class="nav-dropdown-links">
+      <li class="nav-dropdown-heading" aria-hidden="true">Find your next event</li>
+      <li><a href="/hack" data-page="hack"><span class="nav-option-title">Hackathons</span><span class="nav-option-description">Explore hackathons and registration details.</span></a></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">Coding Contests</span><span class="nav-option-description">Timed programming competitions.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">Live Challenges</span><span class="nav-option-description">Special developer competitions.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><a href="/#events"><span class="nav-option-title">Upcoming Events</span><span class="nav-option-description">Check announced events and opportunities.</span></a></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">My Registrations</span><span class="nav-option-description">Manage your event registrations.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">Winners &amp; Past Events</span><span class="nav-option-description">Explore event results and past winners.</span><span class="nav-option-status">Coming soon</span></div></li>
     </ul>
   </details>
   <details class="nav-dropdown" name="site-navbar-menu">
     <summary>Build</summary>
     <ul class="nav-dropdown-links">
-      <li class="nav-dropdown-heading" aria-hidden="true">Create & compete</li>
-      <li>
-        <a href="/projects" data-page="projects">
-          <span class="nav-option-title">Project Showcase</span>
-          <span class="nav-option-description">Explore what other developers have built.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/work" data-page="work">
-          <span class="nav-option-title">Coding Workspace</span>
-          <span class="nav-option-description">Write and run code in the browser.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/hack" data-page="hack">
-          <span class="nav-option-title">Hackathons</span>
-          <span class="nav-option-description">Explore events and team challenges.</span>
-        </a>
-      </li>
+      <li class="nav-dropdown-heading" aria-hidden="true">Create and share</li>
+      <li><a href="/work#ws-panel-scratchpad" data-page="work"><span class="nav-option-title">CodeSpace</span><span class="nav-option-description">Write and run code in the browser.</span></a></li>
+      <li><a href="/work#ws-panel-overview" data-page="work"><span class="nav-option-title">Live Workspace</span><span class="nav-option-description">Organize tasks, notes, and coding sessions.</span></a></li>
+      <li><a href="/projects" data-page="projects"><span class="nav-option-title">Project Gallery</span><span class="nav-option-description">Explore projects from other developers.</span></a></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">My Projects</span><span class="nav-option-description">Manage your portfolio projects.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><button type="button" data-menu-action="publish"><span class="nav-option-title">Publish Project</span><span class="nav-option-description">Share your work with the community.</span></button></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">Team Projects</span><span class="nav-option-description">Collaborate in a shared workspace.</span><span class="nav-option-status">Coming soon</span></div></li>
     </ul>
   </details>
   <details class="nav-dropdown" name="site-navbar-menu">
-    <summary>Connect</summary>
+    <summary>Community</summary>
     <ul class="nav-dropdown-links">
-      <li class="nav-dropdown-heading" aria-hidden="true">Community & support</li>
-      <li>
-        <a href="/comm" data-page="comm">
-          <span class="nav-option-title">Community</span>
-          <span class="nav-option-description">Find peers and explore the leaderboard.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/certificate" data-page="certificate">
-          <span class="nav-option-title">Certificates</span>
-          <span class="nav-option-description">Claim or verify your credentials.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/about" data-page="about">
-          <span class="nav-option-title">About Dev Harbour</span>
-          <span class="nav-option-description">Get to know the platform and its mission.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/contact" data-page="contact">
-          <span class="nav-option-title">Contact &amp; Support</span>
-          <span class="nav-option-description">Get help or reach out to the team.</span>
-        </a>
-      </li>
+      <li class="nav-dropdown-heading" aria-hidden="true">Meet other developers</li>
+      <li><a href="/comm#community-discussion" data-page="comm"><span class="nav-option-title">Discussion Forum</span><span class="nav-option-description">Join the community discussion on WhatsApp.</span></a></li>
+      <li><a href="/comm#community-teammates" data-page="comm"><span class="nav-option-title">Find Teammates</span><span class="nav-option-description">Connect with potential hackathon teammates.</span></a></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">Developer Profiles</span><span class="nav-option-description">Browse profiles of community members.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><a href="/comm" data-page="comm"><span class="nav-option-title">Clubs &amp; Communities</span><span class="nav-option-description">Explore Dev Harbour's community groups.</span></a></li>
+      <li><a href="/#events"><span class="nav-option-title">Announcements</span><span class="nav-option-description">See announced events and opportunities.</span></a></li>
+      <li><a href="/comm#community-mentorship" data-page="comm"><span class="nav-option-title">Mentorship</span><span class="nav-option-description">Find the community's mentorship channel.</span></a></li>
     </ul>
   </details>
+  <a class="nav-link" href="/practice#practice-leaderboard" data-page="practice">Leaderboard</a>
+  <a class="nav-link" href="/home" data-page="home">Dashboard</a>
 </div><div class="site-nav-actions">
   <button type="button" class="ci" id="sb" aria-label="Search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button><button type="button" class="ci" data-t="No notifications yet" aria-label="Notifications"><svg class="i" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg></button>
-  <button type="button" class="av" id="header-avatar" aria-label="Your profile" hidden></button>
-  <span class="xa" id="hero-auth-actions"><button type="button" class="xa-btn xa-login" id="hero-login-btn" onclick="event.stopPropagation();if(window.openAuthModal)window.openAuthModal('login');" data-auth="login" aria-label="Log in">Log in</button></span>
+  <details class="nav-dropdown nav-account" name="site-navbar-menu">
+    <summary><span class="av" id="header-avatar" aria-hidden="true" hidden></span><span class="nav-account-label">My Account</span><span id="navbar-xp" class="nav-account-xp" hidden></span></summary>
+    <ul class="nav-dropdown-links">
+      <li class="nav-dropdown-heading" aria-hidden="true">Your Dev Harbour</li>
+      <li><a href="/home" data-page="home"><span class="nav-option-title">My Dashboard</span><span class="nav-option-description">View your personal overview.</span></a></li>
+      <li><button type="button" data-menu-action="profile"><span class="nav-option-title">My Profile</span><span class="nav-option-description">View and edit your developer profile.</span></button></li>
+      <li><button type="button" data-menu-action="profile"><span class="nav-option-title">XP &amp; Badges</span><span class="nav-option-description">See your XP, level, and streak.</span></button></li>
+      <li><a href="/certificate" data-page="certificate"><span class="nav-option-title">Certificates</span><span class="nav-option-description">Claim, download, or verify certificates.</span></a></li>
+      <li><div class="nav-option-planned"><span class="nav-option-title">Achievements</span><span class="nav-option-description">Explore your milestones and awards.</span><span class="nav-option-status">Coming soon</span></div></li>
+      <li><a href="/settings" data-page="settings"><span class="nav-option-title">Settings</span><span class="nav-option-description">Manage your account preferences.</span></a></li>
+      <li><button type="button" data-menu-action="session"><span class="nav-option-title">Logout</span><span class="nav-option-description">Sign out securely.</span></button></li>
+    </ul>
+  </details>
 </div></nav>
 <div id="intro"><div class="spb" id="spb"></div><div class="hz" id="hz" role="button" tabindex="0" aria-label="Enter Dev Harbour"><div class="xf">
 
@@ -4170,6 +4197,7 @@ body{padding-top:var(--site-nav-height)}
         <h4>Company</h4>
         <ul>
           <li><a data-go="about">About Dev Harbour</a></li>
+          <li><a href="/sitemap" data-go="sitemap">Navigation Sitemap</a></li>
           <li><a data-go="contact">Contact & Support</a></li>
           <li><a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer">WhatsApp Community ↗</a></li>
           <li><a href="https://www.linkedin.com/company/devharbour/" target="_blank" rel="noopener noreferrer">LinkedIn Official ↗</a></li>
@@ -4297,14 +4325,14 @@ body{padding-top:var(--site-nav-height)}
   <div id="dh-practice-list-wrap">
     <div class="g">
       <div class="c s8">
-        <div class="h"><h3>Popular Coding Challenges</h3></div>
+        <div class="h" id="practice-challenges"><h3>Popular Coding Challenges</h3></div>
         <div class="fl" id="cf"></div>
         <input class="srch" style="background:var(--soft)" id="cq" placeholder="Search challenges…" aria-label="Search challenges">
         <div id="cl"></div>
         <p class="mut" style="margin-top:12px">Practice algorithm challenges right in your browser. Solve & pass tests to earn +50 XP on the live leaderboard.</p>
       </div>
       <div class="c k s4">
-        <div class="h"><h3>Leaderboard</h3><span class="tag">Live</span></div>
+        <div class="h" id="practice-leaderboard"><h3>Leaderboard</h3><span class="tag">Live</span></div>
         <div class="fl" id="lt"></div>
         <div id="lb"></div>
       </div>
@@ -4817,7 +4845,7 @@ body{padding-top:var(--site-nav-height)}
   <div class="g">
     <div class="c k s8" style="min-height:280px;display:flex;flex-direction:column;justify-content:space-between">
       <div>
-        <span class="tag" style="align-self:flex-start;position:relative">Orca Coders Community</span>
+        <span class="tag" id="community-discussion" style="align-self:flex-start;position:relative">Orca Coders Community</span>
         <h3 style="font-size:clamp(26px, 3.5vw, 36px);font-weight:300;letter-spacing:-.03em;margin-top:14px">
           Build With The Best. <b style="font-weight:800">Never Code Alone.</b>
         </h3>
@@ -4861,12 +4889,12 @@ body{padding-top:var(--site-nav-height)}
       <p class="mut">Pomodoro sprints and virtual study sessions.</p>
       <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;margin-top:12px;display:inline-block">Enter Study Group ↗</a>
     </div>
-    <div class="c s3">
+    <div class="c s3" id="community-teammates">
       <h3>Hackathons</h3>
       <p class="mut">Build winning projects for ORCATHON 2026.</p>
       <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;margin-top:12px;display:inline-block">Find Teammates ↗</a>
     </div>
-    <div class="c s3">
+    <div class="c s3" id="community-mentorship">
       <h3>Mentorship</h3>
       <p class="mut">Guidance and advice from experienced engineers.</p>
       <a href="https://chat.whatsapp.com/Dt87L7lU5SOBSfKDKuNS8s" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;margin-top:12px;display:inline-block">Ask Mentors ↗</a>
@@ -5391,6 +5419,15 @@ body{padding-top:var(--site-nav-height)}
   </div>
 </section>
 
+<section class="view" id="v-sitemap">
+  <div class="sitemap-shell">
+    <header class="sitemap-header">
+      <div><h1>Navigation Sitemap</h1><p>Explore every section of Dev Harbour in one place.</p></div>
+      <button type="button" class="bt" id="sitemap-toggle">Collapse all</button>
+    </header>
+    <div class="sitemap-grid" id="sitemap-grid"></div>
+  </div>
+</section>
 </main></div>
 
 <script>
@@ -5456,18 +5493,76 @@ document.addEventListener('keydown', event => {
   openMenu.querySelector('summary').focus();
 });
 
-siteNavbar.addEventListener('click', function(e){
-  const link=e.target.closest('a[data-page]');
-  if(!link || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0)return;
-  e.preventDefault();
-  const menu = link.closest('.nav-dropdown');
+const sitemapGrid = document.getElementById('sitemap-grid');
+const sitemapToggle = document.getElementById('sitemap-toggle');
+
+siteNavbar.querySelectorAll('.nav-dropdown').forEach(menu => {
+  const section = document.createElement('details');
+  section.open = true;
+  const summary = document.createElement('summary');
+  summary.textContent = menu.classList.contains('nav-account') ? 'My Account' : menu.querySelector('summary').textContent;
+  const list = menu.querySelector('.nav-dropdown-links').cloneNode(true);
+  list.className = '';
+  list.querySelector('.nav-dropdown-heading').remove();
+  const count = document.createElement('small');
+  count.textContent = list.children.length + ' options';
+  summary.append(count);
+  section.append(summary, list);
+  sitemapGrid.append(section);
+});
+
+function updateSitemapToggle() {
+  sitemapToggle.textContent = sitemapGrid.querySelector('details[open]') ? 'Collapse all' : 'Expand all';
+}
+sitemapGrid.addEventListener('toggle', updateSitemapToggle, true);
+sitemapToggle.addEventListener('click', () => {
+  const expand = !sitemapGrid.querySelector('details[open]');
+  sitemapGrid.querySelectorAll('details').forEach(section => { section.open = expand; });
+  updateSitemapToggle();
+});
+
+function scrollToNavSection(view) {
+  if (!location.hash) return;
+  const target = location.hash.slice(1);
+  if (view === 'practice' && ['practice-challenges', 'practice-leaderboard'].includes(target)) {
+    closePracticeStudio();
+  }
+  if (view === 'work' && ['ws-panel-scratchpad', 'ws-panel-overview'].includes(target)) {
+    WorkspaceManager.switchPanel(target.slice('ws-panel-'.length));
+  }
+  const section = document.getElementById(target);
+  if (section && document.getElementById('v-' + view)?.contains(section)) {
+    requestAnimationFrame(() => section.scrollIntoView({ block: 'start' }));
+  }
+}
+
+function openMenuDestination(event) {
+  const item = event.target.closest('a[data-page],button[data-menu-action]');
+  if (!item || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+  event.preventDefault();
+  const menu = item.closest('.nav-dropdown');
   if (menu) {
     menu.open = false;
     menu.querySelector('summary').focus();
   }
-  if(window.enter)window.enter(link.dataset.page,e.clientX,e.clientY);
-  window.show(link.dataset.page,true);
-});
+  const action = item.dataset.menuAction;
+  if (action === 'profile') {
+    if (currentUser) openProfileModal();
+    else openAuthModal('login');
+  } else if (action === 'session') {
+    if (currentUser) handleLogout();
+    else openAuthModal('login');
+  } else {
+    const view = action === 'publish' ? 'projects' : item.dataset.page;
+    const target = action === 'publish' ? '/projects' : item.pathname + item.search + item.hash;
+    if (location.pathname + location.search + location.hash !== target) history.pushState(null, '', target);
+    window.show(view, true, false);
+    if (action === 'publish') openAddProjectModal();
+  }
+}
+
+siteNavbar.addEventListener('click', openMenuDestination);
+sitemapGrid.addEventListener('click', openMenuDestination);
 
 const pageTaglines = new Map([
   ['home', "Let's cook."],
@@ -5505,7 +5600,7 @@ function show(id, fromUserAction, updateHistory = fromUserAction){
     if(location.pathname !== targetPath)history.pushState(null,"",targetPath);
   }
   document.querySelectorAll("#site-navbar [data-page]").forEach(link=>{
-    if(link.dataset.page===id)link.setAttribute("aria-current","page");
+    if(link.dataset.page===id && link.hash===location.hash)link.setAttribute("aria-current","page");
     else link.removeAttribute("aria-current");
   });
   // Only auto-dismiss hero intro if navigating away from default 'home' view or explicitly triggered by user action
@@ -5521,6 +5616,7 @@ function show(id, fromUserAction, updateHistory = fromUserAction){
   document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));
   updateSidebarTagline();
   scrollTo({top:0,behavior:'smooth'});
+  scrollToNavSection(id);
   if(typeof gtag==='function'){try{gtag('event','page_view',{page_title:id.charAt(0).toUpperCase()+id.slice(1)+' — DevHarbour',page_path:'/'+id})}catch(e){}}
   const viewEl = document.getElementById('v-'+id);
   if (viewEl) {
@@ -6610,18 +6706,13 @@ function updateAuthUI() {
   const btn = document.getElementById('auth-header-btn');
   const av = document.getElementById('header-avatar');
   const greet = document.getElementById('greet-name');
-  const heroActions = document.getElementById('hero-auth-actions');
-
-  if (heroActions) {
-    if (currentUser) {
-      const rawName = (currentUser.fullName && currentUser.fullName.trim()) || currentUser.username || 'DEVELOPER';
-      const firstName = rawName.trim().split(/\s+/)[0].replace(/^@+/, '').toUpperCase();
-      const xp = currentUser.totalXp || 0;
-      heroActions.innerHTML = `<button type="button" class="xa-btn xa-mercury-badge" onclick="event.stopPropagation();openProfileModal()" aria-label="View Profile for ${firstName}"><span class="mercury-pill"><span class="mercury-orb" aria-hidden="true"><span class="mercury-glint"></span></span><span class="mercury-name">${firstName}</span><span class="mercury-sep"></span><span class="mercury-xp"><i class="mercury-star">✦</i><span>${xp} XP</span></span><span class="mercury-sheen" aria-hidden="true"></span></span></button>`;
-    } else {
-      heroActions.innerHTML = `<button type="button" class="xa-btn xa-login" id="hero-login-btn" onclick="event.stopPropagation();if(window.openAuthModal)window.openAuthModal('login');" data-auth="login" aria-label="Log in">Log in</button>`;
-    }
-  }
+  const xp = document.getElementById('navbar-xp');
+  xp.hidden = !currentUser;
+  xp.textContent = currentUser ? (currentUser.totalXp || 0) + ' XP' : '';
+  document.querySelectorAll('[data-menu-action="session"]').forEach(button => {
+    button.querySelector('.nav-option-title').textContent = currentUser ? 'Logout' : 'Log in';
+    button.querySelector('.nav-option-description').textContent = currentUser ? 'Sign out securely.' : 'Sign in to your Dev Harbour account.';
+  });
 
   if (!btn || !av) return;
   btn.hidden = Boolean(currentUser);
@@ -6629,8 +6720,7 @@ function updateAuthUI() {
 
   if (currentUser) {
     const initial = (currentUser.username || 'U')[0].toUpperCase();
-    av.innerHTML = `<span style="font-weight:800;font-size:16px;color:#fff">${initial}</span>`;
-    av.onclick = () => openProfileModal();
+    av.textContent = initial;
     if (greet) greet.textContent = currentUser.fullName || currentUser.username;
   } else {
     btn.className = 'cr';
@@ -10590,6 +10680,10 @@ function submitContactForm() {
   const h = (window.location.hash || '').replace(/^#\/?/, '').replace(/^v-/, '');
 
   const route = p || h;
+  if (!p && ['challenge', 'events'].includes(h)) {
+    requestAnimationFrame(() => jump('#' + h));
+    return;
+  }
 
   if (route.startsWith('certificate/verify/') || route.startsWith('verify/')) {
     const cid = route.replace(/^(certificate\/verify\/|verify\/)/, '');
@@ -10620,7 +10714,7 @@ window.addEventListener('popstate', function() {
     if (!intro || intro.classList.contains('out')) window.location.reload();
     return;
   }
-  if (['about', 'contact', 'terms', 'privacy', 'certificate', 'home', 'learn', 'practice', 'timer', 'projects', 'hack', 'work', 'comm', 'settings'].includes(p)) {
+  if (['about', 'contact', 'terms', 'privacy', 'certificate', 'sitemap', 'home', 'learn', 'practice', 'timer', 'projects', 'hack', 'work', 'comm', 'settings'].includes(p)) {
     show(p, true, false);
   }
 });
