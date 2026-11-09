@@ -5350,8 +5350,20 @@ const pageTaglines = new Map([
   ['privacy', "Here's the rundown."]
 ]);
 
+function updateSidebarTagline() {
+  const hovered = sidebar.querySelector('button[data-v]:hover');
+  const focused = sidebar.querySelector('button[data-v]:focus-visible');
+  const active = sidebar.querySelector('button[data-v].on');
+  const view = (hovered ?? focused ?? active)?.dataset.v;
+  $('top-tagline').textContent = pageTaglines.get(view) ?? pageTaglines.get('home');
+}
+
+sidebar.addEventListener('pointerover', updateSidebarTagline);
+sidebar.addEventListener('pointerleave', updateSidebarTagline);
+sidebar.addEventListener('focusin', updateSidebarTagline);
+sidebar.addEventListener('focusout', () => queueMicrotask(updateSidebarTagline));
+
 function show(id, fromUserAction, updateHistory = fromUserAction){
-  $('top-tagline').textContent = pageTaglines.get(id) ?? pageTaglines.get('home');
   if(updateHistory && document.getElementById("v-"+id)){
     const targetPath = "/" + id;
     if(location.pathname !== targetPath)history.pushState(null,"",targetPath);
@@ -5371,6 +5383,7 @@ function show(id, fromUserAction, updateHistory = fromUserAction){
   }
   document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+id));
   document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));
+  updateSidebarTagline();
   scrollTo({top:0,behavior:'smooth'});
   if(typeof gtag==='function'){try{gtag('event','page_view',{page_title:id.charAt(0).toUpperCase()+id.slice(1)+' — DevHarbour',page_path:'/'+id})}catch(e){}}
   const viewEl = document.getElementById('v-'+id);
