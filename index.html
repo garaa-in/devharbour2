@@ -93,22 +93,22 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .frame{grid-column:1/-1;display:contents}
 /* sidebar */
 .app[data-sidebar-collapsed]{--sidebar-size:var(--sidebar-rail)}
-.sb{position:fixed;inset:var(--site-nav-height) auto 0 0;z-index:105;display:flex;flex-direction:column;width:var(--sidebar-size);overflow:hidden;background:var(--card);transition:width .25s ease}
+.sb{--sidebar-row:clamp(30px,calc((100dvh - var(--site-nav-height) - 75px) / 13),36px);position:fixed;inset:var(--site-nav-height) auto 0 0;z-index:105;display:flex;flex-direction:column;width:var(--sidebar-size);overflow:hidden;background:var(--card);transition:width .25s ease}
 body:has(#intro:not(.out)) .sb{visibility:hidden}
-.sidebar-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;flex:none;align-items:center;gap:6px;padding:8px 7px}
+.sidebar-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;flex:none;align-items:center;gap:6px;padding:6px 7px}
 .app[data-sidebar-collapsed] .sidebar-toolbar{grid-template-columns:minmax(0,1fr)}
 .app[data-sidebar-collapsed] .sidebar-toolbar [data-v="home"]{display:none}
-.sidebar-links{display:flex;flex-direction:column;gap:4px;min-height:0;padding:0 7px 8px;overflow:auto;scrollbar-width:none}
+.sidebar-links{display:flex;flex-direction:column;gap:2px;min-height:0;padding:0 7px 8px;overflow:auto;scrollbar-width:none}
 .sidebar-links > nav,.sidebar-resources{display:contents}
 .app[data-sidebar-collapsed] .sidebar-links{flex:1;overflow:hidden}
-.app[data-sidebar-collapsed] .sidebar-links > nav{display:flex;flex-direction:column;gap:4px;min-height:0;overflow:auto;scrollbar-width:none}
+.app[data-sidebar-collapsed] .sidebar-links > nav{display:flex;flex-direction:column;gap:2px;min-height:0;overflow:auto;scrollbar-width:none}
 .app[data-sidebar-collapsed] .sidebar-links > .set{margin-top:auto}
-.sb .nv{min-height:42px;flex:none;padding:10px 13px;white-space:nowrap}
+.sb .nv{min-height:var(--sidebar-row);flex:none;padding:3px 14.5px;white-space:nowrap}
+.sb svg.i{width:15px;height:15px}
 .sidebar-label{min-width:0;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s ease}
 .app[data-sidebar-collapsed] .sidebar-label{opacity:0}
 .app[data-sidebar-collapsed] .sidebar-section-title,
 .app[data-sidebar-collapsed] .sidebar-resources,
-.app[data-sidebar-collapsed] .sb .tm,
 .app[data-sidebar-collapsed] .sb .nv.on::after{display:none}
 .sb button:focus-visible{outline:2px solid var(--accent,#7c5cff);outline-offset:-2px}
 .app > main{grid-column:2;width:100%;max-width:1300px;min-width:0;margin-inline:auto;padding:18px}
@@ -116,8 +116,7 @@ body:has(#intro:not(.out)) .sb{visibility:hidden}
 .mk{width:30px;height:30px;border-radius:10px;background:var(--blk);display:grid;place-items:center}.mk i{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#a99fc0)}
 .nv{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;font-size:14px;font-weight:600;color:#3a3550;text-align:left;transition:var(--t)}
 .nv:hover{background:var(--soft)}.nv.on{background:var(--blk);color:#fff}
-.sb h6{font-size:11px;letter-spacing:.12em;color:var(--mut);margin:22px 14px 6px;font-weight:700}
-.tm{display:flex;align-items:center;gap:12px;padding:8px 14px;font-size:14px;font-weight:600}.tm s{width:10px;height:10px;border-radius:50%;background:var(--blk)}.tm:nth-of-type(2) s{background:#b6a9d6}
+.sb h6{font-size:11px;letter-spacing:.12em;color:var(--mut);margin:6px 14px 2px;font-weight:700}
 .sb .set{margin-top:auto}
 /* top */
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin:12px 6px 22px}
@@ -256,7 +255,6 @@ body:before{background:radial-gradient(60vw 50vh at 85% 8%,#fff,transparent 70%)
 .io textarea,#out{background:rgba(255,255,255,.75);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}.er{color:#c0392b}
 .nv.on,.pill.on{background:#e6dcfb;color:var(--ink);font-weight:800;box-shadow:inset 0 0 0 1.5px rgba(110,90,200,.28)}
 .mk{background:#f1ecfd;box-shadow:inset 0 0 0 1px var(--line)}.mk img{width:22px;height:22px;object-fit:contain}
-.tm s{background:#7a62d6}
 .c h3,.pk h3,.top h1{font-weight:800}.big b,.tl b,.ring b,.xp b{font-weight:800}
 .cr,.bt.d,.row .sv,.pc .f a{font-weight:800;box-shadow:0 10px 24px -12px rgba(47,40,80,.5)}
 .pc:nth-child(3n+1) .cv{background:linear-gradient(135deg,#cdbff4,#a995e8)}
@@ -289,8 +287,7 @@ html[data-theme="dark"] .mk{background:#141414}
 html[data-theme="dark"] .mk img{filter:brightness(0) invert(1)}
 html[data-theme="dark"] .c.k,html[data-theme="dark"] .pk,html[data-theme="dark"] .pa.k{background:linear-gradient(160deg,#141414,#0b0b0b);color:var(--ink)}
 html[data-theme="dark"] .k .tag{background:rgba(255,255,255,.1);color:#e0e0e0}
-html[data-theme="dark"] .pk .st s,html[data-theme="dark"] .bar,html[data-theme="dark"] .tm s{background:#fff}
-html[data-theme="dark"] .tm:nth-of-type(2) s{background:#777}
+html[data-theme="dark"] .pk .st s,html[data-theme="dark"] .bar{background:#fff}
 html[data-theme="dark"] .pa.k svg.i{background:rgba(255,255,255,.08)}
 html[data-theme="dark"] .io textarea,html[data-theme="dark"] #out{background:rgba(255,255,255,.06);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
 html[data-theme="dark"] .er{color:#ff7b7b}
@@ -3844,7 +3841,7 @@ body{padding-top:var(--site-nav-height)}
 #site-navbar a:hover,#site-navbar a[aria-current="page"]{color:var(--accent,#7c5cff)}
 #site-navbar :focus-visible{outline:2px solid var(--accent,#7c5cff);outline-offset:4px}
 #intro{top:var(--site-nav-height)}
-.sidebar-toggle{display:grid;place-items:center;flex:none;width:44px;height:42px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+.sidebar-toggle{display:grid;place-items:center;flex:none;width:44px;height:var(--sidebar-row);border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
 .sidebar-toggle:hover,.sidebar-toggle[aria-expanded="true"]{background:var(--soft)}
 @media(max-width:1000px){
  :root{--site-nav-height:112px}
@@ -4168,7 +4165,6 @@ body{padding-top:var(--site-nav-height)}
  </div>
  <div class="sidebar-links" id="sidebar-links">
  <nav id="nav" aria-label="Dashboard sections"></nav>
- <h6 class="sidebar-section-title">TRACKS</h6><div class="tm"><s></s>Web</div><div class="tm"><s></s>Security</div>
  <button class="nv set" data-v="settings"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg><span class="sidebar-label">Settings</span></button>
 <div class="sidebar-resources">
 <h6 class="sidebar-section-title">RESOURCES & SUPPORT</h6>
