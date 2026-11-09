@@ -95,6 +95,28 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .app[data-sidebar-collapsed]{--sidebar-size:var(--sidebar-rail)}
 .sb{--sidebar-row:clamp(30px,calc((100dvh - var(--site-nav-height) - 75px) / 13),36px);position:fixed;inset:var(--site-nav-height) auto 0 0;z-index:105;display:flex;flex-direction:column;width:var(--sidebar-size);overflow:hidden;background:var(--card);transition:width .25s ease}
 body:has(#intro:not(.out)) .sb{visibility:hidden}
+.sidebar-greeting{
+  --greeting-left:clamp(12px,calc(var(--sidebar-size) + 12px),calc(100vw - 190px));
+  position:fixed;
+  top:calc(var(--site-nav-height) + 12px);
+  left:var(--greeting-left);
+  z-index:106;
+  max-width:min(260px,calc(100vw - var(--greeting-left) - 12px));
+  padding:12px 16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--card);
+  color:var(--mut);
+  box-shadow:0 12px 28px -12px rgba(40,34,66,.35);
+  overflow-wrap:anywhere;
+  pointer-events:none;
+  visibility:hidden;
+}
+.sidebar-greeting-title{color:var(--ink);font-size:17px;font-weight:800}
+.sb:has(:focus-visible) + .sidebar-greeting{visibility:visible}
+@media(any-hover:hover){.sb:hover + .sidebar-greeting{visibility:visible}}
+body:has(#intro:not(.out)) .sidebar-greeting{visibility:hidden}
+.guest-actions:has(#auth-header-btn[hidden]){display:none}
 .sidebar-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;flex:none;align-items:center;gap:6px;padding:6px 7px}
 .app[data-sidebar-collapsed] .sidebar-toolbar{grid-template-columns:minmax(0,1fr)}
 .app[data-sidebar-collapsed] .sidebar-toolbar [data-v="home"]{display:none}
@@ -4098,9 +4120,12 @@ body{padding-top:var(--site-nav-height)}
 </div>
  </div>
 </aside>
+<div class="sidebar-greeting">
+ <p class="sidebar-greeting-title">Hi, <span id="greet-name">Developer</span>!</p>
+ <p id="top-tagline">Let's cook.</p>
+</div>
 <main>
-<header class="top"><div><h1 id="top-greeting">Hi, <span id="greet-name">Developer</span>!</h1><p id="top-tagline">Let's cook.</p></div>
- <div class="act"><button class="cr" id="auth-header-btn">+ Sign up / Log in</button></div></header>
+<header class="top guest-actions"><div class="act"><button class="cr" id="auth-header-btn">+ Sign up / Log in</button></div></header>
 
 <!-- DASHBOARD -->
 <section class="view on" id="v-home"><div class="g">
