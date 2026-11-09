@@ -89,13 +89,22 @@ body{font-family:var(--font);color:var(--ink);background:var(--bg);min-height:10
 body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(60vw 50vh at 85% 10%,#fff,transparent 70%),radial-gradient(50vw 60vh at 0 80%,#e6e4ec,transparent 70%),radial-gradient(40vw 40vh at 60% 100%,#b7aecb,transparent 70%)}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}a{color:inherit;text-decoration:none}
 svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.app{--sidebar-width:230px;display:grid;grid-template-columns:var(--sidebar-width) minmax(0,1fr);min-height:calc(100vh - var(--site-nav-height));transition:grid-template-columns .25s ease}
+.app{--sidebar-width:230px;--sidebar-rail:60px;--sidebar-size:var(--sidebar-width);display:grid;grid-template-columns:var(--sidebar-size) minmax(0,1fr);min-height:calc(100vh - var(--site-nav-height));transition:grid-template-columns .25s ease}
 .frame{grid-column:1/-1;display:contents}
 /* sidebar */
-.sb{background:var(--card);width:var(--sidebar-width);padding:58px 14px 18px;display:flex;flex-direction:column;gap:6px;position:sticky;top:var(--site-nav-height);height:calc(100dvh - var(--site-nav-height));overflow-y:auto;transition:transform .25s ease}
-.app[data-sidebar-closed]{grid-template-columns:50px minmax(0,1fr)}
-.app[data-sidebar-closed] .sb{transform:translateX(-100%)}
-.app > main{width:100%;max-width:1300px;min-width:0;margin-inline:auto;padding:18px}
+.app[data-sidebar-collapsed]{--sidebar-size:var(--sidebar-rail)}
+.sb{position:fixed;inset:var(--site-nav-height) auto 0 0;z-index:105;display:flex;flex-direction:column;width:var(--sidebar-size);overflow:hidden;background:var(--card);transition:width .25s ease}
+body:has(#intro:not(.out)) .sb{visibility:hidden}
+.sidebar-toolbar{display:flex;flex:none;align-items:center;padding:8px 7px;border-bottom:1px solid var(--line)}
+.sidebar-links{display:flex;flex-direction:column;gap:4px;min-height:0;padding:8px 7px;overflow:auto;scrollbar-width:none}
+.sb .nv{min-height:42px;flex:none;padding:10px 13px;white-space:nowrap}
+.sidebar-label{min-width:0;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s ease}
+.app[data-sidebar-collapsed] .sidebar-label{opacity:0}
+.app[data-sidebar-collapsed] .sidebar-section-title,
+.app[data-sidebar-collapsed] .sb .tm,
+.app[data-sidebar-collapsed] .sb .nv.on::after{display:none}
+.sb button:focus-visible{outline:2px solid var(--accent,#7c5cff);outline-offset:-2px}
+.app > main{grid-column:2;width:100%;max-width:1300px;min-width:0;margin-inline:auto;padding:18px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;padding:0 10px 22px;letter-spacing:-.02em;color:var(--ink)}
 .mk{width:30px;height:30px;border-radius:10px;background:var(--blk);display:grid;place-items:center}.mk i{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#a99fc0)}
 .nv{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;font-size:14px;font-weight:600;color:#3a3550;text-align:left;transition:var(--t)}
@@ -219,9 +228,9 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .row{transition:background .3s}.row:hover{background:rgba(74,66,99,.08)}.ring circle{transition:stroke-dashoffset 1s var(--e)}
 @media(max-width:1000px){.s4,.s5,.s3,.s8,.s6{grid-column:span 12}.s3,.s4.h2{grid-column:span 6}.tk,.pjs{grid-template-columns:1fr 1fr}}
 @media(max-width:860px){
- .app,.app[data-sidebar-closed]{grid-template-columns:minmax(0,1fr)}
- .app > main{padding:54px 12px 12px}
- .sb{position:fixed;left:0;bottom:0;z-index:105;width:min(var(--sidebar-width),85vw)}
+ .app{grid-template-columns:var(--sidebar-rail) minmax(0,1fr)}
+ .app > main{padding:12px}
+ .sb{width:min(var(--sidebar-size),85vw)}
  .top{flex-wrap:wrap}.ci.se{display:none}
 }
 @media(prefers-reduced-motion:reduce){.app,.sb{transition:none}}
@@ -3828,10 +3837,8 @@ body{padding-top:var(--site-nav-height)}
 #site-navbar a:hover,#site-navbar a[aria-current="page"]{color:var(--accent,#7c5cff)}
 #site-navbar :focus-visible{outline:2px solid var(--accent,#7c5cff);outline-offset:4px}
 #intro{top:var(--site-nav-height)}
-.sidebar-toggle{position:fixed;top:calc(var(--site-nav-height) + 10px);left:6px;z-index:106;display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+.sidebar-toggle{display:grid;place-items:center;width:44px;height:42px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
 .sidebar-toggle:hover,.sidebar-toggle[aria-expanded="true"]{background:var(--soft)}
-.sidebar-toggle:focus-visible{outline:2px solid var(--accent,#7c5cff);outline-offset:2px}
-body:has(#intro:not(.out)) .sidebar-toggle{display:none}
 @media(max-width:1000px){
  :root{--site-nav-height:112px}
  #site-navbar{flex-wrap:wrap;gap:10px;padding:12px 16px}
@@ -4148,15 +4155,19 @@ body:has(#intro:not(.out)) .sidebar-toggle{display:none}
 <div id="toast"></div>
 <div id="sr"><div><input id="si" placeholder="Search courses, challenges, projects, hackathons…" aria-label="Search"><div id="sres"></div></div></div>
 <div class="app">
-  <button type="button" class="sidebar-toggle" id="sidebar-toggle" aria-label="Hide sidebar" aria-controls="dashboard-sidebar" aria-expanded="true"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
 <aside class="sb" id="dashboard-sidebar" aria-label="Dashboard sidebar">
+ <div class="sidebar-toolbar">
+  <button type="button" class="sidebar-toggle" id="sidebar-toggle" aria-label="Collapse sidebar" aria-controls="sidebar-links" aria-expanded="true"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+ </div>
+ <div class="sidebar-links" id="sidebar-links">
  <nav style="display:contents" id="nav"></nav>
- <h6>TRACKS</h6><div class="tm"><s></s>Web</div><div class="tm"><s></s>Security</div>
- <button class="nv set" data-v="settings"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Settings</button>
-<h6>RESOURCES & SUPPORT</h6>
-<button class="nv" data-v="about"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About Us</button>
-<button class="nv" data-v="contact"><svg class="i" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact</button>
-<button class="nv" data-v="terms"><svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Terms & Policy</button>
+ <h6 class="sidebar-section-title">TRACKS</h6><div class="tm"><s></s>Web</div><div class="tm"><s></s>Security</div>
+ <button class="nv set" data-v="settings"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg><span class="sidebar-label">Settings</span></button>
+<h6 class="sidebar-section-title">RESOURCES & SUPPORT</h6>
+<button class="nv" data-v="about"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span class="sidebar-label">About Us</span></button>
+<button class="nv" data-v="contact"><svg class="i" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span class="sidebar-label">Contact</span></button>
+<button class="nv" data-v="terms"><svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="sidebar-label">Terms & Policy</span></button>
+ </div>
 </aside>
 <main>
 <header class="top"><div><h1 id="top-greeting">Hi, <span id="greet-name">Developer</span>!</h1><p>Learn. Build. Compete. Grow.</p></div>
@@ -5320,28 +5331,37 @@ const I=d=>`<svg class="i" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
 document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t)toast(t.dataset.t);const v=e.target.closest('[data-v]');if(v&&v.dataset.v&&!v.classList.contains('pill'))show(v.dataset.v, true)});
 /* data */
 const V=[['home','Dashboard','M3 11l9-8 9 8M5 10v10h14V10'],['learn','Learn','M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-6'],['practice','Practice','M8 18 2 12l6-6M16 6l6 6-6 6'],['timer','Timer','M12 6v6l4 2m6-2a10 10 0 1 1-20 0 10 10 0 0 1 20 0z'],['projects','Projects','M3 7h7l2 2h9v10H3z'],['hack','Hackathons','M7 4h10v5a5 5 0 0 1-10 0zM12 14v5M8 20h8'],['work','Workspace','M3 4h18v13H3zM8 21h8M12 17v4'],['comm','Community','M16 20v-2a4 4 0 0 0-8 0v2M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6'],['certificate','Certificate','M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z']];
-$('nav').innerHTML=V.map(v=>`<button class="nv" data-v="${v[0]}">${I(v[2])}${v[1]}</button>`).join('');
+$('nav').innerHTML=V.map(v=>`<button class="nv" data-v="${v[0]}">${I(v[2])}<span class="sidebar-label">${v[1]}</span></button>`).join('');
 
 const sidebar = document.getElementById('dashboard-sidebar');
 const sidebarToggle = document.getElementById('sidebar-toggle');
 const compactSidebar = matchMedia('(max-width: 860px)');
 
-function setSidebarOpen(open) {
-  if (!open && sidebar.contains(document.activeElement)) sidebarToggle.focus();
-  sidebar.closest('.app').toggleAttribute('data-sidebar-closed', !open);
-  sidebar.inert = !open;
-  sidebarToggle.setAttribute('aria-expanded', String(open));
-  sidebarToggle.setAttribute('aria-label', open ? 'Hide sidebar' : 'Show sidebar');
+const sidebarApp = sidebar.closest('.app');
+
+function setSidebarExpanded(expanded) {
+  sidebarApp.toggleAttribute('data-sidebar-collapsed', !expanded);
+  sidebarToggle.setAttribute('aria-expanded', String(expanded));
+  sidebarToggle.setAttribute('aria-label', expanded ? 'Collapse sidebar' : 'Expand sidebar');
+  sidebar.querySelectorAll('.nv .sidebar-label').forEach(label => {
+    const button = label.closest('button');
+    if (expanded) button.removeAttribute('title');
+    else button.title = label.textContent;
+  });
 }
 
-setSidebarOpen(!compactSidebar.matches);
-compactSidebar.addEventListener('change', event => setSidebarOpen(!event.matches));
-sidebarToggle.addEventListener('click', () => setSidebarOpen(sidebar.inert));
+setSidebarExpanded(!compactSidebar.matches);
+compactSidebar.addEventListener('change', event => setSidebarExpanded(!event.matches));
+sidebarToggle.addEventListener('click', () => setSidebarExpanded(sidebarApp.hasAttribute('data-sidebar-collapsed')));
 sidebar.addEventListener('click', event => {
-  if (compactSidebar.matches && event.target.closest('button[data-v]')) setSidebarOpen(false);
+  if (compactSidebar.matches && event.target.closest('button[data-v]')) setSidebarExpanded(false);
 });
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && compactSidebar.matches && !sidebar.inert) setSidebarOpen(false);
+  if (event.key === 'Escape' && !sidebarApp.hasAttribute('data-sidebar-collapsed')
+      && (compactSidebar.matches || sidebar.contains(event.target))) {
+    setSidebarExpanded(false);
+    sidebarToggle.focus();
+  }
 });
 
 document.getElementById('site-navbar').addEventListener('click', function(e){
