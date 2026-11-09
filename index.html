@@ -4099,7 +4099,7 @@ body{padding-top:var(--site-nav-height)}
  </div>
 </aside>
 <main>
-<header class="top"><div><h1 id="top-greeting">Hi, <span id="greet-name">Developer</span>!</h1><p>Learn. Build. Compete. Grow.</p></div>
+<header class="top"><div><h1 id="top-greeting">Hi, <span id="greet-name">Developer</span>!</h1><p id="top-tagline">Let's cook.</p></div>
  <div class="act"><button class="cr" id="auth-header-btn">+ Sign up / Log in</button></div></header>
 
 <!-- DASHBOARD -->
@@ -5308,7 +5308,25 @@ document.getElementById('site-navbar').addEventListener('click', function(e){
   window.show(link.dataset.page,true);
 });
 
+const pageTaglines = new Map([
+  ['home', "Let's cook."],
+  ['projects', 'Show us what you got.'],
+  ['practice', "Let's do it."],
+  ['learn', 'Time to level up.'],
+  ['work', "Let's ship it."],
+  ['hack', 'Game on.'],
+  ['timer', 'Lock in.'],
+  ['comm', 'Find your people.'],
+  ['certificate', 'You earned it.'],
+  ['settings', 'Make it yours.'],
+  ['about', "Here's what we're about."],
+  ['contact', "What's up?"],
+  ['terms', 'The fine print.'],
+  ['privacy', "Here's the rundown."]
+]);
+
 function show(id, fromUserAction, updateHistory = fromUserAction){
+  $('top-tagline').textContent = pageTaglines.get(id) ?? pageTaglines.get('home');
   if(updateHistory && document.getElementById("v-"+id)){
     const targetPath = "/" + id;
     if(location.pathname !== targetPath)history.pushState(null,"",targetPath);
