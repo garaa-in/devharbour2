@@ -176,8 +176,6 @@ body:has(#intro:not(.out)) .sidebar-greeting{visibility:hidden}
 /* pages */
 .fl{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .pill{padding:9px 16px;border-radius:99px;background:var(--card);font-size:13px;font-weight:600;transition:var(--t)}.pill.on{background:var(--blk);color:#fff}
-.practice-level-label{font-size:13px;font-weight:700;margin-right:6px}
-.srch.practice-level{width:auto;margin-right:8px;color:var(--ink)}
 .srch{width:100%;max-width:320px;padding:12px 18px;border-radius:99px;border:0;background:var(--card);font:inherit;margin-bottom:16px;outline:none}
 .row{display:grid;grid-template-columns:36px 1fr 92px 70px auto;gap:12px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}.row:last-child{border:0}.row h4{font-size:15px}.row small{color:var(--mut)}
 .row .sv{background:var(--blk);color:#fff;border-radius:12px;padding:8px 16px;font-size:13px;font-weight:700}
@@ -3787,27 +3785,6 @@ body{padding-top:var(--site-nav-height)}
 #site-navbar .nav-dropdown-links a{
   display:grid;gap:2px;padding:9px 10px;border-radius:8px;white-space:normal;
 }
-.nav-mega{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:520px}
-.nav-mega > div{min-width:0}
-.nav-dsa{padding:2px 4px;background:var(--soft);border:1px solid var(--line);border-radius:9px}
-.nav-roadmap,.nav-levels{list-style:none;margin:0;padding:0}
-.nav-roadmap{counter-reset:roadmap}
-.nav-roadmap li{position:relative;counter-increment:roadmap}
-.nav-roadmap li:not(:last-child)::after{
-  content:"";position:absolute;left:22px;top:34px;bottom:-10px;width:1px;background:var(--line);pointer-events:none;
-}
-#site-navbar .nav-roadmap a,#site-navbar .nav-levels a{grid-template-columns:25px minmax(0,1fr);column-gap:8px}
-.nav-roadmap a::before{
-  content:counter(roadmap,decimal-leading-zero);grid-row:span 2;z-index:1;
-  display:grid;place-items:center;width:25px;height:25px;border:1px solid var(--line);
-  border-radius:50%;background:var(--card);color:var(--accent,#7c5cff);font-size:10px;font-weight:800;
-}
-.nav-level-meter{grid-row:span 2;display:flex;gap:2px;align-items:end;height:16px;margin:3px 0 0 3px}
-.nav-level-meter i{width:4px;border-radius:2px;background:var(--line)}
-.nav-level-meter i:nth-child(1){height:6px;background:var(--accent,#7c5cff)}
-.nav-level-meter i:nth-child(2){height:11px}
-.nav-level-meter i:nth-child(3){height:16px}
-.nav-level-meter[data-level="2"] i:nth-child(2){background:var(--accent,#7c5cff)}
 .nav-option-title{font-size:13px;font-weight:750}
 .nav-option-description{color:var(--mut);font-size:12px;font-weight:500;line-height:1.35}
 #site-navbar .nav-dropdown-links a:hover,#site-navbar .nav-dropdown-links a[aria-current="page"]{background:var(--soft)}
@@ -3833,7 +3810,6 @@ body{padding-top:var(--site-nav-height)}
  #site-navbar .site-nav-actions{margin-left:auto}
 }
 @media(max-width:560px){
- .nav-mega{grid-template-columns:1fr}
  #site-navbar{padding-inline:10px;column-gap:6px}
  #site-navbar .nav-link,#site-navbar summary{padding:6px 7px;font-size:12px}
  #site-navbar .xlg{gap:6px;font-size:12px}
@@ -3875,29 +3851,32 @@ body{padding-top:var(--site-nav-height)}
   <a class="nav-link" href="/home" data-page="home">Dashboard</a>
   <details class="nav-dropdown" name="site-navbar-menu">
     <summary>Learn</summary>
-    <div class="nav-dropdown-links nav-mega">
-      <div>
-        <p class="nav-dropdown-heading">Learning roadmap</p>
-        <ol class="nav-roadmap">
-          <li><a href="/learn" data-page="learn"><span class="nav-option-title">Learn the foundations</span><span class="nav-option-description">Start with a guided learning path.</span></a></li>
-          <li><a href="/practice" data-page="practice" data-practice-shortcut><span class="nav-option-title">DSA Challenges</span><span class="nav-option-description">Put concepts into practice with coding problems.</span></a></li>
-          <li><a href="/timer" data-page="timer"><span class="nav-option-title">Build a study routine</span><span class="nav-option-description">Set a session with Focus Timer.</span></a></li>
-        </ol>
-      </div>
-      <div class="nav-dsa">
-        <p class="nav-dropdown-heading">DSA difficulty levels</p>
-        <ul class="nav-levels">
-          <li><a href="/practice?level=easy" data-page="practice" data-practice-shortcut><span class="nav-level-meter" data-level="1" aria-hidden="true"><i></i><i></i><i></i></span><span class="nav-option-title">Easy</span><span class="nav-option-description">Start with the fundamentals.</span></a></li>
-          <li><a href="/practice?level=medium" data-page="practice" data-practice-shortcut><span class="nav-level-meter" data-level="2" aria-hidden="true"><i></i><i></i><i></i></span><span class="nav-option-title">Medium</span><span class="nav-option-description">Apply patterns to tougher problems.</span></a></li>
-        </ul>
-      </div>
-    </div>
+    <ul class="nav-dropdown-links">
+      <li class="nav-dropdown-heading" aria-hidden="true">Study & practice</li>
+      <li>
+        <a href="/learn" data-page="learn">
+          <span class="nav-option-title">Learning Paths</span>
+          <span class="nav-option-description">Follow a guided path from the basics.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/practice" data-page="practice">
+          <span class="nav-option-title">DSA Practice</span>
+          <span class="nav-option-description">Solve coding problems and sharpen your skills.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/timer" data-page="timer">
+          <span class="nav-option-title">Focus Timer</span>
+          <span class="nav-option-description">Set up a Pomodoro or timed study session.</span>
+        </a>
+      </li>
+    </ul>
   </details>
   <details class="nav-dropdown" name="site-navbar-menu">
     <summary>Build</summary>
-    <div class="nav-dropdown-links">
-      <p class="nav-dropdown-heading">Build and share</p>
-      <ol class="nav-roadmap">
+    <ul class="nav-dropdown-links">
+      <li class="nav-dropdown-heading" aria-hidden="true">Create & compete</li>
       <li>
         <a href="/projects" data-page="projects">
           <span class="nav-option-title">Project Showcase</span>
@@ -3916,8 +3895,7 @@ body{padding-top:var(--site-nav-height)}
           <span class="nav-option-description">Explore events and team challenges.</span>
         </a>
       </li>
-    </ol>
-    </div>
+    </ul>
   </details>
   <details class="nav-dropdown" name="site-navbar-menu">
     <summary>Connect</summary>
@@ -4321,12 +4299,6 @@ body{padding-top:var(--site-nav-height)}
       <div class="c s8">
         <div class="h"><h3>Popular Coding Challenges</h3></div>
         <div class="fl" id="cf"></div>
-        <label class="practice-level-label" for="practice-level">Difficulty</label>
-        <select class="srch practice-level" id="practice-level">
-          <option value="">All levels</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-        </select>
         <input class="srch" style="background:var(--soft)" id="cq" placeholder="Search challenges…" aria-label="Search challenges">
         <div id="cl"></div>
         <p class="mut" style="margin-top:12px">Practice algorithm challenges right in your browser. Solve & pass tests to earn +50 XP on the live leaderboard.</p>
@@ -5493,14 +5465,6 @@ siteNavbar.addEventListener('click', function(e){
     menu.open = false;
     menu.querySelector('summary').focus();
   }
-  if (link.hasAttribute('data-practice-shortcut')) {
-    const target = link.pathname + link.search;
-    if (location.pathname + location.search !== target) history.pushState(null, '', target);
-    cat = 'All';
-    $('cq').value = '';
-    renderPracticeTopics();
-    closePracticeStudio();
-  }
   if(window.enter)window.enter(link.dataset.page,e.clientX,e.clientY);
   window.show(link.dataset.page,true);
 });
@@ -5541,9 +5505,7 @@ function show(id, fromUserAction, updateHistory = fromUserAction){
     if(location.pathname !== targetPath)history.pushState(null,"",targetPath);
   }
   document.querySelectorAll("#site-navbar [data-page]").forEach(link=>{
-    const matchesView = link.dataset.page === id;
-    const matchesLevel = !link.hasAttribute('data-practice-shortcut') || link.search === location.search;
-    if(matchesView && matchesLevel)link.setAttribute("aria-current","page");
+    if(link.dataset.page===id)link.setAttribute("aria-current","page");
     else link.removeAttribute("aria-current");
   });
   // Only auto-dismiss hero intro if navigating away from default 'home' view or explicitly triggered by user action
@@ -5558,7 +5520,6 @@ function show(id, fromUserAction, updateHistory = fromUserAction){
   document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+id));
   document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==id));
   updateSidebarTagline();
-  if (id === 'practice') syncPracticeLevel();
   scrollTo({top:0,behavior:'smooth'});
   if(typeof gtag==='function'){try{gtag('event','page_view',{page_title:id.charAt(0).toUpperCase()+id.slice(1)+' — DevHarbour',page_path:'/'+id})}catch(e){}}
   const viewEl = document.getElementById('v-'+id);
@@ -6454,27 +6415,8 @@ if(!matchMedia('(prefers-reduced-motion:reduce)').matches)setTimeout(()=>['n1','
 /* filters */
 const cats=['All','Arrays','Strings','Hash Maps','Stacks','Queues','Trees','Graphs','Dynamic Programming'];let cat='All',pc='All';
 function pills(el,l,c,f){el.innerHTML=l.map(x=>`<button class="pill ${x==c?'on':''}" data-v="${x}">${x}</button>`).join('');el.onclick=e=>{const v=e.target.dataset.v;if(v){f(v);pills(el,l,v,f)}}}
-function rc(){const level=$('practice-level').value,s=$('cq').value.toLowerCase(),l=C.map((c,i)=>[c,i]).filter(([c])=>(cat=='All'||c[2]==cat)&&(!level || c[1].toLowerCase() === level)&&c[0].toLowerCase().includes(s));$('cl').innerHTML=l.length?l.map(([c,i])=>`<div class="row"><b class="mut">0${i+1}</b><div><h4>${c[0]}</h4></div><small class="tp">${c[2]}</small><span class="${c[1]}">${c[1]}</span><button class="sv" onclick="openPracticeStudio(${i})">Solve →</button></div>`).join(''):'<p class="mut" style="padding:20px 0">No challenges match yet.</p>'}
-function renderPracticeTopics() {
-  pills($('cf'), cats, cat, value => { cat = value; rc(); });
-}
-
-function syncPracticeLevel() {
-  const level = new URLSearchParams(location.search).get('level');
-  $('practice-level').value = ['easy', 'medium'].includes(level) ? level : '';
-  rc();
-}
-
-renderPracticeTopics();
-$('cq').oninput = rc;
-$('practice-level').onchange = event => {
-  const url = new URL(location.href);
-  if (event.target.value) url.searchParams.set('level', event.target.value);
-  else url.searchParams.delete('level');
-  history.replaceState(null, '', url);
-  show('practice', false, false);
-};
-syncPracticeLevel();
+function rc(){const s=$('cq').value.toLowerCase(),l=C.map((c,i)=>[c,i]).filter(([c])=>(cat=='All'||c[2]==cat)&&c[0].toLowerCase().includes(s));$('cl').innerHTML=l.length?l.map(([c,i])=>`<div class="row"><b class="mut">0${i+1}</b><div><h4>${c[0]}</h4></div><small class="tp">${c[2]}</small><span class="${c[1]}">${c[1]}</span><button class="sv" onclick="openPracticeStudio(${i})">Solve →</button></div>`).join(''):'<p class="mut" style="padding:20px 0">No challenges match yet.</p>'}
+pills($('cf'),cats,cat,v=>{cat=v;rc()});$('cq').oninput=rc;rc();
 function esc(s) {
   if (s == null) return '';
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
