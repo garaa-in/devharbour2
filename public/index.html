@@ -190,7 +190,24 @@ body:has(#intro:not(.out)) .sidebar-greeting{visibility:hidden}
 .orcathon-project p{overflow-wrap:anywhere}
 .orcathon-project-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
 .orcathon-project-links a{display:inline-block;text-decoration:none}
-#project-search{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+#project-search{background:var(--card);border:1px solid var(--line);color:var(--ink);margin:0}
+.project-gallery-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-bottom:16px}
+.project-category-label{display:flex;align-items:center;flex-wrap:wrap;gap:8px;color:var(--mut);font-size:13px;font-weight:700}
+#orcathon-category{max-width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+.orcathon-thumb{
+  position:relative;isolation:isolate;min-height:132px;padding:16px;display:flex;align-items:center;gap:8px;
+  color:#fff;background:radial-gradient(ellipse at var(--thumb-shift) 18%,color-mix(in srgb,var(--thumb-accent) 37%,transparent),transparent 69%),var(--thumb-base);
+}
+.orcathon-thumb::before{
+  content:"";position:absolute;inset:0;z-index:-1;opacity:.16;
+  background:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);
+  background-size:22px 22px;mask-image:linear-gradient(90deg,transparent,#000);
+}
+.orcathon-thumb-copy{min-width:0;flex:1}
+.orcathon-thumb-copy small{display:block;margin-bottom:5px;color:var(--thumb-accent);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.orcathon-thumb-copy b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-size:clamp(15px,2vw,21px);line-height:1.2}
+.orcathon-thumb svg{flex:none;width:clamp(34px,5vw,66px);height:auto;color:var(--thumb-accent)}
+.orcathon-project-tags{display:flex;flex-wrap:wrap;gap:6px}
 .pc .b{padding:20px}.pc p{color:var(--mut);font-size:14px;margin:4px 0 14px}.pc .f{display:flex;gap:6px;align-items:center}.pc .f a{margin-left:auto;background:var(--blk);color:#fff;border-radius:12px;padding:8px 14px;font-size:13px;font-weight:700}
 .dl div{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:14px}.dl dt{color:var(--mut)}.dl dd{font-weight:700;text-align:right}
 .hb{min-height:340px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}.hb:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-60px;top:-60px;background:radial-gradient(circle at 30% 28%,#fff,#a99fc0 55%,#222);box-shadow:inset -20px -26px 50px rgba(40,34,66,.5)}
@@ -4595,139 +4612,14 @@ body{padding-top:var(--site-nav-height)}
       <span>Add Project</span>
     </button>
   </div>
-  <input class="srch" id="project-search" type="search" placeholder="Search projects..." aria-label="Search projects">
+  <div class="project-gallery-controls">
+    <input class="srch" id="project-search" type="search" placeholder="Search projects..." aria-label="Search projects">
+    <label class="project-category-label">ORCATHON category
+      <select id="orcathon-category"><option value="">All categories</option></select>
+    </label>
+  </div>
   <div class="g" id="pj"></div>
-  <script type="application/json" id="orcathon-project-data">
-[
-  {"name": "AAROGYA VISION", "summary": "02 - HEALTHCARE & MEDTECH Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results....", "demo": "https://aarogya-b3uc7sue.manus.space/", "repository": "https://github.com/vipultiwaridec-blip/AAROGYA-VISION-"},
-  {"name": "Aegis – CI for AI agents", "summary": "01 | Software & AI – predict failures, trace root causes and compare fixes before a crash (applied to AI agents: Aegis catches unsafe agent actions before release)", "demo": "https://agent-aegis.vercel.app", "repository": "https://github.com/Harsh1t-S/agent-aegis"},
-  {"name": "AetherEye", "summary": "AetherEye — An intelligent satellite anomaly detection system that spots surface changes, highlights affected areas, and explains whether they are natural or human-made.", "demo": "https://aethereye.vercel.app/", "repository": "https://github.com/expertX221/AetherEye"},
-  {"name": "AutoHeal.ai", "summary": "Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://autohealai.vercel.app/", "repository": "https://github.com/Chai-Coders/AutoHeal.ai"},
-  {"name": "blast-radius", "repository": "https://github.com/lileshconnect-dev/blast-radius"},
-  {"name": "Breadcrumb — Cyber Deception & Incident Reconstruction", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network.", "demo": "https://breadcrumb-demo.onrender.com", "repository": "https://github.com/adoraeden/Breadcrumb"},
-  {"name": "CareCrypt", "demo": "https://carecrypt-henna.vercel.app/login", "repository": "https://github.com/SAHIL-coder-79/Carecrypt"},
-  {"name": "Cascade Guard.", "summary": "Build a ai system that cascading software failure, identifies thier root cause,and recomends the optimal recovery strategy before whole system crashes . Description analyse stimulated server logs are servies dependencies to predict which components may fail next, trace how failure could…", "repository": "https://github.com/siddheshgarware/orcathon-ps-1"},
-  {"name": "CascadeGuard", "summary": "Track 01 | Software & AI: Build an AI system that predicts cascading software failures, identifies root causes, and recommends the optimal recovery strategy before an entire system crashes, by analysing simulated server logs and service dependencies to predict which components may fail…", "demo": "https://cascade-guard-pi.vercel.app/", "repository": "https://github.com/manthansingh26/CascadeGuard"},
-  {"name": "CascadeGuard", "summary": "Problem 01 (Software & AI): Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://cascadeguard-pfm2ichnq22yce2tbs2t9t.streamlit.app/", "repository": "https://github.com/sweetypricilla135-sudo/cascadeguard"},
-  {"name": "CascadeGuard", "summary": "\"Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.\" — ORCATHON 2026, Track 01 Software & AI, Dev Harbour, 25 Oct 2026, 11:00–15:30 IST.", "demo": "https://cascadeguard-ten.vercel.app/", "repository": "https://github.com/pal-123456789/cascadeguard"},
-  {"name": "CascadeGuard AI", "summary": "Build an Al system that predicts the optimal recovery strategy before an entire system crashes. cascading software failures, identifies their root causes, and", "demo": "http://gorgeous-nougat-94507a.netlify.app/", "repository": "https://github.com/bhagirath050904-del/cascade-guard-ai-"},
-  {"name": "CascadeGuard AI", "summary": "Build an Al system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://cascadeguard-ai-frontend.vercel.app/", "repository": "https://github.com/Rahul0969/cascadeguard-ai"},
-  {"name": "CascadeGuard AI", "summary": "Develop an AI-powered disaster cascade prediction system that forecasts how one environmental disaster can trigger multiple secondary disasters and optimises emergency resource allocation to minimise total damage.", "demo": "https://cascadeguard-rhf2xhcu5-shamili.vercel.app/", "repository": "https://github.com/ShamiliVijayakumar/cascadeguard"},
-  {"name": "CascadeGuard AI", "summary": "Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes. Analyse simulated server logs and service dependencies to predict which components may fail next, trace how failures…", "demo": "https://cascade-guard-ai--ssr10b4854.replit.app", "repository": "https://github.com/sumitgupta4854/cascadeguard-ai"},
-  {"name": "CascadeGuard AI", "summary": "A failing dependency can cascade through payments, orders and API gateways, making the visible symptom different from the actual origin. Operators need to identify the likely source, anticipate downstream impact and compare recovery tradeoffs before acting. CascadeGuard AI demonstrates…", "demo": "https://afford-fairy-mileage-penguin.trycloudflare.com", "repository": "https://github.com/sgoel2be24-cyber/cascadeguard-ai"},
-  {"name": "CascadeGuard AI – AI-Based Cascading Software Failure Prediction and Recovery Recommendation System", "summary": "Conventional software monitoring systems may detect failures only after they occur. A failure in one service can spread to dependent services and cause a larger system outage. An intelligent system is needed to detect abnormal server behaviour, predict possible cascading failures…", "repository": "https://github.com/rohithsec24-blip/Rohit-"},
-  {"name": "CascadeGuard AI – Predictive Software Failure Detection and Recovery", "summary": "AI-Powered Software Failure Prediction: Develop an AI system that predicts cascading software failures before they cause widespread outages, identifies potential root causes, analyzes dependencies between services, and recommends optimal recovery strategies. The solution should analyze…", "demo": "https://cascadeguard-ai-w53sjbwnzh5ym8uf28s6gs.streamlit.app/", "repository": "https://github.com/vy123yadav45-max/CascadeGuard-AI"},
-  {"name": "CascadeGuard AI — Predictive Software Failure Intelligence", "summary": "Build an AI-assisted system that predicts cascading software failures, identifies their likely root causes, and recommends optimal recovery strategies before an entire system crashes. The system analyses simulated server logs and service dependencies to predict which components may fail…", "demo": "https://cascadeguard-ai-renokx.streamlit.app/", "repository": "https://github.com/gireeshpatgar17/CascadeGuard-AI"},
-  {"name": "CascadeGuard AI: Predictive Microservice Failure & Blast-Radius Recovery Engine (BFS + DAG)", "summary": "01 | Software & AI - Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://adarahmittal123bari-ai.github.io/CascadeGuard-AI/", "repository": "https://github.com/adarahmittal123bari-ai/CascadeGuard-AI"},
-  {"name": "CascadeGuard-AI", "summary": "Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://cascadeguard-ai-d5orrdbjjot8rqdvk8p7sp.streamlit.app/", "repository": "https://github.com/pranavasharanyabhattu/CascadeGuard-AI"},
-  {"name": "CascadeGuard: Configurable AI Platform for Cascading-Failure Prediction and Recovery (work in progress)", "summary": "Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes. Analyse simulated server logs and service dependencies to predict which components may fail next, trace how failures…", "repository": "https://github.com/Rakshadevaraju08/CascadeGuard"},
-  {"name": "CascadeIQ", "summary": "Problem 01: an AI system that predicts cascading software failures, identifies the root cause, and recommends the optimal recovery strategy — before the entire system crashes.", "demo": "https://cascadeiq-vsaq.onrender.com/", "repository": "https://github.com/harishx1/cascadeiq"},
-  {"name": "CascadeShield", "summary": "04 | Environment & Sustainability Problem Statement: Develop an AI-powered disaster cascade prediction system that forecasts how one environmental disaster can trigger multiple secondary disasters and optimises emergency resource allocation to minimise total damage.", "demo": "https://cascadeshield.vercel.app", "repository": "https://github.com/bhavyamakhijani5-ctrl/cascadeshield"},
-  {"name": "CascadeZero", "summary": "01| Software & AI(Artificial Intelligence)", "demo": "https://yogitharai25-debug.github.io/Cascade-Zero/", "repository": "https://github.com/yogitharai25-debug/Cascade-Zero"},
-  {"name": "Cascading failure predictor", "summary": "Build an ai system that predicts cascading project failures identifies their root cause and recommends recovery strategy before the entire system crashes.", "demo": "https://orca-503xqyrjn-frier-voigel.vercel.app/", "repository": "https://github.com/Frier-Voigel/ORCA"},
-  {"name": "CascGuard", "demo": "https://casc-guard.vercel.app/", "repository": "https://github.com/shreyas123-xx/CascGuard"},
-  {"name": "Chainguard-ai2.0", "summary": "Build a simulated network containing decoy files, fake credentials, and monitored endpoints. When suspicious activity interacts with these decoys, the system should trigger alerts, reconstruct the movement, and generate an incident timeline. Password:- Aw@2007,Username:-Awi$2005", "demo": "https://chainguard-ai-2-0.onrender.com", "repository": "https://github.com/awanishkumarmishra2005-eng/chainguard-ai-2.0"},
-  {"name": "City Hospital", "summary": "Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "demo": "https://city-hospital-sand.vercel.app/", "repository": "https://github.com/Aayushpuri05/City-Hospital"},
-  {"name": "CityGraph AI — Cascading Disaster Prediction & Emergency Response Intelligence", "summary": "Track 04 — Environment & Sustainability: Develop an AI-powered disaster cascade prediction system that forecasts how one environmental disaster can trigger multiple secondary disasters and optimises emergency resource allocation to minimise total damage.", "demo": "https://citygraph-intelligence.vercel.app/", "repository": "https://github.com/rajsalonia/citygraph"},
-  {"name": "CloudLog Enterprise — AI Cloud Log Analyzer & SRE Resilience Platform", "summary": "Software & AI — predict cascading software failures and recommend recovery strategies.Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes", "demo": "https://ai-cloud-9ved.vercel.app/", "repository": "https://github.com/varalaxmi123-NU/Ai-cloud"},
-  {"name": "CrashLens", "summary": "01 | Software & AI PROBLEM STATEMENT Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://orcathon-2026.vercel.app", "repository": "https://github.com/vihaant1234/CrashLens"},
-  {"name": "CyberShield AI – Intelligent Cyber Deception and Intrusion Tracking System", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network.", "demo": "https://cybershield-ai-gamma.vercel.app/", "repository": "https://github.com/Arshi-shaik-07/cybershield-ai"},
-  {"name": "CyberTrap AI", "summary": "Track 03 – Cybersecurity & Blockchain: Develop a cyber deception system using decoy assets to simulate intruder movement, generate security alerts, and display an incident timeline.", "demo": "https://elaborate-cupcake-c09bf0.netlify.app", "repository": "https://github.com/ap0896-eng/cybertrap-ai"},
-  {"name": "DcoY - Intelligent Cyber Deception & Threat Investigation Platform", "summary": "PS 03 — Cybersecurity & Blockchain: Design and develop a cyber-deception system that uses decoy assets and credentials to detect suspicious interactions, generate actionable security alerts, and support incident investigation through event tracking and integrity verification.", "demo": "https://dcoy.pages.dev", "repository": "https://github.com/hiransheedoshi/DcoY"},
-  {"name": "DeceptionNet", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network. DeceptionNet uses decoy files, honeytoken credentials and a decoy host to raise high-confidence alerts, reconstruct the attacker's path…", "demo": "https://deceptionnet-suthakrish123.streamlit.app/", "repository": "https://github.com/Suthakani/deceptionnet"},
-  {"name": "DeceptiTrace", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network.", "repository": "https://github.com/aradhyags7/Orcathon"},
-  {"name": "DECOY-X: AI Cyber Deception & Digital Crime Scene Reconstruction", "summary": "Track 03 (Cybersecurity & Blockchain): Build a cyber deception system that creates realistic decoy digital assets (fake files, credentials, servers) to detect intruders and trace their movement through a simulated network. Our solution, DECOY-X, detects any decoy interaction instantly…", "demo": "https://guruvemula61-cmyk.github.io/decoynet-orcathon/", "repository": "https://github.com/guruvemula61-cmyk/decoynet-orcathon"},
-  {"name": "DECOYNET — AI-Powered Cyber Deception & Intrusion Detection System", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network.", "demo": "https://decoynet-phi.vercel.app/", "repository": "https://github.com/ssinega/Decoynet"},
-  {"name": "DECOYTRACE", "summary": "Problem Statement 03 — Cybersecurity & Blockchain: Build a cyber deception system with realistic decoy assets in a simulated network. Suspicious interactions with decoys should trigger alerts, reconstruct attacker movement, generate an incident timeline, and preserve evidence using a…", "demo": "https://replit-design-project--souvikpaldev.replit.app", "repository": "https://github.com/souvikpal77/decoytrace"},
-  {"name": "decoytrace", "summary": "Traditional security systems often detect suspicious activities only after potential damage has occurred. There is a need for a proactive security solution that uses decoy resources to identify unauthorized access attempts, monitors suspicious activities, and maintains tamper-evident…", "demo": "https://decoytrace.netlify.app/", "repository": "https://github.com/gajavallisaravana/decoytrace"},
-  {"name": "DocLens", "summary": "Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "demo": "https://doc-lens-frontend-git-main-aryan-shaw-s-projects.vercel.app/", "repository": "https://github.com/AryanShaw26/DocLens"},
-  {"name": "Domino: Disaster Cascade Prediction & Response Planning", "summary": "PS 04 – Environment & Sustainability: An AI-powered system that simulates how extreme rainfall cascades into floods, landslides, power failures and water contamination, predicts how these events affect each other, identifies the most vulnerable locations, and allocates limited rescue…", "demo": "https://domino-orcathon.vercel.app", "repository": "https://github.com/Mayur280star/domino-orcathon"},
-  {"name": "EcoShield AI – Disaster Cascade Prediction & Response System", "summary": "Develop an AI-powered disaster cascade prediction system that simulates how extreme rainfall and other environmental hazards can trigger secondary disasters such as floods, landslides, power failures, and water contamination. The system identifies vulnerable areas, provides weather and…", "demo": "https://vy9635145-ux.github.io/Environment-Sustainability-Predictor/", "repository": "https://github.com/vy9635145-ux/Environment-Sustainability-Predictor"},
-  {"name": "EVOFORM", "summary": "Many fitness and wellness applications focus only on workouts or diet plans. Users often need multiple apps for fitness tracking, skincare guidance, appearance enhancement, and performance monitoring. EvoForm solves this problem by providing an all-in-one AI-powered platform that…", "repository": "https://github.com/paramasivampandiyang-gif/evoform-ai-health"},
-  {"name": "FailGuard AI", "summary": "Develop an AI-powered system that detects software service anomalies, assesses failure risks, predicts potential cascading failures across interconnected services, identifies suspected root causes, and recommends recovery strategies to improve software reliability and minimize downtime.", "demo": "https://failguardai.vercel.app/", "repository": "https://github.com/Subhashree0604/FailGuard-AI"},
-  {"name": "FaultLens AI", "summary": "Software failures can spread across interconnected services, making it difficult to understand service dependencies, investigate root causes, and identify suitable recovery actions. FaultLens AI addresses this challenge through an interactive AIOps-inspired dashboard that visualizes…", "demo": "https://faultlens-ai.netlify.app/", "repository": "https://github.com/AyushSingh-coder-web/faultlens-ai"},
-  {"name": "Financial health copilot", "demo": "https://f-inancial-health-copilot.vercel.app/", "repository": "https://github.com/Aarushs-max/FInancial-Health-Copilot"},
-  {"name": "FINPILOT: AN INTEGRATED MOBILE SYSTEM FOR PERSONAL FINANCE MANAGEMENT, AI-ASSISTED FINANCIAL GUIDANCE AND VERIFIED RESOURCE DISCOVERY", "summary": "Problem Statement Managing personal finances effectively is challenging for individuals due to unorganized expense tracking, limited awareness of spending patterns, difficulty maintaining budgets, and a lack of personalized financial guidance. Existing solutions may require considerable…", "repository": "https://github.com/SSrimathi17/FinPilot_Code-Kernel-26_Hackathon"},
-  {"name": "Fraud Guard AI"},
-  {"name": "game", "summary": "Stone Paper Scissors project", "repository": "https://github.com/prasadvishnu8528-coder/Project_Summer_game"},
-  {"name": "GEO Watch AI", "summary": "Problem - Statement - 5 Develop an AI-powered satellite anomaly detection system that identifies unusual changes on Earth's surface and distinguishes natural events from potential human-made damage.", "demo": "https://geowatch-ai-6d18.onrender.com", "repository": "https://github.com/Walker65434/geowatch-ai"},
-  {"name": "GeoSense", "summary": "5 Develop an Al-powered satellite anomaly detection system that identifies unusual changes on Earth's surface and distinguishes natural events from potential human-made damage.", "repository": "https://github.com/ArnavJakate007/geosense"},
-  {"name": "GeoVision — Intelligent Satellite Image Analytics Platform for Environmental Monitoring", "summary": "Develop an AI-powered satellite anomaly detection system that identifies unusual changes on Earth's surface and helps distinguish natural events from potential human-made damage. The system analyzes satellite imagery captured at different times to identify and visualize changes…", "demo": "https://geo-vision-29tjm789w-scarface17.vercel.app/aoi", "repository": "https://github.com/jinay-16/geo_vision"},
-  {"name": "Health Predictor", "summary": "Developing an offline-capable, rule-based medical report analyzer to detect abnormal indicators and critical health combinations (like Metabolic Syndrome and Nutritional Anemia) to assist doctors.", "demo": "https://ayushmaurya-creator.github.io/health-predictor/", "repository": "https://github.com/ayushmaurya-creator/health-predictor"},
-  {"name": "Healthcare & MedTech", "summary": "Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "demo": "https://healthcaremedtech.netlify.app/", "repository": "https://github.com/punyavasishta/mediscan-ai"},
-  {"name": "HealthLens", "summary": "Problem Statement: Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results. Description: Analyse sample medical reports, flag values outside predefined reference ranges, and highlight…", "repository": "https://github.com/Nish1201/medical-report-analyzer"},
-  {"name": "HealthLens Ai", "repository": "https://github.com/rahulkumbhakar62070-dotcom/HealthLens-ai"},
-  {"name": "HealthVision", "summary": "Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "demo": "https://skillbridge-project-main.vercel.app/", "repository": "https://github.com/krishn809/HealthVision-project"},
-  {"name": "Indus Code", "summary": "ndia's hardware supply chain faces severe fragmentation due to the lack of standardized product identities. Identical items—such as bolts, bearings, and pipes—are marketed under conflicting part numbers and regional trade terms, causing costly procurement errors and preventing…"},
-  {"name": "Intelligent medical report analyzer", "summary": "Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "repository": "https://github.com/Purnashish07/Intelligent-medical-report-analyzer"},
-  {"name": "KisanSetu — Smart Procurement & Queue Management System. 🌾", "summary": "Farmers often face long waiting times at agricultural procurement centres due to overcrowding, unorganised arrivals, and a lack of proper scheduling. They frequently have limited information about procurement schedules, token positions, and the status of their crop procurement and…", "demo": "https://smart-procurement-ma-9lff.bolt.host/", "repository": "https://github.com/Jagriti-yadav/smart-procurement-system"},
-  {"name": "KRAKEN BLAST SHIELD — Cyber Threat Analysis Platform.", "summary": "Build an ai system that predicts cascading software failures, identifies their root causes and recommends the optimal recovery stratergy before an entire system crashes", "demo": "https://kraken-blast-shield-neprdjtyapar3p6qvkwbde.streamlit.app/", "repository": "https://github.com/nish-21-ux/KRAKEN-BLAST-SHIELD"},
-  {"name": "Lab Report Analyzer", "summary": "Track 02 : Healthcare & MedTech: Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "demo": "https://labanalyzer.stabat.fr", "repository": "https://github.com/Theophanestb/Hackathon-Orca-EPITA-GITM"},
-  {"name": "LabLens", "summary": "Track 02 | Healthcare & MedTech: Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results. Analyse sample medical reports, flag values outside predefined reference ranges, and highlight…", "demo": "https://lablens-orca-coder.vercel.app", "repository": "https://github.com/UjjwalArote69/Lablens-Orca-Coder"},
-  {"name": "LANTERNFISH — Cyber Deception & Intruder Tracing", "summary": "Stealthy adversaries bypass perimeter firewalls using valid credentials and living-off-the-land techniques, remaining undetected for an average dwell time of 10+ days. Traditional SIEMs suffer from high false-positive rates and lack proactive lures. LANTERNFISH deploys realistic digital…", "demo": "https://lanternfish-kappa.vercel.app/", "repository": "https://github.com/ankush-dev-eng/lanternfish"},
-  {"name": "LaucnchForge", "summary": "We are submitting our existing project, LauchForge, a web-based platform developed by our team. This submission showcases the current implementation of our project and its existing features.", "demo": "https://lauchforge.netlify.app", "repository": "https://github.com/NaitikMorajkar/launchforge"},
-  {"name": "Lumina", "summary": "Build CascadeGuard AI — Disaster Cascade Prediction & Emergency Resource Optimization Platform Act as a senior full-stack engineer, AI/ML engineer, UI/UX designer, and disaster-management systems architect. Build a professional, responsive, working web application named CascadeGuard AI.…", "demo": "https://lumina-nu-snowy.vercel.app", "repository": "https://github.com/varunb2026ece-bit/AI-Disaster-Cascade-Prediction1"},
-  {"name": "Lureline — Evidence-First Cyber-Deception Investigation", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network. Lureline demonstrates this workflow through synthetic event validation, rule-based decoy alerts, topology-aware path reconstruction…", "demo": "https://lureline-orcathon-2026.vercel.app/", "repository": "https://github.com/akshit-sukhija/lureline-orcathon-2026"},
-  {"name": "Marcuscabin AI", "summary": "02 || Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "demo": "https://marcuscabinai.vercel.app/", "repository": "https://github.com/aryantripathi52/marcuscabinai"},
-  {"name": "Med-Analyzer", "demo": "https://ashu-meditation-front-end.vercel.app/", "repository": "https://github.com/devspark-2501/Med-Analyzer"},
-  {"name": "MedAssist", "demo": "https://health-assist-c18ep49dm-hitanshu4.vercel.app/", "repository": "https://github.com/hitanshus-svg/Health-Assist"},
-  {"name": "MedGate Sentinel - Clinical Action Review Console", "summary": "Track 02 (AI for Human Health): helping people understand medical lab reports. MedGate Sentinel parses pasted lab-report text, flags out-of-range values against reference ranges, and detects concerning clinical combinations (glucose+HbA1c, anemia, kidney, thyroid, liver, lipid clusters)…", "demo": "https://shlok.is-a.dev/medgate-sentinel/", "repository": "https://github.com/shlokgit-04/medgate-sentinel"},
-  {"name": "Medi-Scan", "summary": "02 | Healthcare & MedTech PROBLEM STATEMENT Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results. DESCRIPTION Analyse sample medical reports, flag values outside predefined reference ranges…", "repository": "https://github.com/poornika0406-commits/Medi---scan"},
-  {"name": "Medical Report Scanner", "summary": "Understanding medical reports can be difficult for people without a medical background. Medical Report Scanner aims to provide a simple and user-friendly interface that helps users access and understand their medical report information more easily. The project focuses on creating an…", "demo": "https://medical-report-scanner.onrender.com", "repository": "https://github.com/mycledox/medical-report-scanner"},
-  {"name": "MedIntellect: Clinical Decision-Support Lab Report Analyzer", "summary": "Standard laboratory reports often present individual test results in isolation, making it difficult to identify risks arising from combinations of abnormal biomarkers. MedIntellect analyzes multiple indicators together, explains potential physiological patterns, suggests specialist…", "demo": "https://orca-fshn.onrender.com", "repository": "https://github.com/atharvadhenge714-eng/orca"},
-  {"name": "MediOTO AI", "summary": "Lab reports can be difficult for people to understand. MediOTO AI is an educational prototype that helps users explore fictional lab results through clear comparisons, visual summaries, and explainable rules. It is not a diagnostic tool.", "demo": "https://medioto-ai-hackathon.onrender.com/", "repository": "https://github.com/codewithswarup108/MediOTO-AI-Hackathon"},
-  {"name": "MediRelay", "summary": "Develop an intelligenent medical report analyzer that detects abnormal health indicators and identify potential concerning combinations of result", "demo": "https://mediprototype.netlify.app"},
-  {"name": "MediScan AI – Intelligent Medical Report Analyzer", "summary": "Develop an AI-powered medical report analyzer that analyzes medical report indicators, compares values against predefined reference ranges, flags abnormal values and potentially concerning combinations, and explains the findings in an understandable format to support health awareness and…", "demo": "https://mediscan-ai-nqfd9wqklhtmkyyogrlesw.streamlit.app/", "repository": "https://github.com/unnatipatil1907/MediScan-Ai"},
-  {"name": "Medlens", "summary": "Healthcare & Med Tech PROBLEM STATEMENT DESCRIPTION Develop an intelligent medical report analyser that detects abnormal health indicators and identifies potentially concerning combinations of results. combinations that may require further medical review.", "demo": "https://apexpredator.onrender.com", "repository": "https://github.com/pdbmnm7sxy-svg/Apexpredator"},
-  {"name": "MedReport AI – Intelligent Medical Report Analyzer", "summary": "Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results. The system analyzes sample medical reports, flags values outside predefined reference ranges, and highlights combinations that may require…", "repository": "https://github.com/SaniyaKuppam/MedReport-AI"},
-  {"name": "MedReport AI – Medical Report & Medication Safety Analyzer", "summary": "Medical laboratory reports can be difficult for patients to understand, and medication-related risks may be overlooked. MedReport AI provides an accessible screening tool that flags values outside supplied reference ranges and checks potential medication interactions, allergy conflicts…", "demo": "https://med-safe-ai-six.vercel.app", "repository": "https://github.com/Varun7-ux/MedSafe-AI"},
-  {"name": "medscan", "summary": "PROBLEM STATEMENT Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of DESCRIPTION results. outsidormal health Analyse sample medical reports, flag values combinations that may require further medical…", "demo": "https://medscan-omega.vercel.app/", "repository": "https://github.com/vishnupriyakv2008-ctrl/medscan"},
-  {"name": "Mirage studio", "summary": "Develop a cyber deception system that creates realistic decov digital assets to detect intruders and trace their movement through a simulated network", "demo": "https://mirage-studio-nine.vercel.app/", "repository": "https://github.com/Powerhouse0784/Mirage-studio"},
-  {"name": "MirageNet (deception that catches intruders and tells their story)", "summary": "Problem (Track 3): Develop a cyber deception system with realistic decoy assets that detects intruders and traces their movement through a simulated network (decoy files, fake credentials, monitored endpoints, alerts, reconstructed movement, incident timeline).", "demo": "https://mirage-net.vercel.app/", "repository": "https://github.com/sadaf355/MirageNet"},
-  {"name": "Orbital intelligence", "summary": "SpaceTech & Satellite Intelligence: Automated orbital monitoring system for detecting unauthorized urban expansion and environmental changes using multi-spectral satellite image comparison.", "demo": "https://nehatomar-coder.github.io/Spacetrack---Satelite-Intelliance/", "repository": "https://github.com/nehatomar-coder/Spacetrack---Satelite-Intelliance"},
-  {"name": "OrbitalDelta", "summary": "Track 05, SpaceTech & Satellite Intelligence: Develop an AI-powered satellite anomaly detection system that identifies unusual changes on Earth's surface and distinguishes natural events from potential human-made damage.", "demo": "https://orbit-delta-earth.vercel.app/", "repository": "https://github.com/ashritanshuman/OrbitalDelta"},
-  {"name": "OrbitalPulse", "summary": "Develop an AI-powered satellite anomaly detection system that identifies unusual changes on Earth's surface and distinguishes natural events from potential human-induced damage.", "demo": "https://orbitalpulse1.netlify.app/", "repository": "https://github.com/DHAKED440/OrbitalPulse"},
-  {"name": "OrbitDiff", "summary": "SpaceTech & Satellite Intelligence (0 votes / Bonus Track): A bonus track focusing on an AI-powered satellite anomaly detection system to identify unusual surface changes and distinguish natural events from human-made damage.", "demo": "https://6addd5c22cb91774c70cc64f--orcathon-26.netlify.app/", "repository": "https://github.com/an-netizen-ant/orcathon-26"},
-  {"name": "OrbitWatch AI", "summary": "Environmental changes such as vegetation loss, land degradation, and ecosystem disturbance are difficult to monitor consistently over large areas using manual observation alone. OrbitWatch AI uses Sentinel-2 satellite imagery and NDVI-based change analysis to help identify and visualize…", "demo": "https://orbitwatch-ai.ai.studio", "repository": "https://github.com/kasanusrinavya-cloud/orbitwatch-ai"},
-  {"name": "Orca MedScan – Healthcare and MedTech", "summary": "Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results. (Healthcare documents such as medical reports can be difficult for patients to understand and manage. Orca MedScan provides a centralized…", "demo": "https://orca-medscan-api.onrender.com", "repository": "https://github.com/Chanbasha13/Orca-MedScan-Healthcare-and-Medtech-"},
-  {"name": "ORCA – Outage Risk & Cascade Analyzer", "summary": "Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the best recovery strategy before the entire system crashes. The system should analyse simulated server logs and service dependencies, predict which components will fail next, trace…", "demo": "https://2vishalv1.github.io/orca-cascade-ai/", "repository": "https://github.com/2ViShAlv1/orca-cascade-ai"},
-  {"name": "PatchPilot AI – Intelligent Bug Detection & Automated Code Repair", "summary": "Developers often spend hours debugging software, identifying root causes, and fixing errors that can introduce new bugs. Existing AI coding tools can suggest code changes, but those changes still need reliable verification. PatchPilot AI addresses this challenge by combining automated…", "demo": "https://patch-pilot-ai-ja91.vercel.app/", "repository": "https://github.com/afroz01q/PatchPilot-AI"},
-  {"name": "PhantomNet", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network.", "demo": "https://phantomnet-five.vercel.app/", "repository": "https://github.com/rishmore-07/PhantomNet"},
-  {"name": "PhantomShield", "summary": "Cybersecurity & Blockchain", "demo": "https://phantom-shield.vercel.app/", "repository": "https://github.com/abhishekdubey-tech/PhantomShield"},
-  {"name": "PreMortem — AI Incident Command Center", "summary": "Modern applications rely on interconnected microservices, where a single failure can trigger cascading outages. Traditional monitoring often detects problems only after users are affected, leaving teams with limited time to identify root causes and choose safe recovery actions. PreMortem…", "demo": "https://premortem-ai-1-i3h9.onrender.com/", "repository": "https://github.com/sriram-257/premortem-ai"},
-  {"name": "ProblemSetu", "summary": "Develop an AI-powered disaster cascade prediction system that forecasts how one environmental disaster can trigger multiple secondary disasters and optimises emergency resource allocation to minimise total damage.", "demo": "https://problem-setu.vercel.app/", "repository": "https://github.com/kushmakadia07/ProblemSetu"},
-  {"name": "RE:SOURCE – Intelligent Resource Utilization & Decision System", "summary": "Organizations struggle with inefficient resource utilization due to fragmented data, lack of real-time visibility, and poor coordination across departments. This leads to underutilized assets, resource shortages, increased operational costs, and inefficient decision-making. RE:SOURCE…", "demo": "https://resource-intelligence-mcc7.onrender.com/", "repository": "https://github.com/Piyu7667/resourceinte"},
-  {"name": "Riptide: Cascading Failure Intelligence", "summary": "01 | Software & AI: Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes. Riptide analyses live logs and metrics from a 20-service digital twin, predicts which services…", "demo": "https://riptide-production-d8c4.up.railway.app", "repository": "https://github.com/daanialmirza5/riptide"},
-  {"name": "RocketRide Server", "repository": "https://github.com/jayant-lang/rocketride-server"},
-  {"name": "RxDiff - Medication Reconciliation and Lab Report Review", "summary": "Track 02 - Healthcare and MedTech: Develop an intelligent medical report analyzer that detects abnormal health indicators and identifies potentially concerning combinations of results.", "demo": "https://rx-diff.vercel.app/", "repository": "https://github.com/NITISH-027/RxDiff"},
-  {"name": "S.P.E.C.T.R.A. - Satellite Precision Earth Change Tracking & Rapid Analytics", "summary": "SpaceTech & Satellite Intelligence", "demo": "https://s-p-e-c-t-r-a.onrender.com", "repository": "https://github.com/8ernity/S.P.E.C.T.R.A."},
-  {"name": "SatVision AI — Autonomous Satellite Anomaly & Threat Attribution Detector", "summary": "Autonomous Satellite Anomaly Detection and Threat Attribution: Rapidly processing multi-temporal orbital satellite feeds to detect surface disruptions, quantify area delta, and autonomously distinguish natural ecological variance (such as coastal shifts) from human-driven threats (such…", "demo": "https://satellite-anomaly-detector.onrender.com/", "repository": "https://github.com/TanusnSN/satellite_anomaly_detector"},
-  {"name": "ScamShield – Suspicious Message Checker", "summary": "People often receive fraudulent messages containing suspicious links, urgent requests, and attempts to steal personal or financial information. ScamShield helps users identify common scam warning signs by analyzing message text and providing risk categories and safety recommendations.", "demo": "https://share.streamlit.io/"},
-  {"name": "ShieldX Guard", "summary": "Real-Time Mitigation of Zero-Day Financial Scams and Email Phishing Threats(Web users lack instant protection against phishing and fraud because existing tools fail to detect and block malicious domains in real time).", "repository": "https://github.com/edulajayasimhaci25-crypto/ShieldX-Guard"},
-  {"name": "SignalPath", "summary": "Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://signalpath3357.netlify.app", "repository": "https://github.com/Rohilmaurya/SignalPath"},
-  {"name": "SkillConnect — Trusted Local Service Professionals", "summary": "PS 01 – Software & AI Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://skill-connect-omega.vercel.app/", "repository": "https://github.com/sharmaa-abhi/SkillConnect"},
-  {"name": "Smart Soil Moisture Monitoring and Analysis System", "summary": "Plants require an appropriate amount of water for healthy growth. Manual soil moisture checking can be time-consuming and may lead to overwatering or underwatering. This project demonstrates a simple, low-cost website that classifies manually entered soil moisture values as dry…", "demo": "https://imayaa9025.github.io/Soil-moisture-alert/", "repository": "https://github.com/imayaa9025/Soil-moisture-alert"},
-  {"name": "Smart Waste Management System Using IoT", "summary": "The main objective of this project is to develop a smart waste management system that monitors the garbage level in dustbins and alerts the responsible authorities when the bins are full. This helps improve waste collection efficiency, maintain cleanliness, and reduce environmental…"},
-  {"name": "SmartReport AI", "summary": "Medical laboratory reports contain complex values and reference ranges that can be difficult for ordinary people to understand.", "repository": "https://github.com/devyadav96569-bit/smartreport-ai"},
-  {"name": "Software & AI", "summary": "Build an AI system that predicts cascading software failures, identifies their root causes, and recommends the optimal recovery strategy before an entire system crashes.", "demo": "https://production.d1zk8ptor0c0s.amplifyapp.com/", "repository": "https://github.com/yagnikjivani010-byte/faultline"},
-  {"name": "SpacePicz", "summary": "Develop an AI-powered satellite anomaly detection system that identifies unusual changes on Earth's surface and distinguishes natural events from potential human-made damage.", "repository": "https://github.com/nonstudyholic/Orcathon"},
-  {"name": "StudySphere AI – Personalized AI Study Companion", "repository": "https://github.com/bikkinagowtham/studysphere-ai"},
-  {"name": "SUDARSHAN AI CARE BUDDY", "summary": "Develop an intelligent, AI-powered medical report analyzer that identifies abnormal health indicators, detects potentially concerning combinations of medical test results, and provides understandable health insights to support early awareness and timely medical consultation. The system…", "demo": "https://sudarshan-ai-care-buddy.vercel.app/", "repository": "https://github.com/ommpritamjena5-star/sudarshan-ai-care-buddy"},
-  {"name": "Systempilot", "repository": "https://github.com/slumio/SystemPilot"},
-  {"name": "TerraSentinel AI — Explainable Satellite Change & Damage Intelligence", "summary": "Satellite imagery contains valuable evidence of environmental changes and potential damage, but identifying meaningful changes across different dates is time-consuming. Basic image comparisons can confuse real changes with seasonal variation, lighting differences, sensor inconsistencies…", "demo": "https://terrasentinel-ai.streamlit.app/", "repository": "https://github.com/Abhijeet908/TerraSentinel-AI"},
-  {"name": "TerraWatch", "summary": "Develop an AI-powered satellite anomaly detection system capable of identifying unusual changes in Earth's surface by analysing satellite imagery captured at different points in time. The system should compare before-and-after satellite images, detect and highlight potentially affected…", "repository": "https://github.com/CodingNIL/TerraWatch"},
-  {"name": "TERRAWATCH AI", "summary": "Develop an AI-powered satellite imagery analysis platform that compares images of the same geographical area across different dates to detect and visualize potential environmental changes. The platform uses image-difference analysis and a change heatmap to support preliminary…", "demo": "https://jazzy-sable-1e67d7.netlify.app/", "repository": "https://github.com/dikhyantbehera-spec/terrawatch"},
-  {"name": "TerraWatch AI – Satellite Image Change Detection", "summary": "Problem Statement 5: Satellite Image Change Detection. Develop an AI-powered application that compares satellite or aerial images captured at different times to identify potential land-use changes, vegetation loss, and other visible environmental changes.", "demo": "https://terrawatch-ai-snowy.vercel.app/", "repository": "https://github.com/Harshan-c/terrawatch-ai"},
-  {"name": "TerraWatch — Satellite Surface Change Detection | ORCATHON 2026", "summary": "Track 05 - SpaceTech & Satellite Intelligence (Bonus Track) Develop an AI-powered satellite anomaly detection system that identifies unusual changes on Earth's surface and distinguishes natural anomalies from potential human-made damage. Analyze sample satellite images to detect changes…", "demo": "https://terrawatch-change-detection.app.workbuddy.host/", "repository": "https://github.com/ASylviaofmine/terrawatch"},
-  {"name": "TerraWatch: AI Satellite Change Detection", "summary": "Develop an Al-powered satellite anomaly detection system that identifies unusual changes Earth's surface and distinguishes natural events from potential human-made damage.", "demo": "https://terrawatch-ai.netlify.app/", "repository": "https://github.com/Sneha4961/TerraWatch"},
-  {"name": "The LivingBlueprint", "repository": "https://github.com/sakshamgupta005/TheLivingBlueprint"},
-  {"name": "TraceTrap", "summary": "Develop a cyber deception system that creates realistic decoy digital assets to detect intruders and trace their movement through a simulated network.", "demo": "https://tracetrap.netlify.app/login", "repository": "https://github.com/taniruth2008/TraceTrap"},
-  {"name": "TrapMatrix", "summary": "TrapMatriX addresses the challenge of identifying and investigating suspicious activity through simulated decoy assets, threat alerts, incident timelines, and attack-path visualization.", "demo": "https://trapmatrix.netlify.app", "repository": "https://github.com/jayeshk2441-cloud/cyber-deception-system"},
-  {"name": "TripWire", "summary": "Cybersecurity and Blockchain", "demo": "https://tripwire-delta.vercel.app/", "repository": "https://github.com/Keykyrios/TripWire"},
-  {"name": "VigilanceAI: An LLM and RAG based Framework for Automated Security Incident Analysis", "summary": "SOC analysts cannot manually read the thousands of SIEM alerts they receive, and LLM helpers often invent attack techniques and overstate confidence. VigilanceAI triages Wazuh alerts automatically: it retrieves the closest MITRE ATT&CK, CAPEC, CWE or NVD record, makes the LLM reason from…", "repository": "https://github.com/harshalbadgujar1053/VigilanceAI-Autonomous_Security_survilance"},
-  {"name": "Vitality OrbitAI", "summary": "5) SpaceTech and Satellite Intelligence", "demo": "https://vitality-orbitai-2026.surge.sh", "repository": "https://github.com/Shlokyadav-0315/Vitality_OrbitAI"}
-]
-  </script>
+  <div id="orcathon-gallery-status" class="mut" role="status" hidden></div>
   <p class="mut" style="margin:14px 6px">Explore featured builds and ORCATHON 2026 submissions. Open live demos and repositories where available.</p>
 </section>
 
@@ -6580,7 +6472,8 @@ const C=[['Two Sum','Easy','Arrays',49,'function twoSum(nums, target) {\n  const
 ['Reverse a Linked List','Easy','Queues',58,'class Node { constructor(v, n = null) { this.v = v; this.next = n; } }\nfunction reverse(head) {\n  // your code\n  return head;\n}\nlet h = null;\nJSON.parse(input).reverse().forEach(v => h = new Node(v, h));\nconst o = [];\nfor (let n = reverse(h); n; n = n.next) o.push(n.v);\nconsole.log(JSON.stringify(o));','[1,2,3]','[3,2,1]'],
 ['Binary Search','Easy','Arrays',55,'function search(nums, target) {\n  // your code\n  return -1;\n}\nconst [a, b] = input.split("\\n");\nconsole.log(search(JSON.parse(a), +b));','[-1,0,3,5,9,12]\n9','4'],
 ['Min Stack','Medium','Stacks',33,'class MinStack {\n  // push, pop, top, getMin\n}\nconst s = new MinStack(), o = [];\ns.push(-2); s.push(0); s.push(-3);\no.push(s.getMin()); s.pop();\no.push(s.top(), s.getMin());\nconsole.log(o.join(","));','(driver is built in)','-3,0,-2']];
-const orcathonProjects = JSON.parse(document.getElementById("orcathon-project-data").textContent);
+let orcathonProjects = [];
+let orcathonGalleryState = "loading";
 
 const J=[
   ['Emergency E-Card','Full-stack emergency response app with medical profile, SOS alerts, nearby responders and live location sharing.','Web','https://emergency-e-card-1.onrender.com','https://emergency-e-card-1.onrender.com','assets/emergency-e-card-thumbnail.svg',{detail:'During emergencies, delays in accessing critical medical information, contacting trusted people, and finding nearby assistance can make an already difficult situation even more challenging. Emergency E-Card is a full-stack web application built around a streamlined emergency response system. Users can create a medical profile, trigger an SOS button to raise an emergency alert, navigate to the SOS location, discover nearby registered responders, and share a time-limited location-tracking link. It also notifies emergency contacts to connect people in distress with their trusted contacts. Work is ongoing, with further development and improvements in progress.',screenshots:'https://drive.google.com/drive/folders/1qgwt4eNxSx_7NioGoX1IdSpbscnFxWXo',linkedin:'https://lnkd.in/p/diwCmXdU',github:'https://github.com/mohammed-hasan-ECE/emergency-e-card'}],
@@ -7324,10 +7217,69 @@ try {
   };
 } catch(err) {}
 
+const orcathonThumbnailThemes = {
+  "Software & AI": [
+    "#201d4c",
+    "#b6a3ff",
+    "M7 16 2 22l5 6m18-12 5 6-5 6M19 13l-6 18"
+  ],
+  "Healthcare & MedTech": [
+    "#123d46",
+    "#78efd2",
+    "M16 7v18M7 16h18M3 31h26"
+  ],
+  "Cybersecurity": [
+    "#301933",
+    "#f7a1d0",
+    "M16 3l11 5v8c0 7-4 11-11 15C9 27 5 23 5 16V8l11-5zM11 16l4 4 7-8"
+  ],
+  "Environment & Sustainability": [
+    "#203b2a",
+    "#b9ec9c",
+    "M28 4C11 4 5 10 5 21c0 5 4 7 8 7 12 0 15-11 15-24zM5 29l14-14"
+  ],
+  "SpaceTech": [
+    "#172343",
+    "#9ec5ff",
+    "M3 22c-2-4 4-11 13-15s16-3 17 1-5 10-14 14S4 27 3 22zM16 8a9 9 0 1 0 0 18 9 9 0 1 0 0-18z"
+  ],
+  "FinTech": [
+    "#422923",
+    "#ffca90",
+    "M5 5v22h23M9 21l7-7 5 3 7-9m-6 0h6v6"
+  ],
+  "Business & Services": [
+    "#2e2548",
+    "#dac0ff",
+    "M4 10h24v17H4zM11 10V6h10v4M4 18h24"
+  ],
+  "Education": [
+    "#173447",
+    "#99e2ff",
+    "M16 8C11 4 6 5 3 7v18c4-2 9-2 13 2 4-4 9-4 13-2V7c-3-2-8-3-13 1zm0 0v19"
+  ],
+  "Games": [
+    "#3a214f",
+    "#e9abff",
+    "M10 10h12c5 0 7 4 8 10s-3 7-7 3H9c-4 4-8 3-7-3s3-10 8-10zm0 3v8m-4-4h8m9-2h1m1 4h1"
+  ],
+  "Other": [
+    "#29334b",
+    "#c0cee9",
+    "M16 3 29 10v13l-13 7-13-7V10L16 3zm0 14L3 10m13 7 13-7m-13 7v13"
+  ]
+};
+
 function renderOrcathonCard(project) {
+  const [base, accent, icon] = orcathonThumbnailThemes[project.category] || orcathonThumbnailThemes.Other;
+  const offset = 38 + [...project.name].reduce((sum, char) => sum + char.codePointAt(0), 0) % 54;
   return `<article class="c pc s4 orcathon-project">
+    <div class="orcathon-thumb" aria-hidden="true" style="--thumb-base:${base};--thumb-accent:${accent};--thumb-shift:${offset}%">
+      <div class="orcathon-thumb-copy"><small>${esc(project.category)}</small><b>${esc(project.name)}</b></div>
+      <svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${icon}"/></svg>
+    </div>
     <div class="b">
-      <span class="tag">ORCATHON 2026</span>
+      <div class="orcathon-project-tags"><span class="tag">ORCATHON 2026</span><span class="tag">${esc(project.category)}</span></div>
       <h3>${esc(project.name)}</h3>
       ${project.summary ? `<p>${esc(project.summary)}</p>` : ''}
       <div class="orcathon-project-links">
@@ -7341,8 +7293,9 @@ function renderOrcathonCard(project) {
 function rp(){
   const query = $('project-search').value.trim().toLowerCase();
   const matchesSearch = (...fields) => fields.some(field => field?.toLowerCase().includes(query));
+  const category = $('orcathon-category').value;
   const submissions = pc === 'All' || pc === 'ORCATHON'
-    ? orcathonProjects.filter(project => matchesSearch(project.name, project.summary))
+    ? orcathonProjects.filter(project => (!category || project.category === category) && matchesSearch(project.name, project.summary, project.category))
     : [];
   const filtered = J.filter(j => pc === 'All' || j[2] === pc || j[2].split(',').map(s=>s.trim()).includes(pc));
   // Sort descending by like count so the most liked project is on top!
@@ -7380,8 +7333,22 @@ function rp(){
       </div>
     </article>`;
   }).join('');
-  $('pj').innerHTML = featured + submissions.map(renderOrcathonCard).join('')
-    || '<p class="mut s12">No projects match your search.</p>';
+  const gallery = featured + submissions.map(renderOrcathonCard).join('');
+  const includesOrcathon = pc === 'All' || pc === 'ORCATHON';
+  const pending = includesOrcathon && orcathonGalleryState !== 'ready';
+  $('pj').innerHTML = gallery || (pending ? '' : '<p class="mut s12">No projects match your search.</p>');
+  const status = $('orcathon-gallery-status');
+  status.hidden = !pending;
+  status.textContent = orcathonGalleryState === 'loading' ? 'Loading ORCATHON projects...' : '';
+  if (pending && orcathonGalleryState === 'error') {
+    status.textContent = 'ORCATHON projects could not load. ';
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'bt';
+    retry.textContent = 'Retry';
+    retry.addEventListener('click', loadOrcathonGallery);
+    status.append(retry);
+  }
 }
 
 function openProjectModal(title){
@@ -7445,9 +7412,42 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-pills($('pf'),['All','ORCATHON','Web','Mobile','Security','Game'],pc,v=>{pc=v;rp()});
+const projectFilters = ['All', 'ORCATHON', 'Web', 'Mobile', 'Security', 'Game'];
+const categoryFilter = $('orcathon-category');
+async function loadOrcathonGallery() {
+  orcathonGalleryState = 'loading';
+  categoryFilter.disabled = true;
+  rp();
+  try {
+    const response = await fetch('/api/projects/orcathon');
+    if (!response.ok) throw new Error('Could not load projects');
+    const data = await response.json();
+    if (!Array.isArray(data.projects)) throw new Error('Invalid project list');
+    orcathonProjects = data.projects;
+    const categories = [...new Set(orcathonProjects.map(project => project.category))].sort();
+    categoryFilter.length = 1;
+    categories.forEach(category => categoryFilter.add(new Option(category, category)));
+    categoryFilter.disabled = categories.length === 0;
+    $('t2').textContent = J.length + orcathonProjects.length;
+    orcathonGalleryState = 'ready';
+  } catch {
+    orcathonGalleryState = 'error';
+  }
+  rp();
+}
+function selectProjectFilter(filter) {
+  pc = filter;
+  if (filter !== 'ORCATHON') categoryFilter.value = '';
+  rp();
+}
+pills($('pf'), projectFilters, pc, selectProjectFilter);
+categoryFilter.addEventListener('change', () => {
+  pc = 'ORCATHON';
+  pills($('pf'), projectFilters, pc, selectProjectFilter);
+  rp();
+});
 $('project-search').addEventListener('input', rp);
-rp();
+loadOrcathonGallery();
 /* workspace */
 const code=$('code'),hl=$('hl');let cur=0;
 function paint(){hl.innerHTML=code.value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/(\/\/.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(function|const|let|var|return|for|if|else|class|new|while|of|null|true|false)\b|\b(\d+)\b/g,(m,c,s,k,n)=>c?`<span class="cm">${c}</span>`:s?`<span class="s2">${s}</span>`:k?`<span class="kw">${k}</span>`:`<span class="nm">${n}</span>`)+'\n';hl.scrollTop=code.scrollTop;hl.scrollLeft=code.scrollLeft}

@@ -480,6 +480,15 @@ async function getUserSubmissions(userId, challengeId) {
 }
 
 // ================= PROJECTS =================
+async function getOrcathonProjects() {
+  const { rows } = await query(`
+    SELECT name, summary, category, demo_url AS demo, repository_url AS repository
+    FROM public.orcathon_projects
+    ORDER BY lower(name), id;
+  `);
+  return rows;
+}
+
 async function getProjects({ category, search, status = 'approved' } = {}) {
   let q = `
     SELECT p.*, u.username, u.full_name, u.avatar_url
@@ -1152,6 +1161,7 @@ module.exports = {
   recordSubmission,
   getUserSubmissions,
   getProjects,
+  getOrcathonProjects,
   getProjectById,
   createProject,
   updateProject,

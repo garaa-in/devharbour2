@@ -25,6 +25,16 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/projects/orcathon
+router.get('/orcathon', async (_req, res) => {
+  try {
+    const projects = await db.getOrcathonProjects();
+    res.json({ projects });
+  } catch (err) {
+    res.status(503).json({ error: 'ORCATHON projects are temporarily unavailable.' });
+  }
+});
+
 // GET /api/projects/:id
 router.get('/:id', async (req, res) => {
   try {
