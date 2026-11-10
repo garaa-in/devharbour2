@@ -3916,7 +3916,7 @@ body{padding-top:var(--site-nav-height)}
 .dhw-gd .dhw-card{background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(250,244,236,.74) 55%,rgba(244,232,212,.8));box-shadow:0 0 0 calc(var(--u)*.42) rgba(255,255,255,.38),0 calc(var(--u)*1.8) calc(var(--u)*3.2) calc(var(--u)*-.8) rgba(214,168,70,.5),inset 0 2px 3px #fff,inset 0 calc(var(--u)*-.7) calc(var(--u)*1.2) rgba(226,190,120,.3)}
 .dhw-gd .dhw-glow{background:radial-gradient(closest-side,rgba(255,206,110,.7),transparent)}
 .dhw-gd .dhw-nm{color:#17142a}
-@media(max-width:760px){.dhw{--u:2.2vw}}
+@media(max-width:760px){.dhw{--u:2vw}}
 html[data-theme="dark"] .dhw-card{background:linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.05));border-color:rgba(255,255,255,.35);box-shadow:0 0 0 calc(var(--u)*.42) rgba(255,255,255,.08),0 calc(var(--u)*1.7) calc(var(--u)*3) calc(var(--u)*-.8) rgba(0,0,0,.7),inset 0 1px 2px rgba(255,255,255,.4)}
 html[data-theme="dark"] .dhw-nm,html[data-theme="dark"] .dhw-s .dhw-nm,html[data-theme="dark"] .dhw-b .dhw-nm,html[data-theme="dark"] .dhw-gd .dhw-nm{color:#fff;text-shadow:none}
 html[data-theme="dark"] .dhw-ring,html[data-theme="dark"] .dhw-track{filter:drop-shadow(0 0 calc(var(--u)*.6) rgba(255,255,255,.25)) grayscale(1)}
@@ -4069,8 +4069,8 @@ var T=document.getElementById('dhwTrack'),G=[].slice.call(L.querySelectorAll('.d
     still=matchMedia('(prefers-reduced-motion:reduce)').matches,P=26000,W,H,u,cx,cy,rx,ry,t0=performance.now();
 function size(){
   W=L.clientWidth;H=L.clientHeight;var m=matchMedia('(max-width:760px)').matches;
-  u=m?W*.022:Math.min(W/100,H*.019);
-  cx=W/2;cy=H*(m?.5:.57);rx=u*(m?15.5:29.5);ry=u*(m?3.2:4.1);
+  u=m?W*.02:Math.min(W/100,H*.019);
+  cx=W/2;cy=H*(m?.355:.57);rx=u*(m?13:29.5);ry=u*(m?3.4:4.1);
   var py=cy+u*4,sx=rx/470,sy=ry/70;
   T.style.width=1000*sx+'px';T.style.height=200*sy+'px';
   T.style.left=(cx-500*sx)+'px';T.style.top=(py-100*sy)+'px';
@@ -4080,7 +4080,7 @@ function draw(now){
   for(var i=0;i<G.length;i++){
     var g=G[i],th=(+g.dataset.th+a)*Math.PI/180,c=Math.cos(th),s=Math.sin(th),d=(s+1)/2,k=+g.dataset.k,sc=k*(.72+.28*d);
     g.style.transform='translate('+(cx+rx*c).toFixed(1)+'px,'+(cy+ry*s).toFixed(1)+'px) scale('+sc.toFixed(3)+')';
-    g.style.opacity=(.8+.2*d).toFixed(2);
+    g.style.opacity=(.55+.45*d).toFixed(2);
     g.style.zIndex=s>-.05?3+Math.round(d*6):1;
     g.style.setProperty('--rz',(-c*11).toFixed(1)+'deg');
     g.style.setProperty('--ry',(c*14).toFixed(1)+'deg');
