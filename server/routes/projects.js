@@ -159,11 +159,11 @@ router.delete('/:id', requireAuth, async (req, res) => {
 });
 
 // POST /api/projects/:id/vote
-router.post('/:id/vote', async (req, res) => {
+router.post('/:id/vote', requireAuth, async (req, res) => {
   try {
     let project = await db.getProjectById(req.params.id);
     if (!project) {
-      const all = await db.getProjects({});
+      const all = await db.getProjects({ status: 'approved' });
       const cleanParam = req.params.id.toLowerCase().replace(/^prj-/, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       project = (all || []).find(p => p.id === req.params.id || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === cleanParam);
     }
@@ -171,22 +171,8 @@ router.post('/:id/vote', async (req, res) => {
       return res.status(404).json({ error: 'Project not found.' });
     }
 
-    let votesCount = 0;
-    let voted = true;
-
-    if (req.user) {
-      const result = await db.toggleProjectVote(req.user.id, project.id);
-      voted = result.voted;
-      votesCount = result.votesCount;
-    } else {
-      const updated = await db.incrementProjectVotes(project.id);
-      voted = true;
-      votesCount = updated.votesCount;
-    }
-
-    // Real-Time Broadcast to all connected clients
-    const likerName = req.user ? (req.user.username || req.user.full_name) : (req.body && req.body.username ? req.body.username : 'A developer');
-    const userLoc = (req.body && req.body.location ? req.body.location : (req.user && req.user.location ? req.user.location : 'Navi Mumbai')).trim();
+    const { voted, votesCount } = await db.toggleProjectVote(req.user.id, project.id);
+    const likerName = req.user.username || req.user.full_name || 'A developer';
 
     eventBus.broadcast({
       type: 'project_voted',
@@ -195,8 +181,7 @@ router.post('/:id/vote', async (req, res) => {
       voted,
       votesCount,
       username: likerName,
-      location: userLoc,
-      message: `${likerName}${userLoc ? ' from ' + userLoc : ''} liked "${project.title}"! (${votesCount} ${votesCount === 1 ? 'like' : 'likes'})`
+      message: `${likerName} ${voted ? 'liked' : 'unliked'} "${project.title}"! (${votesCount} ${votesCount === 1 ? 'like' : 'likes'})`
     });
 
     return res.json({

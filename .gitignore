@@ -49,3 +49,8 @@ storage/
 private/
 public/certificates/*.pdf
 public/certificates/*.zip
+
+# Private database exports and participant manifests
+server/devharbour.sql
+output/certificates_manifest.csv
+output/certificates_manifest.json

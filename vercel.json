@@ -2,20 +2,66 @@
   "version": 2,
   "buildCommand": "npm run build",
   "rewrites": [
-    { "source": "/api/leaderboard", "destination": "/api/leaderboard.js" },
-    { "source": "/api/certificates/claim", "destination": "/api/certificates/claim.js" },
-    { "source": "/api/certificates/stats", "destination": "/api/certificates/stats.js" },
-    { "source": "/api/certificates/verify/:id", "destination": "/api/certificates/verify/[id].js" },
-    { "source": "/api/(.*)", "destination": "/api/index.js" },
-    { "source": "/downloads/(.*)", "destination": "/downloads/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/leaderboard",
+      "destination": "/api/leaderboard.js"
+    },
+    {
+      "source": "/api/certificates/claim",
+      "destination": "/api/certificates/claim.js"
+    },
+    {
+      "source": "/api/certificates/stats",
+      "destination": "/api/certificates/stats.js"
+    },
+    {
+      "source": "/api/certificates/verify/:id",
+      "destination": "/api/certificates/verify/[id].js"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/downloads/(.*)",
+      "destination": "/downloads/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        }
       ]
     }
-  ]
+  ],
+  "outputDirectory": "public"
 }

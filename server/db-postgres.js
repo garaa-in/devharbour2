@@ -574,30 +574,35 @@ async function deleteProject(id, userId, isAdmin = false) {
   return true;
 }
 
-async function incrementProjectVotes(id) {
-  const res = await query(`
-    UPDATE projects
-    SET votes_count = votes_count + 1
-    WHERE id = $1
-    RETURNING votes_count;
-  `, [id]);
-  return { votesCount: res.rows[0] ? res.rows[0].votes_count : 0 };
-}
-
 async function toggleProjectVote(userId, projectId) {
-  const check = await query('SELECT id FROM project_votes WHERE user_id = $1 AND project_id = $2 LIMIT 1;', [userId, projectId]);
-  let voted = false;
-  if (check.rows.length > 0) {
-    await query('DELETE FROM project_votes WHERE user_id = $1 AND project_id = $2;', [userId, projectId]);
-    await query('UPDATE projects SET votes_count = GREATEST(0, votes_count - 1) WHERE id = $1;', [projectId]);
-    voted = false;
-  } else {
-    await query('INSERT INTO project_votes (id, user_id, project_id, created_at) VALUES ($1, $2, $3, NOW());', [crypto.randomUUID(), userId, projectId]);
-    await query('UPDATE projects SET votes_count = votes_count + 1 WHERE id = $1;', [projectId]);
-    voted = true;
+  if (!pool) throw new Error('PostgreSQL pool is not configured.');
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('SELECT id FROM projects WHERE id = $1 FOR UPDATE;', [projectId]);
+    const removed = await client.query(
+      'DELETE FROM project_votes WHERE user_id = $1 AND project_id = $2 RETURNING id;',
+      [userId, projectId]
+    );
+    const voted = removed.rowCount === 0;
+    if (voted) {
+      await client.query(
+        'INSERT INTO project_votes (id, user_id, project_id, created_at) VALUES ($1, $2, $3, NOW());',
+        [crypto.randomUUID(), userId, projectId]
+      );
+    }
+    const updated = await client.query(
+      'UPDATE projects SET votes_count = GREATEST(0, votes_count + $2) WHERE id = $1 RETURNING votes_count;',
+      [projectId, voted ? 1 : -1]
+    );
+    await client.query('COMMIT');
+    return { voted, votesCount: updated.rows[0].votes_count };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
   }
-  const proj = await getProjectById(projectId);
-  return { voted, votesCount: proj ? proj.votes_count : 0 };
 }
 
 async function toggleProjectBookmark(userId, projectId) {
@@ -1166,7 +1171,6 @@ module.exports = {
   createProject,
   updateProject,
   deleteProject,
-  incrementProjectVotes,
   toggleProjectVote,
   toggleProjectBookmark,
   getUserInteractions,

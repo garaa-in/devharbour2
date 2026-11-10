@@ -7226,63 +7226,38 @@ function isProjectLiked(title) {
   return Boolean(likesStore[title]);
 }
 
-function toggleProjectLike(title, event) {
-  if (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-  const liked = isProjectLiked(title);
-  let newLikesCount = 0;
-  if (liked) {
-    delete likesStore[title];
-    if (serverVotes[title] && serverVotes[title] > 0) serverVotes[title]--;
-    newLikesCount = Math.max(0, (serverVotes[title] || 0));
-    toast(`Removed like from ${title}`);
-  } else {
-    likesStore[title] = true;
-    serverVotes[title] = (serverVotes[title] || 0) + 1;
-    newLikesCount = serverVotes[title];
-    toast(`✦ Liked ${title}!`);
-  }
-  try {
-    localStorage.setItem('dh-project-likes', JSON.stringify(likesStore));
-  } catch(e) {}
+const pendingProjectVotes = new Set();
 
-  const userLoc = (currentUser && currentUser.location) ? currentUser.location : '';
-  const userName = (currentUser && currentUser.username) ? currentUser.username : 'A developer';
-
-  // Broadcast to other open tabs / windows immediately via BroadcastChannel
-  if (syncChannel) {
-    syncChannel.postMessage({
-      type: 'project_voted',
-      projectTitle: title,
-      votesCount: newLikesCount,
-      username: userName,
-      location: userLoc,
-      message: `${userName} from ${userLoc} liked "${title}"! (${newLikesCount} ${newLikesCount === 1 ? 'like' : 'likes'})`
-    });
+async function toggleProjectLike(title, event) {
+  event?.stopPropagation();
+  event?.preventDefault();
+  const headers = getAuthHeaders();
+  if (!headers.Authorization || headers.Authorization.startsWith('Bearer local-token-')) {
+    toast('Sign in to like a project.');
+    return;
   }
-
-  // Also sync with backend server when available
+  if (pendingProjectVotes.has(title)) return;
+  pendingProjectVotes.add(title);
   try {
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    fetch(`/api/projects/prj-${slug}/vote`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ location: userLoc, username: userName })
-    })
-      .then(r => r.json())
-      .then(res => {
-        if (res && typeof res.votesCount === 'number') {
-          serverVotes[title] = res.votesCount;
-          rp();
-        }
-      })
-      .catch(() => {});
-  } catch(e) {}
-
-  rp();
-};
+    const response = await fetch(`/api/projects/prj-${slug}/vote`, { method: 'POST', headers });
+    const result = await response.json();
+    if (!response.ok) {
+      toast(result.error || 'Could not save your vote.');
+      return;
+    }
+    if (result.voted) likesStore[title] = true;
+    else delete likesStore[title];
+    serverVotes[title] = result.votesCount;
+    try { localStorage.setItem('dh-project-likes', JSON.stringify(likesStore)); } catch {}
+    rp();
+    if (document.getElementById('project-modal')?.classList.contains('open')) openProjectModal(title);
+  } catch {
+    toast('Could not save your vote.');
+  } finally {
+    pendingProjectVotes.delete(title);
+  }
+}
 
 // Sync live project votes from server on page load
 try {
@@ -10687,41 +10662,9 @@ addEventListener('message', m => {
   }
 });
 
-async function submitPracticeCode() {
-  const c = C[activeChallengeIdx];
+function submitPracticeCode() {
   runPracticeCode();
-
-  setTimeout(async () => {
-    const res = document.getElementById('ps-res');
-    if (res && res.classList.contains('ok')) {
-      toast(`🎉 Challenge "${c[0]}" passed! +50 XP awarded!`);
-
-      // 1. Submit to server if authenticated
-      const token = localStorage.getItem('dh-auth-token');
-      try {
-        await fetch(`/api/challenges/${c[0].toLowerCase().replace(/\s+/g, '-')}/submit`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify({ code: document.getElementById('ps-code').value, language: 'javascript' })
-        });
-      } catch(err) {}
-
-      // 2. Award local XP
-      if (currentUser) {
-        currentUser.totalXp = (currentUser.totalXp || 0) + 50;
-        localStorage.setItem('dh-current-user', JSON.stringify(currentUser));
-        updateAuthUI(currentUser);
-      }
-
-      // 3. Refresh live leaderboard immediately
-      if (typeof rl === 'function') rl(currentLeaderboardTimeframe);
-    } else {
-      toast('Test not passing yet. Review the expected output and try again!');
-    }
-  }, 600);
+  toast('Server grading is temporarily unavailable. You can still run the public examples.');
 }
 window.submitPracticeCode = submitPracticeCode;
 
