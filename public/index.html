@@ -3890,7 +3890,7 @@ body{padding-top:var(--site-nav-height)}
 /* ===== Hero winner cards (added layer) ===== */
 .dhw{position:absolute;inset:0;pointer-events:none;--u:min(1vw,1.9vh)}
 .dhw-track{position:absolute;left:0;top:0;z-index:1;overflow:visible;filter:drop-shadow(0 0 calc(var(--u)*.7) rgba(168,148,240,.5));animation:wi 1.4s .9s var(--e) backwards}
-.dhw-g{position:absolute;left:0;top:0;width:0;height:0;--rz:0deg;--ry:0deg;animation:wi 1.4s .9s var(--e) backwards}
+.dhw-g{position:absolute;left:0;top:0;width:0;height:0;--rz:0deg;--ry:0deg;--rx:9deg;animation:wi 1.4s .9s var(--e) backwards}
 .dhw-ring{position:absolute;left:calc(var(--u)*-16.875);top:calc(var(--u)*-10.625);width:calc(var(--u)*33.75);height:calc(var(--u)*21.25);overflow:visible;filter:drop-shadow(0 0 calc(var(--u)*.6) rgba(168,148,240,.45))}
 .dhw-gl,.dhw-glr{stroke-dasharray:6 94;animation:dhwGl 9s linear infinite}
 .dhw-glr{animation-name:dhwGlR}
@@ -3902,8 +3902,9 @@ body{padding-top:var(--site-nav-height)}
 .dhw-bob{animation:dhwBob 6.2s ease-in-out infinite}
 .dhw-s .dhw-bob{animation-duration:6.8s;animation-delay:-1.4s}.dhw-b .dhw-bob{animation-duration:5.9s;animation-delay:-3.1s}.dhw-gd .dhw-bob{animation-duration:6.4s;animation-delay:-.6s}
 @keyframes dhwBob{0%,100%{transform:translateY(calc(var(--u)*.5))}50%{transform:translateY(calc(var(--u)*-.7))}}
-.dhw-card{position:absolute;left:calc(var(--u)*-8.15);top:calc(var(--u)*-2.8);width:calc(var(--u)*16.3);height:calc(var(--u)*5.6);box-sizing:border-box;border-radius:calc(var(--u)*1.5);display:flex;align-items:flex-end;justify-content:center;padding-bottom:calc(var(--u)*1.35);
- transform:perspective(calc(var(--u)*60)) rotateX(9deg) rotateY(var(--ry)) rotateZ(var(--rz));
+.dhw-card{pointer-events:auto;cursor:pointer;outline:0;position:absolute;left:calc(var(--u)*-8.15);top:calc(var(--u)*-2.8);width:calc(var(--u)*16.3);min-height:calc(var(--u)*5.6);box-sizing:border-box;border-radius:calc(var(--u)*1.5);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:calc(var(--u)*3.1) calc(var(--u)*1.2) calc(var(--u)*1.35);
+ transition:width .5s var(--e),left .5s var(--e),border-radius .5s var(--e);
+ transform:perspective(calc(var(--u)*60)) rotateX(var(--rx,9deg)) rotateY(var(--ry)) rotateZ(var(--rz));
  background:linear-gradient(150deg,rgba(255,255,255,.82),rgba(236,229,252,.5) 55%,rgba(222,212,248,.62));
  border:1px solid rgba(255,255,255,.95);
  box-shadow:0 0 0 calc(var(--u)*.42) rgba(255,255,255,.3),0 calc(var(--u)*1.7) calc(var(--u)*3) calc(var(--u)*-.8) rgba(110,88,200,.5),inset 0 2px 3px #fff,inset 0 calc(var(--u)*-.7) calc(var(--u)*1.2) rgba(160,140,236,.3);
@@ -3911,17 +3912,100 @@ body{padding-top:var(--site-nav-height)}
 .dhw-card:before{content:"";position:absolute;left:6%;right:6%;top:5%;height:38%;border-radius:calc(var(--u)*1.2);background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none}
 .dhw-glow{position:absolute;left:8%;right:8%;bottom:calc(var(--u)*-1.1);height:calc(var(--u)*1.6);border-radius:50%;background:radial-gradient(closest-side,rgba(190,168,255,.6),transparent);filter:blur(calc(var(--u)*.5));z-index:-1}
 .dhw-nm{position:relative;font-family:'Manrope',var(--font);font-weight:800;font-size:calc(var(--u)*1.12);letter-spacing:.005em;color:#1d1a33;line-height:1;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.7)}
-.dhw-tr{position:absolute;left:50%;bottom:calc(var(--u)*2.3);width:calc(var(--u)*6.6);height:calc(var(--u)*6.6);transform:translateX(-50%) rotate(calc(var(--rz)*-.4));overflow:visible;filter:drop-shadow(0 calc(var(--u)*.5) calc(var(--u)*.55) rgba(60,40,0,.28)) drop-shadow(0 0 calc(var(--u)*.6) rgba(255,255,255,.7))}
+.dhw-tr{position:absolute;left:50%;top:calc(var(--u)*-3.3);width:calc(var(--u)*6.6);height:calc(var(--u)*6.6);transform:translateX(-50%) rotate(calc(var(--rz)*-.4));overflow:visible;filter:drop-shadow(0 calc(var(--u)*.5) calc(var(--u)*.55) rgba(60,40,0,.28)) drop-shadow(0 0 calc(var(--u)*.6) rgba(255,255,255,.7))}
 .dhw-s .dhw-nm,.dhw-b .dhw-nm{color:#2c2754}
 .dhw-gd .dhw-card{background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(250,244,236,.74) 55%,rgba(244,232,212,.8));box-shadow:0 0 0 calc(var(--u)*.42) rgba(255,255,255,.38),0 calc(var(--u)*1.8) calc(var(--u)*3.2) calc(var(--u)*-.8) rgba(214,168,70,.5),inset 0 2px 3px #fff,inset 0 calc(var(--u)*-.7) calc(var(--u)*1.2) rgba(226,190,120,.3)}
 .dhw-gd .dhw-glow{background:radial-gradient(closest-side,rgba(255,206,110,.7),transparent)}
 .dhw-gd .dhw-nm{color:#17142a}
-@media(max-width:760px){.dhw{--u:2vw}}
+
+.dhw-card:after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.93),rgba(241,236,254,.9));opacity:0;transition:opacity .45s;z-index:-1}
+.dhw-card:focus-visible{outline:2px solid #7c5cff;outline-offset:4px}
+.dhw-x{display:grid;grid-template-rows:0fr;width:100%;transition:grid-template-rows .5s var(--e)}
+.dhw-x>div{overflow:hidden;min-height:0;opacity:0;text-align:center;transition:opacity .3s}
+.dhw-pl{display:inline-flex;align-items:center;gap:calc(var(--u)*.6);padding-bottom:calc(var(--u)*.55);font-weight:800;font-size:calc(var(--u)*.78*var(--fk,1));letter-spacing:.16em;color:#6f58d6;white-space:nowrap}
+.dhw-pl:before,.dhw-pl:after{content:"";width:calc(var(--u)*1.6);height:1px;background:currentColor;opacity:.55}
+.dhw-dv{display:block;height:1px;margin:calc(var(--u)*.75) 8% calc(var(--u)*.7);background:linear-gradient(90deg,transparent,rgba(124,92,255,.55),transparent)}
+.dhw-tg{display:block;font-style:italic;font-weight:600;font-size:calc(var(--u)*.98*var(--fk,1));line-height:1.3;color:#3a3466}
+.dhw-why{margin:calc(var(--u)*.85) 0 0;padding:calc(var(--u)*.8) calc(var(--u)*.95);border-radius:calc(var(--u)*1.1);border:1px solid rgba(140,118,230,.45);background:rgba(255,255,255,.55);font-weight:600;font-size:calc(var(--u)*.86*var(--fk,1));line-height:1.38;color:#2b2650}
+.dhw-g.on .dhw-card{width:calc(var(--u)*21);left:calc(var(--u)*-10.5);border-radius:calc(var(--u)*1.9)}
+.dhw-g.on .dhw-card:after{opacity:1}
+.dhw-g.on .dhw-x{grid-template-rows:1fr}
+.dhw-g.on .dhw-x>div{opacity:1;transition-delay:.14s}
+.dhw-g.on .dhw-nm{font-size:calc(var(--u)*1.32*var(--fk,1))}
+.dhw-nm{transition:font-size .45s var(--e)}
+@media(max-width:760px){.dhw{--u:2vw;--fk:1.28}.dhw-g.on .dhw-card{width:calc(var(--u)*34);left:calc(var(--u)*-17)}}
 html[data-theme="dark"] .dhw-card{background:linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.05));border-color:rgba(255,255,255,.35);box-shadow:0 0 0 calc(var(--u)*.42) rgba(255,255,255,.08),0 calc(var(--u)*1.7) calc(var(--u)*3) calc(var(--u)*-.8) rgba(0,0,0,.7),inset 0 1px 2px rgba(255,255,255,.4)}
 html[data-theme="dark"] .dhw-nm,html[data-theme="dark"] .dhw-s .dhw-nm,html[data-theme="dark"] .dhw-b .dhw-nm,html[data-theme="dark"] .dhw-gd .dhw-nm{color:#fff;text-shadow:none}
 html[data-theme="dark"] .dhw-ring,html[data-theme="dark"] .dhw-track{filter:drop-shadow(0 0 calc(var(--u)*.6) rgba(255,255,255,.25)) grayscale(1)}
+html[data-theme="dark"] .dhw-card:after{background:linear-gradient(160deg,rgba(44,40,72,.95),rgba(20,18,36,.95))}
+html[data-theme="dark"] .dhw-pl{color:#b9a8ff}html[data-theme="dark"] .dhw-tg{color:#ddd7f7}
+html[data-theme="dark"] .dhw-why{color:#ece9fc;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
 @media(prefers-reduced-motion:reduce){.dhw *{animation:none!important}}
 /* ===== /Hero winner cards ===== */
+/* ===== DEV HARBOUR · PHONE COMPATIBILITY FIXES (kept last so they win) ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,a,[role="button"],.nv,.pill{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+@media (max-width:860px){
+  html,body{max-width:100%;overflow-x:clip}
+  /* Keep the canonical collapsible icon rail on phones while shrinking main to the screen */
+  .app{grid-template-columns:var(--sidebar-rail) minmax(0,1fr)!important}
+  .app>main,main{min-width:0;max-width:100%}
+  .view,.view .g,.view .g>*{min-width:0;max-width:100%}
+  /* stop iOS zooming in on every input focus */
+  input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px!important}
+
+  /* Practice: 5-column row was squeezed into 3 columns, dropping the Solve button onto its own line */
+  .row{grid-template-columns:26px minmax(0,1fr) auto auto!important;gap:8px 10px!important}
+  .row .tp,.row .rt{display:none}
+  .row h4{overflow-wrap:anywhere}
+  .row .sv{white-space:nowrap;padding:8px 14px!important}
+
+  /* Workspace tab roller: six tabs have to fit a phone-width capsule */
+  .ws-container{min-width:0;max-width:100%}
+  .ws-roller-wrapper,.ws-roller-capsule,.ws-roller-track,.ws-head-wrap,.ws-panel{min-width:0;max-width:100%}
+  .ws-roller-capsule{overflow:hidden}
+  .ws-roller-tab{flex:1 1 0;width:0;min-width:0!important;overflow:hidden;padding:0 1px!important;font-size:8.5px!important;letter-spacing:-.02em}
+  .ws-roller-tab span{display:block;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .ws-stats-grid,.ws-graphs-row{min-width:0}
+  .ws-top-actions{flex-wrap:wrap;width:100%}
+  .ws-search-box{flex:1 1 150px;min-width:0}
+
+  /* Timer */
+  .dh-timer-shell,.dh-timer-top,.dh-timer-title-group{min-width:0;max-width:100%}
+  .dh-timer-tabs{width:100%;max-width:100%}
+  .dh-timer-tab{flex:1 1 0;min-width:0;justify-content:center;white-space:nowrap;overflow:hidden;padding:8px 4px!important;font-size:10.5px!important;gap:4px!important}
+  .dh-timer-tab svg.i{width:13px;height:13px;flex-shrink:0}
+  .dh-timer-stage{min-width:0;max-width:100%;width:100%;min-height:360px;padding:26px 10px 22px;border-radius:24px;box-sizing:border-box}
+  .dh-timer-toolbar,.dh-timer-actions,.dh-timer-presets{flex-wrap:wrap;justify-content:center;max-width:100%;gap:8px}
+  .dh-flip-container{gap:8px;max-width:100%;justify-content:center}
+  .dh-flip-card-unit{width:clamp(84px,24vw,150px);height:clamp(108px,31vw,185px);border-radius:18px}
+  .dh-flip-num{font-size:clamp(48px,14vw,94px)}
+  .dh-flip-divider{font-size:clamp(28px,7vw,48px);padding:0 2px}
+  .dh-stage-glow{max-width:100%}
+
+  /* Team cards: long credential chips wrapped instead of running out of the card */
+  .fc-chip{white-space:normal!important;max-width:100%;line-height:1.35}
+  .fc{min-width:0}
+}
+
+/* Dark theme: the sign-in / sign-up button was white text on a white button */
+html[data-theme="dark"] .dh-submit-btn{color:#0b0b0b}
+@media (max-width:400px){
+  .ws-roller-tab{font-size:8px!important}
+}
+/* Keep hero stage locked inside viewport below #site-navbar */
+.hz{height:calc(100vh - var(--site-nav-height,0px));height:calc(100svh - var(--site-nav-height,0px))}
+@supports(height:100dvh){.hz{height:calc(100dvh - var(--site-nav-height,0px))}}
+
+
+/* Landing hero on phones: keep the bottom block clear of "Scroll to explore" and give the wordmark its own space */
+@media (max-width:760px){
+  #intro .xbm{bottom:calc(74px + env(safe-area-inset-bottom,0px))!important}
+  #intro .sc{bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}
+  /* wordmark sits under the orbit instead of on top of the logo */
+  #intro .xw{top:63%!important;font-size:clamp(22px,8.2vw,40px)!important;opacity:1!important}
+}
 </style>
 </head>
 <body>
@@ -4028,7 +4112,7 @@ html[data-theme="dark"] .dhw-ring,html[data-theme="dark"] .dhw-track{filter:drop
 <linearGradient id="dhGb" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#8d5845"/><stop offset=".26" stop-color="#e6b39e"/><stop offset=".48" stop-color="#fcdccb"/><stop offset=".74" stop-color="#c58a72"/><stop offset="1" stop-color="#7f4b3a"/></linearGradient>
 <linearGradient id="dhRg" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#cdc1f4"/><stop offset=".6" stop-color="#f8f5ff"/><stop offset="1" stop-color="#a08fe0"/></linearGradient>
 <radialGradient id="dhRf" cx=".5" cy=".5" r=".5"><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#cbbdf5" stop-opacity=".42"/></radialGradient>
-</defs></svg><svg class="dhw-track" id="dhwTrack" viewBox="-500 -100 1000 200" preserveAspectRatio="none" aria-hidden="true"><ellipse rx="470" ry="70" fill="none" stroke="url(#dhRg)" stroke-width="7" vector-effect="non-scaling-stroke"/><ellipse rx="466" ry="66" fill="none" stroke="#fff" stroke-width="1.4" opacity=".85" vector-effect="non-scaling-stroke"/><ellipse rx="404" ry="52" fill="none" stroke="url(#dhRg)" stroke-width="3.4" opacity=".8" vector-effect="non-scaling-stroke"/><ellipse class="dhw-gl" rx="470" ry="70" pathLength="100" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" vector-effect="non-scaling-stroke" style="animation-duration:16s"/><ellipse class="dhw-glr" rx="404" ry="52" pathLength="100" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke" style="animation-duration:21s"/></svg><div class="dhw-g dhw-s" data-th="210" data-k="0.88"><svg class="dhw-ring" viewBox="-270 -170 540 340" aria-hidden="true"><g transform="translate(0 66) rotate(0)"><ellipse rx="150" ry="40" fill="url(#dhRf)"/><ellipse rx="150" ry="40" fill="none" stroke="url(#dhRg)" stroke-width="6.5"/><ellipse rx="146.4" ry="36.4" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-gl" rx="150" ry="40" pathLength="100" fill="none" stroke="#fff" stroke-width="4.0" stroke-linecap="round" style="animation-duration:10s;animation-delay:-0s"/><g transform="translate(0 1)"><ellipse rx="116" ry="29" fill="url(#dhRf)"/><ellipse rx="116" ry="29" fill="none" stroke="url(#dhRg)" stroke-width="3.6"/><ellipse rx="114.0" ry="27.0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-glr" rx="116" ry="29" pathLength="100" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" style="animation-duration:12.0s;animation-delay:-3s"/></g></g><circle class="dhw-sp" cx="-120" cy="70" r="3.2" fill="#fff" style="animation-delay:-0s"/><circle class="dhw-sp" cx="125" cy="62" r="3.2" fill="#fff" style="animation-delay:-1.7s"/></svg><div class="dhw-float"><div class="dhw-bob"><div class="dhw-card"><span class="dhw-glow"></span><svg class="dhw-tr" viewBox="0 0 100 100" aria-hidden="true">
+</defs></svg><svg class="dhw-track" id="dhwTrack" viewBox="-500 -100 1000 200" preserveAspectRatio="none" aria-hidden="true"><ellipse rx="470" ry="70" fill="none" stroke="url(#dhRg)" stroke-width="7" vector-effect="non-scaling-stroke"/><ellipse rx="466" ry="66" fill="none" stroke="#fff" stroke-width="1.4" opacity=".85" vector-effect="non-scaling-stroke"/><ellipse rx="404" ry="52" fill="none" stroke="url(#dhRg)" stroke-width="3.4" opacity=".8" vector-effect="non-scaling-stroke"/><ellipse class="dhw-gl" rx="470" ry="70" pathLength="100" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" vector-effect="non-scaling-stroke" style="animation-duration:16s"/><ellipse class="dhw-glr" rx="404" ry="52" pathLength="100" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke" style="animation-duration:21s"/></svg><div class="dhw-g dhw-s" data-th="210" data-k="0.88"><svg class="dhw-ring" viewBox="-270 -170 540 340" aria-hidden="true"><g transform="translate(0 66) rotate(0)"><ellipse rx="150" ry="40" fill="url(#dhRf)"/><ellipse rx="150" ry="40" fill="none" stroke="url(#dhRg)" stroke-width="6.5"/><ellipse rx="146.4" ry="36.4" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-gl" rx="150" ry="40" pathLength="100" fill="none" stroke="#fff" stroke-width="4.0" stroke-linecap="round" style="animation-duration:10s;animation-delay:-0s"/><g transform="translate(0 1)"><ellipse rx="116" ry="29" fill="url(#dhRf)"/><ellipse rx="116" ry="29" fill="none" stroke="url(#dhRg)" stroke-width="3.6"/><ellipse rx="114.0" ry="27.0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-glr" rx="116" ry="29" pathLength="100" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" style="animation-duration:12.0s;animation-delay:-3s"/></g></g><circle class="dhw-sp" cx="-120" cy="70" r="3.2" fill="#fff" style="animation-delay:-0s"/><circle class="dhw-sp" cx="125" cy="62" r="3.2" fill="#fff" style="animation-delay:-1.7s"/></svg><div class="dhw-float"><div class="dhw-bob"><div class="dhw-card" tabindex="0" role="button" aria-label="CRISISLENS - 2ND PLACE. Show why it won"><span class="dhw-glow"></span><svg class="dhw-tr" viewBox="0 0 100 100" aria-hidden="true">
 <g class="dhw-lv"><ellipse cx="43.93" cy="85.56" rx="5.4" ry="2.2" transform="rotate(158.0 43.93 85.56)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="43.18" cy="89.08" rx="5.4" ry="2.2" transform="rotate(226.0 43.18 89.08)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="37.33" cy="83.31" rx="5.4" ry="2.2" transform="rotate(171.7 37.33 83.31)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="35.77" cy="86.55" rx="5.4" ry="2.2" transform="rotate(239.7 35.77 86.55)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="31.45" cy="79.55" rx="5.4" ry="2.2" transform="rotate(185.4 31.45 79.55)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="29.17" cy="82.34" rx="5.4" ry="2.2" transform="rotate(253.4 29.17 82.34)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="26.64" cy="74.51" rx="5.4" ry="2.2" transform="rotate(199.1 26.64 74.51)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="23.76" cy="76.67" rx="5.4" ry="2.2" transform="rotate(267.1 23.76 76.67)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="23.15" cy="68.48" rx="5.4" ry="2.2" transform="rotate(212.9 23.15 68.48)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="19.84" cy="69.89" rx="5.4" ry="2.2" transform="rotate(280.9 19.84 69.89)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="21.19" cy="61.78" rx="5.4" ry="2.2" transform="rotate(226.6 21.19 61.78)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="17.64" cy="62.37" rx="5.4" ry="2.2" transform="rotate(294.6 17.64 62.37)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="20.88" cy="54.82" rx="5.4" ry="2.2" transform="rotate(240.3 20.88 54.82)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="17.29" cy="54.55" rx="5.4" ry="2.2" transform="rotate(308.3 17.29 54.55)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="22.23" cy="47.98" rx="5.4" ry="2.2" transform="rotate(254.0 22.23 47.98)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="18.81" cy="46.86" rx="5.4" ry="2.2" transform="rotate(322.0 18.81 46.86)" fill="url(#dhGs)" opacity=".92"/><g transform="translate(100 0) scale(-1 1)"><ellipse cx="43.93" cy="85.56" rx="5.4" ry="2.2" transform="rotate(158.0 43.93 85.56)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="43.18" cy="89.08" rx="5.4" ry="2.2" transform="rotate(226.0 43.18 89.08)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="37.33" cy="83.31" rx="5.4" ry="2.2" transform="rotate(171.7 37.33 83.31)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="35.77" cy="86.55" rx="5.4" ry="2.2" transform="rotate(239.7 35.77 86.55)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="31.45" cy="79.55" rx="5.4" ry="2.2" transform="rotate(185.4 31.45 79.55)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="29.17" cy="82.34" rx="5.4" ry="2.2" transform="rotate(253.4 29.17 82.34)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="26.64" cy="74.51" rx="5.4" ry="2.2" transform="rotate(199.1 26.64 74.51)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="23.76" cy="76.67" rx="5.4" ry="2.2" transform="rotate(267.1 23.76 76.67)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="23.15" cy="68.48" rx="5.4" ry="2.2" transform="rotate(212.9 23.15 68.48)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="19.84" cy="69.89" rx="5.4" ry="2.2" transform="rotate(280.9 19.84 69.89)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="21.19" cy="61.78" rx="5.4" ry="2.2" transform="rotate(226.6 21.19 61.78)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="17.64" cy="62.37" rx="5.4" ry="2.2" transform="rotate(294.6 17.64 62.37)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="20.88" cy="54.82" rx="5.4" ry="2.2" transform="rotate(240.3 20.88 54.82)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="17.29" cy="54.55" rx="5.4" ry="2.2" transform="rotate(308.3 17.29 54.55)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="22.23" cy="47.98" rx="5.4" ry="2.2" transform="rotate(254.0 22.23 47.98)" fill="url(#dhGs)" opacity=".92"/><ellipse cx="18.81" cy="46.86" rx="5.4" ry="2.2" transform="rotate(322.0 18.81 46.86)" fill="url(#dhGs)" opacity=".92"/></g></g>
 <path d="M33 20C22 20 20 26.5 22 31.5C24 37 32 38.5 38.5 36.5M67 20C78 20 80 26.5 78 31.5C76 37 68 38.5 61.5 36.5" fill="none" stroke="url(#dhGs)" stroke-width="3.4" stroke-linecap="round"/>
 <rect x="46" y="55" width="8" height="10" rx="1.5" fill="url(#dhGs)"/>
@@ -4039,7 +4123,7 @@ html[data-theme="dark"] .dhw-ring,html[data-theme="dark"] .dhw-track{filter:drop
 <ellipse cx="50" cy="17" rx="18" ry="3.4" fill="#fff" opacity=".55"/>
 <path d="M37 23C37.4 33 41 42 46 47" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
 <path d="M60 26C60.6 32 59 38 56.5 42" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".35"/>
-</svg><span class="dhw-nm">CRISISLENS</span></div></div></div></div><div class="dhw-g dhw-b" data-th="330" data-k="0.88"><svg class="dhw-ring" viewBox="-270 -170 540 340" aria-hidden="true"><g transform="translate(0 66) rotate(0)"><ellipse rx="150" ry="40" fill="url(#dhRf)"/><ellipse rx="150" ry="40" fill="none" stroke="url(#dhRg)" stroke-width="6.5"/><ellipse rx="146.4" ry="36.4" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-gl" rx="150" ry="40" pathLength="100" fill="none" stroke="#fff" stroke-width="4.0" stroke-linecap="round" style="animation-duration:10s;animation-delay:-6s"/><g transform="translate(0 1)"><ellipse rx="116" ry="29" fill="url(#dhRf)"/><ellipse rx="116" ry="29" fill="none" stroke="url(#dhRg)" stroke-width="3.6"/><ellipse rx="114.0" ry="27.0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-glr" rx="116" ry="29" pathLength="100" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" style="animation-duration:12.0s;animation-delay:-9s"/></g></g><circle class="dhw-sp" cx="-120" cy="70" r="3.2" fill="#fff" style="animation-delay:-6s"/><circle class="dhw-sp" cx="125" cy="62" r="3.2" fill="#fff" style="animation-delay:-7.7s"/></svg><div class="dhw-float"><div class="dhw-bob"><div class="dhw-card"><span class="dhw-glow"></span><svg class="dhw-tr" viewBox="0 0 100 100" aria-hidden="true">
+</svg><div class="dhw-x"><div><span class="dhw-pl">2ND PLACE</span></div></div><span class="dhw-nm">CRISISLENS</span><div class="dhw-x"><div><i class="dhw-dv"></i><em class="dhw-tg">Disaster-Triage LLM</em><p class="dhw-why">High-Accuracy Multi-Disaster Triage, 9 AutoScientist Sweeps &amp; Zero-Cost Edge Deployment</p></div></div></div></div></div></div><div class="dhw-g dhw-b" data-th="330" data-k="0.88"><svg class="dhw-ring" viewBox="-270 -170 540 340" aria-hidden="true"><g transform="translate(0 66) rotate(0)"><ellipse rx="150" ry="40" fill="url(#dhRf)"/><ellipse rx="150" ry="40" fill="none" stroke="url(#dhRg)" stroke-width="6.5"/><ellipse rx="146.4" ry="36.4" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-gl" rx="150" ry="40" pathLength="100" fill="none" stroke="#fff" stroke-width="4.0" stroke-linecap="round" style="animation-duration:10s;animation-delay:-6s"/><g transform="translate(0 1)"><ellipse rx="116" ry="29" fill="url(#dhRf)"/><ellipse rx="116" ry="29" fill="none" stroke="url(#dhRg)" stroke-width="3.6"/><ellipse rx="114.0" ry="27.0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-glr" rx="116" ry="29" pathLength="100" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" style="animation-duration:12.0s;animation-delay:-9s"/></g></g><circle class="dhw-sp" cx="-120" cy="70" r="3.2" fill="#fff" style="animation-delay:-6s"/><circle class="dhw-sp" cx="125" cy="62" r="3.2" fill="#fff" style="animation-delay:-7.7s"/></svg><div class="dhw-float"><div class="dhw-bob"><div class="dhw-card" tabindex="0" role="button" aria-label="CHARTABSTAIN - 3RD PLACE. Show why it won"><span class="dhw-glow"></span><svg class="dhw-tr" viewBox="0 0 100 100" aria-hidden="true">
 <g class="dhw-lv"><ellipse cx="43.93" cy="85.56" rx="5.4" ry="2.2" transform="rotate(158.0 43.93 85.56)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="43.18" cy="89.08" rx="5.4" ry="2.2" transform="rotate(226.0 43.18 89.08)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="37.33" cy="83.31" rx="5.4" ry="2.2" transform="rotate(171.7 37.33 83.31)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="35.77" cy="86.55" rx="5.4" ry="2.2" transform="rotate(239.7 35.77 86.55)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="31.45" cy="79.55" rx="5.4" ry="2.2" transform="rotate(185.4 31.45 79.55)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="29.17" cy="82.34" rx="5.4" ry="2.2" transform="rotate(253.4 29.17 82.34)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="26.64" cy="74.51" rx="5.4" ry="2.2" transform="rotate(199.1 26.64 74.51)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="23.76" cy="76.67" rx="5.4" ry="2.2" transform="rotate(267.1 23.76 76.67)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="23.15" cy="68.48" rx="5.4" ry="2.2" transform="rotate(212.9 23.15 68.48)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="19.84" cy="69.89" rx="5.4" ry="2.2" transform="rotate(280.9 19.84 69.89)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="21.19" cy="61.78" rx="5.4" ry="2.2" transform="rotate(226.6 21.19 61.78)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="17.64" cy="62.37" rx="5.4" ry="2.2" transform="rotate(294.6 17.64 62.37)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="20.88" cy="54.82" rx="5.4" ry="2.2" transform="rotate(240.3 20.88 54.82)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="17.29" cy="54.55" rx="5.4" ry="2.2" transform="rotate(308.3 17.29 54.55)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="22.23" cy="47.98" rx="5.4" ry="2.2" transform="rotate(254.0 22.23 47.98)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="18.81" cy="46.86" rx="5.4" ry="2.2" transform="rotate(322.0 18.81 46.86)" fill="url(#dhGb)" opacity=".92"/><g transform="translate(100 0) scale(-1 1)"><ellipse cx="43.93" cy="85.56" rx="5.4" ry="2.2" transform="rotate(158.0 43.93 85.56)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="43.18" cy="89.08" rx="5.4" ry="2.2" transform="rotate(226.0 43.18 89.08)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="37.33" cy="83.31" rx="5.4" ry="2.2" transform="rotate(171.7 37.33 83.31)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="35.77" cy="86.55" rx="5.4" ry="2.2" transform="rotate(239.7 35.77 86.55)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="31.45" cy="79.55" rx="5.4" ry="2.2" transform="rotate(185.4 31.45 79.55)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="29.17" cy="82.34" rx="5.4" ry="2.2" transform="rotate(253.4 29.17 82.34)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="26.64" cy="74.51" rx="5.4" ry="2.2" transform="rotate(199.1 26.64 74.51)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="23.76" cy="76.67" rx="5.4" ry="2.2" transform="rotate(267.1 23.76 76.67)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="23.15" cy="68.48" rx="5.4" ry="2.2" transform="rotate(212.9 23.15 68.48)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="19.84" cy="69.89" rx="5.4" ry="2.2" transform="rotate(280.9 19.84 69.89)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="21.19" cy="61.78" rx="5.4" ry="2.2" transform="rotate(226.6 21.19 61.78)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="17.64" cy="62.37" rx="5.4" ry="2.2" transform="rotate(294.6 17.64 62.37)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="20.88" cy="54.82" rx="5.4" ry="2.2" transform="rotate(240.3 20.88 54.82)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="17.29" cy="54.55" rx="5.4" ry="2.2" transform="rotate(308.3 17.29 54.55)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="22.23" cy="47.98" rx="5.4" ry="2.2" transform="rotate(254.0 22.23 47.98)" fill="url(#dhGb)" opacity=".92"/><ellipse cx="18.81" cy="46.86" rx="5.4" ry="2.2" transform="rotate(322.0 18.81 46.86)" fill="url(#dhGb)" opacity=".92"/></g></g>
 <path d="M33 20C22 20 20 26.5 22 31.5C24 37 32 38.5 38.5 36.5M67 20C78 20 80 26.5 78 31.5C76 37 68 38.5 61.5 36.5" fill="none" stroke="url(#dhGb)" stroke-width="3.4" stroke-linecap="round"/>
 <rect x="46" y="55" width="8" height="10" rx="1.5" fill="url(#dhGb)"/>
@@ -4050,7 +4134,7 @@ html[data-theme="dark"] .dhw-ring,html[data-theme="dark"] .dhw-track{filter:drop
 <ellipse cx="50" cy="17" rx="18" ry="3.4" fill="#fff" opacity=".55"/>
 <path d="M37 23C37.4 33 41 42 46 47" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
 <path d="M60 26C60.6 32 59 38 56.5 42" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".35"/>
-</svg><span class="dhw-nm">CHARTABSTAIN</span></div></div></div></div><div class="dhw-g dhw-gd" data-th="90" data-k="1"><svg class="dhw-ring" viewBox="-270 -170 540 340" aria-hidden="true"><g transform="translate(0 66) rotate(0)"><ellipse rx="150" ry="40" fill="url(#dhRf)"/><ellipse rx="150" ry="40" fill="none" stroke="url(#dhRg)" stroke-width="6.5"/><ellipse rx="146.4" ry="36.4" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-gl" rx="150" ry="40" pathLength="100" fill="none" stroke="#fff" stroke-width="4.0" stroke-linecap="round" style="animation-duration:10s;animation-delay:-3s"/><g transform="translate(0 1)"><ellipse rx="116" ry="29" fill="url(#dhRf)"/><ellipse rx="116" ry="29" fill="none" stroke="url(#dhRg)" stroke-width="3.6"/><ellipse rx="114.0" ry="27.0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-glr" rx="116" ry="29" pathLength="100" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" style="animation-duration:12.0s;animation-delay:-6s"/></g></g><circle class="dhw-sp" cx="-120" cy="70" r="3.2" fill="#fff" style="animation-delay:-3s"/><circle class="dhw-sp" cx="125" cy="62" r="3.2" fill="#fff" style="animation-delay:-4.7s"/></svg><div class="dhw-float"><div class="dhw-bob"><div class="dhw-card"><span class="dhw-glow"></span><svg class="dhw-tr" viewBox="0 0 100 100" aria-hidden="true">
+</svg><div class="dhw-x"><div><span class="dhw-pl">3RD PLACE</span></div></div><span class="dhw-nm">CHARTABSTAIN</span><div class="dhw-x"><div><i class="dhw-dv"></i><em class="dhw-tg">Calibrated Chart Intelligence</em><p class="dhw-why">Data Adaptation Pipeline Auditing &amp; 99.1% Hallucination-Resistant Abstention</p></div></div></div></div></div></div><div class="dhw-g dhw-gd" data-th="90" data-k="1"><svg class="dhw-ring" viewBox="-270 -170 540 340" aria-hidden="true"><g transform="translate(0 66) rotate(0)"><ellipse rx="150" ry="40" fill="url(#dhRf)"/><ellipse rx="150" ry="40" fill="none" stroke="url(#dhRg)" stroke-width="6.5"/><ellipse rx="146.4" ry="36.4" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-gl" rx="150" ry="40" pathLength="100" fill="none" stroke="#fff" stroke-width="4.0" stroke-linecap="round" style="animation-duration:10s;animation-delay:-3s"/><g transform="translate(0 1)"><ellipse rx="116" ry="29" fill="url(#dhRf)"/><ellipse rx="116" ry="29" fill="none" stroke="url(#dhRg)" stroke-width="3.6"/><ellipse rx="114.0" ry="27.0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/><ellipse class="dhw-glr" rx="116" ry="29" pathLength="100" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" style="animation-duration:12.0s;animation-delay:-6s"/></g></g><circle class="dhw-sp" cx="-120" cy="70" r="3.2" fill="#fff" style="animation-delay:-3s"/><circle class="dhw-sp" cx="125" cy="62" r="3.2" fill="#fff" style="animation-delay:-4.7s"/></svg><div class="dhw-float"><div class="dhw-bob"><div class="dhw-card" tabindex="0" role="button" aria-label="MODEL AUTOPSY X - 1ST PLACE. Show why it won"><span class="dhw-glow"></span><svg class="dhw-tr" viewBox="0 0 100 100" aria-hidden="true">
 <g class="dhw-lv"><ellipse cx="43.93" cy="85.56" rx="5.4" ry="2.2" transform="rotate(158.0 43.93 85.56)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="43.18" cy="89.08" rx="5.4" ry="2.2" transform="rotate(226.0 43.18 89.08)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="37.33" cy="83.31" rx="5.4" ry="2.2" transform="rotate(171.7 37.33 83.31)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="35.77" cy="86.55" rx="5.4" ry="2.2" transform="rotate(239.7 35.77 86.55)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="31.45" cy="79.55" rx="5.4" ry="2.2" transform="rotate(185.4 31.45 79.55)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="29.17" cy="82.34" rx="5.4" ry="2.2" transform="rotate(253.4 29.17 82.34)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="26.64" cy="74.51" rx="5.4" ry="2.2" transform="rotate(199.1 26.64 74.51)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="23.76" cy="76.67" rx="5.4" ry="2.2" transform="rotate(267.1 23.76 76.67)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="23.15" cy="68.48" rx="5.4" ry="2.2" transform="rotate(212.9 23.15 68.48)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="19.84" cy="69.89" rx="5.4" ry="2.2" transform="rotate(280.9 19.84 69.89)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="21.19" cy="61.78" rx="5.4" ry="2.2" transform="rotate(226.6 21.19 61.78)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="17.64" cy="62.37" rx="5.4" ry="2.2" transform="rotate(294.6 17.64 62.37)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="20.88" cy="54.82" rx="5.4" ry="2.2" transform="rotate(240.3 20.88 54.82)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="17.29" cy="54.55" rx="5.4" ry="2.2" transform="rotate(308.3 17.29 54.55)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="22.23" cy="47.98" rx="5.4" ry="2.2" transform="rotate(254.0 22.23 47.98)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="18.81" cy="46.86" rx="5.4" ry="2.2" transform="rotate(322.0 18.81 46.86)" fill="url(#dhGg)" opacity=".92"/><g transform="translate(100 0) scale(-1 1)"><ellipse cx="43.93" cy="85.56" rx="5.4" ry="2.2" transform="rotate(158.0 43.93 85.56)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="43.18" cy="89.08" rx="5.4" ry="2.2" transform="rotate(226.0 43.18 89.08)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="37.33" cy="83.31" rx="5.4" ry="2.2" transform="rotate(171.7 37.33 83.31)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="35.77" cy="86.55" rx="5.4" ry="2.2" transform="rotate(239.7 35.77 86.55)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="31.45" cy="79.55" rx="5.4" ry="2.2" transform="rotate(185.4 31.45 79.55)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="29.17" cy="82.34" rx="5.4" ry="2.2" transform="rotate(253.4 29.17 82.34)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="26.64" cy="74.51" rx="5.4" ry="2.2" transform="rotate(199.1 26.64 74.51)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="23.76" cy="76.67" rx="5.4" ry="2.2" transform="rotate(267.1 23.76 76.67)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="23.15" cy="68.48" rx="5.4" ry="2.2" transform="rotate(212.9 23.15 68.48)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="19.84" cy="69.89" rx="5.4" ry="2.2" transform="rotate(280.9 19.84 69.89)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="21.19" cy="61.78" rx="5.4" ry="2.2" transform="rotate(226.6 21.19 61.78)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="17.64" cy="62.37" rx="5.4" ry="2.2" transform="rotate(294.6 17.64 62.37)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="20.88" cy="54.82" rx="5.4" ry="2.2" transform="rotate(240.3 20.88 54.82)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="17.29" cy="54.55" rx="5.4" ry="2.2" transform="rotate(308.3 17.29 54.55)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="22.23" cy="47.98" rx="5.4" ry="2.2" transform="rotate(254.0 22.23 47.98)" fill="url(#dhGg)" opacity=".92"/><ellipse cx="18.81" cy="46.86" rx="5.4" ry="2.2" transform="rotate(322.0 18.81 46.86)" fill="url(#dhGg)" opacity=".92"/></g></g>
 <path d="M33 20C22 20 20 26.5 22 31.5C24 37 32 38.5 38.5 36.5M67 20C78 20 80 26.5 78 31.5C76 37 68 38.5 61.5 36.5" fill="none" stroke="url(#dhGg)" stroke-width="3.4" stroke-linecap="round"/>
 <rect x="46" y="55" width="8" height="10" rx="1.5" fill="url(#dhGg)"/>
@@ -4061,34 +4145,57 @@ html[data-theme="dark"] .dhw-ring,html[data-theme="dark"] .dhw-track{filter:drop
 <ellipse cx="50" cy="17" rx="18" ry="3.4" fill="#fff" opacity=".55"/>
 <path d="M37 23C37.4 33 41 42 46 47" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
 <path d="M60 26C60.6 32 59 38 56.5 42" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".35"/>
-</svg><span class="dhw-nm">MODEL AUTOPSY X</span></div></div></div></div></div><script>
-/* Winner cards: revolve around the logo on a glass orbit track (front = bigger) */
+</svg><div class="dhw-x"><div><span class="dhw-pl">1ST PLACE</span></div></div><span class="dhw-nm">MODEL AUTOPSY X</span><div class="dhw-x"><div><i class="dhw-dv"></i><em class="dhw-tg">The AI That Investigates Other AI</em><p class="dhw-why">12-Engine Statistical Reliability, Drift Analysis &amp; Automated Failure Forensics</p></div></div></div></div></div></div></div><script>
+/* Winner cards: revolve around the logo on a glass orbit track; hover / tap a card to see why it won */
 (function(){
 var L=document.getElementById('dhw'),intro=document.getElementById('intro');if(!L)return;
 var T=document.getElementById('dhwTrack'),G=[].slice.call(L.querySelectorAll('.dhw-g')),
-    still=matchMedia('(prefers-reduced-motion:reduce)').matches,P=26000,W,H,u,cx,cy,rx,ry,t0=performance.now();
+    still=matchMedia('(prefers-reduced-motion:reduce)').matches,P=26000,W,H,u,cx,cy,rx,ry,mob,
+    ang=0,spd=1,last=performance.now(),act=null,pin=null,cur=null,tmo;
 function size(){
-  W=L.clientWidth;H=L.clientHeight;var m=matchMedia('(max-width:760px)').matches;
-  u=m?W*.02:Math.min(W/100,H*.019);
-  cx=W/2;cy=H*(m?.355:.57);rx=u*(m?13:29.5);ry=u*(m?3.4:4.1);
+  W=L.clientWidth;H=L.clientHeight;mob=matchMedia('(max-width:760px)').matches;
+  u=mob?W*.02:Math.min(W/100,H*.019);
+  cx=W/2;cy=H*(mob?.355:.57);rx=u*(mob?13:29.5);ry=u*(mob?3.4:4.1);
   var py=cy+u*4,sx=rx/470,sy=ry/70;
   T.style.width=1000*sx+'px';T.style.height=200*sy+'px';
   T.style.left=(cx-500*sx)+'px';T.style.top=(py-100*sy)+'px';
 }
-function draw(now){
-  var a=still?0:((now-t0)%P)/P*360;
+function lerp(a,b,t){return a+(b-a)*t}
+function draw(dt){
+  var on=act||pin,k1=Math.min(1,dt/170);
+  if(on!==cur){cur=on;G.forEach(function(g){g.classList.toggle('on',g===on)})}
   for(var i=0;i<G.length;i++){
-    var g=G[i],th=(+g.dataset.th+a)*Math.PI/180,c=Math.cos(th),s=Math.sin(th),d=(s+1)/2,k=+g.dataset.k,sc=k*(.72+.28*d);
-    g.style.transform='translate('+(cx+rx*c).toFixed(1)+'px,'+(cy+ry*s).toFixed(1)+'px) scale('+sc.toFixed(3)+')';
-    g.style.opacity=(.55+.45*d).toFixed(2);
-    g.style.zIndex=s>-.05?3+Math.round(d*6):1;
-    g.style.setProperty('--rz',(-c*11).toFixed(1)+'deg');
-    g.style.setProperty('--ry',(c*14).toFixed(1)+'deg');
+    var g=G[i],th=(+g.dataset.th+ang)*Math.PI/180,c=Math.cos(th),s=Math.sin(th),d=(s+1)/2,k=+g.dataset.k,
+        h=g._h||0;h+=((g===on?1:0)-h)*k1;g._h=h;
+    var sc=lerp(k*(.72+.28*d),mob?1:1.06,h),x=cx+rx*c,y=cy+ry*s;
+    if(mob){x=lerp(x,cx,h)}
+    g.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) scale('+sc.toFixed(3)+')';
+    g.style.opacity=lerp(.55+.45*d,1,h).toFixed(2);
+    g.style.zIndex=h>.02?9:(s>-.05?3+Math.round(d*6):1);
+    g.style.setProperty('--rz',(-c*11*(1-h)).toFixed(1)+'deg');
+    g.style.setProperty('--ry',(c*14*(1-h)).toFixed(1)+'deg');
+    g.style.setProperty('--rx',(9*(1-h)).toFixed(1)+'deg');
   }
 }
-function loop(now){if(!intro.classList.contains('out'))draw(now);requestAnimationFrame(loop)}
-size();draw(t0);addEventListener('resize',function(){size();draw(performance.now())});
-if(!still)requestAnimationFrame(loop);
+function loop(now){
+  var dt=Math.min(now-last,60);last=now;
+  if(!intro.classList.contains('out')){
+    spd+=(((act||pin)||still?0:1)-spd)*Math.min(1,dt/220);
+    ang+=dt*spd*360/P;draw(dt);
+  }
+  requestAnimationFrame(loop);
+}
+G.forEach(function(g){
+  var c=g.querySelector('.dhw-card');
+  c.addEventListener('pointerenter',function(e){if(e.pointerType!=='mouse')return;clearTimeout(tmo);act=g});
+  c.addEventListener('pointerleave',function(e){if(e.pointerType!=='mouse')return;tmo=setTimeout(function(){if(act===g)act=null},140)});
+  c.addEventListener('focus',function(){clearTimeout(tmo);act=g});
+  c.addEventListener('blur',function(){if(act===g)act=null});
+  c.addEventListener('click',function(e){e.stopPropagation();pin=(pin===g)?null:g});
+  c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();pin=(pin===g)?null:g}});
+});
+size();draw(16);addEventListener('resize',function(){size();draw(16)});
+requestAnimationFrame(loop);
 })();
 </script>
 <div class="xw" id="xw" data-t="DEV HARBOUR">DEV HARBOUR<sup>®</sup></div>
@@ -9039,7 +9146,7 @@ const go=(x,y,v,fast)=>{
 window.go=go;
 const hz=$('hz');
 function handleHeroTrigger(e){
-  if(e.target.closest('.xa')||e.target.closest('[data-auth]')||e.target.closest('.dh-modal-wrap'))return;
+  if(e.target.closest('.dhw-card')||e.target.closest('.xa')||e.target.closest('[data-auth]')||e.target.closest('.dh-modal-wrap'))return;
   const s=e.target.closest('[data-sc]');
   if(s){jump(s.dataset.sc);return}
   if(e.target.closest('a')||e.target.closest('[data-lk]'))return;
@@ -9052,7 +9159,7 @@ if(hz){
 }
 if(intro){
   intro.addEventListener('click',e=>{
-    if(e.target.closest('#landing')||e.target.closest('[data-sc]')||e.target.closest('a')||e.target.closest('[data-lk]')||e.target.closest('.xa')||e.target.closest('[data-auth]')||e.target.closest('.dh-modal-wrap'))return;
+    if(e.target.closest('.dhw-card')||e.target.closest('#landing')||e.target.closest('[data-sc]')||e.target.closest('a')||e.target.closest('[data-lk]')||e.target.closest('.xa')||e.target.closest('[data-auth]')||e.target.closest('.dh-modal-wrap'))return;
     go(e.clientX,e.clientY);
   });
 }
