@@ -1038,7 +1038,6 @@ async function saveEmailVerification(userIdOrObj, email, challengeId, codeHash, 
       sent_at = EXCLUDED.sent_at,
       attempts = 0,
       state = 'pending',
-      verified_at = NULL,
       hour_started_at = EXCLUDED.hour_started_at,
       send_count = EXCLUDED.send_count;
   `, [uId, em, chId, cHash, expAt, now, hourStartedAt, sendCount]);
@@ -1064,27 +1063,44 @@ async function markEmailVerified(userId) {
   return getEmailVerification(userId);
 }
 
-async function recordOtpAttempt(userId, success) {
-  if (success) {
-    return markEmailVerified(userId);
-  }
-  const existing = await getEmailVerification(userId);
-  const attempts = (existing ? existing.attempts : 0) + 1;
-  const state = attempts >= 5 ? 'locked' : 'pending';
-
+async function recordFailedOtpAttempt(userId, challengeId) {
   await query(`
     UPDATE email_verifications
-    SET attempts = $1, state = $2
-    WHERE user_id = $3;
-  `, [attempts, state, userId]);
-
-  return getEmailVerification(userId);
+    SET attempts = COALESCE(attempts, 0) + 1,
+        state = CASE WHEN COALESCE(attempts, 0) + 1 >= 5 THEN 'locked' ELSE 'pending' END
+    WHERE user_id = $1 AND challenge_id = $2 AND state = 'pending' AND code_hash IS NOT NULL
+  `, [userId, challengeId]);
 }
 
-async function updateUserPassword(userId, passwordHash, salt) {
-  await query('UPDATE users SET password_hash = $1, salt = $2, updated_at = NOW() WHERE id = $3', [passwordHash, salt, userId]);
-  await query('DELETE FROM sessions WHERE user_id = $1', [userId]);
-  return true;
+async function completeEmailVerification(userId, challengeId) {
+  const result = await query(`
+    UPDATE email_verifications
+    SET state = 'verified', verified_at = NOW(), code_hash = NULL, expires_at = NULL
+    WHERE user_id = $1 AND challenge_id = $2 AND state = 'pending'
+      AND code_hash IS NOT NULL AND expires_at::timestamptz > NOW()
+  `, [userId, challengeId]);
+  return result.rowCount === 1;
+}
+
+async function completePasswordReset(userId, challengeId, passwordHash, salt) {
+  const result = await query(`
+    WITH consumed AS (
+      UPDATE email_verifications
+      SET state = 'verified', verified_at = NOW(), code_hash = NULL, expires_at = NULL
+      WHERE user_id = $1 AND challenge_id = $2 AND state = 'pending'
+        AND code_hash IS NOT NULL AND expires_at::timestamptz > NOW()
+      RETURNING user_id
+    ), updated_user AS (
+      UPDATE users
+      SET password_hash = $3, salt = $4, updated_at = NOW()
+      WHERE id IN (SELECT user_id FROM consumed)
+      RETURNING id
+    ), revoked_sessions AS (
+      DELETE FROM sessions WHERE user_id IN (SELECT id FROM updated_user)
+    )
+    SELECT id FROM updated_user
+  `, [userId, challengeId, passwordHash, salt]);
+  return result.rowCount === 1;
 }
 
 async function getUserSummaryStats(userId) {
@@ -1102,9 +1118,9 @@ async function getUserSummaryStats(userId) {
 
 async function isEmailVerified(userId) {
   if (!userId) return false;
-  const res = await query("SELECT state, verified_at FROM email_verifications WHERE user_id = $1 LIMIT 1;", [userId]);
+  const res = await query("SELECT verified_at FROM email_verifications WHERE user_id = $1 LIMIT 1;", [userId]);
   if (!res.rows[0]) return false;
-  return res.rows[0].state === 'verified' && res.rows[0].verified_at !== null;
+  return res.rows[0].verified_at !== null;
 }
 
 async function getUserCertificates(email) {
@@ -1200,8 +1216,9 @@ module.exports = {
   getEmailVerification,
   saveEmailVerification,
   markEmailVerified,
-  recordOtpAttempt,
-  updateUserPassword,
+  recordFailedOtpAttempt,
+  completeEmailVerification,
+  completePasswordReset,
   getUserSummaryStats,
   getUserProjects,
   isEmailVerified,

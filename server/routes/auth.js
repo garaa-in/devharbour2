@@ -370,7 +370,7 @@ router.post('/otp/verify', rateLimit({ windowMs: 60000, max: 10 }), async (req, 
     }
 
     const record = await db.getEmailVerification(user.id);
-    if (!record || !record.code_hash) {
+    if (!record || !record.code_hash || record.challenge_id.startsWith('reset:')) {
       return res.status(400).json({ error: 'No pending verification code found. Please request a new code.' });
     }
 
@@ -385,11 +385,13 @@ router.post('/otp/verify', rateLimit({ windowMs: 60000, max: 10 }), async (req, 
     const isValid = verifyOtpHash(record.code_hash, user.id, record.challenge_id, cleanOtp);
 
     if (!isValid) {
-      await db.recordOtpAttempt(user.id, false);
+      await db.recordFailedOtpAttempt(user.id, record.challenge_id);
       return res.status(400).json({ error: 'Invalid verification code. Please check your email and try again.' });
     }
 
-    await db.recordOtpAttempt(user.id, true);
+    if (!(await db.completeEmailVerification(user.id, record.challenge_id))) {
+      return res.status(400).json({ error: 'Invalid or expired verification code.' });
+    }
 
     const { token, expiresAt } = await db.createSession(user.id);
     const totalXp = await db.getUserTotalXp(user.id);
@@ -436,7 +438,7 @@ router.post('/password-reset/request', rateLimit({ windowMs: 60000, max: 5 }), a
     // Anti-enumeration: always return generic confirmation
     if (user) {
       const otp = generateOtp();
-      const challengeId = crypto.randomUUID();
+      const challengeId = 'reset:' + crypto.randomUUID();
       const codeHash = hashOtp(user.id, challengeId, otp);
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
 
@@ -490,7 +492,7 @@ router.post('/password-reset/confirm', rateLimit({ windowMs: 60000, max: 10 }), 
     }
 
     const record = await db.getEmailVerification(user.id);
-    if (!record || !record.code_hash) {
+    if (!record || !record.code_hash || !record.challenge_id.startsWith('reset:')) {
       return res.status(400).json({ error: 'No pending reset code found. Please request a new code.' });
     }
 
@@ -505,13 +507,14 @@ router.post('/password-reset/confirm', rateLimit({ windowMs: 60000, max: 10 }), 
     const isValid = verifyOtpHash(record.code_hash, user.id, record.challenge_id, cleanOtp);
 
     if (!isValid) {
-      await db.recordOtpAttempt(user.id, false);
+      await db.recordFailedOtpAttempt(user.id, record.challenge_id);
       return res.status(400).json({ error: 'Invalid verification code.' });
     }
 
     const { salt, hash } = hashPassword(newPassword);
-    await db.updateUserPassword(user.id, hash, salt);
-    await db.recordOtpAttempt(user.id, true);
+    if (!(await db.completePasswordReset(user.id, record.challenge_id, hash, salt))) {
+      return res.status(400).json({ error: 'Invalid or expired verification code.' });
+    }
 
     res.json({
       success: true,
