@@ -1,6 +1,6 @@
 /**
  * Dev Harbour - Automated Full-Stack Integration Test Suite
- * Tests Auth, Security, Database Persistence, Sandboxed Code Execution, XP Ledger,
+ * Tests Auth, Security, Database Persistence, Challenge Endpoint Protection, XP Ledger,
  * Leaderboard, Projects, and Reading Mode.
  */
 
@@ -15,7 +15,6 @@ process.env.PORT = '3099';
 
 const app = require('../server/index');
 const db = require('../server/db');
-const { executeCode } = require('../server/execution');
 
 let server;
 const BASE_URL = 'http://localhost:3099/api';
@@ -153,42 +152,15 @@ test('4. Reading Mode & Anti-Duplicate XP Verification', async () => {
   assert.ok(comp2.data.xp.currentXp >= 10);
 });
 
-test('5. Secure Code Execution Sandbox & Server-Side Test Evaluation', async () => {
-  const publicTests = [{ args: [[2, 7, 11, 15], 9], expected: [0, 1] }];
-  const hiddenTests = [{ args: [[3, 3], 6], expected: [0, 1] }];
-
-  // Correct Solution
-  const validCode = `
-    function twoSum(nums, target) {
-      const map = new Map();
-      for (let i = 0; i < nums.length; i++) {
-        const comp = target - nums[i];
-        if (map.has(comp)) return [map.get(comp), i];
-        map.set(nums[i], i);
-      }
-      return [];
-    }
-  `;
-  const validRes = await executeCode(validCode, publicTests, hiddenTests, 'two-sum');
-  assert.strictEqual(validRes.status, 'passed');
-  assert.strictEqual(validRes.passed, true);
-  assert.strictEqual(validRes.passedCount, 2);
-
-  // Wrong Solution
-  const wrongCode = `function twoSum(nums, target) { return [0, 0]; }`;
-  const wrongRes = await executeCode(wrongCode, publicTests, hiddenTests, 'two-sum');
-  assert.strictEqual(wrongRes.status, 'failed');
-  assert.strictEqual(wrongRes.passed, false);
-
-  // Infinite Loop / Timeout Safeguard
-  const loopCode = `function twoSum() { while(true) {} }`;
-  const loopRes = await executeCode(loopCode, publicTests, hiddenTests, 'two-sum');
-  assert.strictEqual(loopRes.passed, false);
-  assert.strictEqual(loopRes.sampleResults[0].passed, false);
-  assert.ok(loopRes.sampleResults[0].error.includes('timed out'));
+test('5. Challenge submissions reject anonymous execution', async () => {
+  const submission = await api('/challenges/challenge-two-sum/submit', {
+    method: 'POST',
+    body: { code: 'function twoSum() { return [0, 1]; }' }
+  });
+  assert.strictEqual(submission.status, 401);
 });
 
-test('6. Coding Challenge Submission & XP Ledger Credit', async () => {
+test('6. Verified users cannot execute code on the web server', async () => {
   const student = {
     email: `coder_${Date.now()}@devharbour.in`,
     username: `coder_${Date.now().toString().slice(-6)}`,
@@ -198,40 +170,13 @@ test('6. Coding Challenge Submission & XP Ledger Credit', async () => {
   const { data: { token, user } } = await api('/auth/signup', { method: 'POST', body: student });
   await db.markEmailVerified(user.id);
 
-  const validCode = `
-    function twoSum(nums, target) {
-      const map = new Map();
-      for (let i = 0; i < nums.length; i++) {
-        const comp = target - nums[i];
-        if (map.has(comp)) return [map.get(comp), i];
-        map.set(nums[i], i);
-      }
-      return [];
-    }
-  `;
-
-  // Submit valid code
-  const submitRes = await api('/challenges/challenge-two-sum/submit', {
+  const submission = await api('/challenges/challenge-two-sum/submit', {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}` },
-    body: { code: validCode }
+    headers: { Authorization: `Bearer ${token}` },
+    body: { code: 'function twoSum() { return [0, 1]; }' }
   });
-  assert.strictEqual(submitRes.status, 200);
-  assert.strictEqual(submitRes.data.status, 'passed');
-  assert.strictEqual(submitRes.data.passed, true);
-  assert.strictEqual(submitRes.data.xp.awarded, true);
-  assert.strictEqual(submitRes.data.xp.amount, 25);
-  assert.strictEqual(submitRes.data.xp.currentXp, 25);
-
-  // Re-submit passing code: duplicate XP must be prevented
-  const submitRes2 = await api('/challenges/challenge-two-sum/submit', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}` },
-    body: { code: validCode }
-  });
-  assert.strictEqual(submitRes2.status, 200);
-  assert.strictEqual(submitRes2.data.xp.awarded, false);
-  assert.ok(submitRes2.data.xp.currentXp >= 25);
+  assert.strictEqual(submission.status, 503);
+  assert.match(submission.data.error, /grading is temporarily unavailable/i);
 });
 
 test('7. Leaderboard Calculation & Timeframe Integrity', async () => {

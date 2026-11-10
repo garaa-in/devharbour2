@@ -1,7 +1,7 @@
 /**
  * Dev Harbour - Security & Remediation Verification Test Suite
  * Validates Google OAuth protection, OTP hashing & rate limiting,
- * VM Sandbox escape blocking, Security Headers, Course Slug lookups,
+ * Challenge endpoint protection, Security Headers, Course Slug lookups,
  * and Supabase PostgreSQL connectivity.
  */
 
@@ -14,7 +14,6 @@ const http = require('node:http');
 const app = require('../server/index');
 const db = require('../server/db');
 const { generateOtp, hashOtp, verifyOtpHash } = require('../server/email');
-const { executeCode } = require('../server/execution');
 
 let server;
 const BASE_URL = 'http://localhost:3199/api';
@@ -110,20 +109,10 @@ test('4. Course Slug Resolution (Anti-404)', async () => {
   assert.ok(Array.isArray(resSlug.data.lessons));
 });
 
-test('5. Sandbox Hardening Against VM Escapes', async () => {
-  // Test A: Access to process
-  const resProcess = await executeCode('process.exit(1)', [], [], 'test-slug');
-  assert.equal(resProcess.passed, false);
-
-  // Test B: Access to require
-  const resRequire = await executeCode("const fs = require('fs');", [], [], 'test-slug');
-  assert.equal(resRequire.passed, false);
-
-  // Test C: Prototype constructor escape
-  const resEscape = await executeCode("this.constructor.constructor('return process')()", [], [], 'test-slug');
-  assert.equal(resEscape.passed, false);
+test('5. Project votes require authentication', async () => {
+  const result = await api('/projects/prj-security-regression/vote', { method: 'POST', body: {} });
+  assert.equal(result.status, 401);
 });
-
 
 test('6. Complete End-to-End OTP Verification & Password Reset Flow', async () => {
   // Step 1: Create a test user
