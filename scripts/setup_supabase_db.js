@@ -1,11 +1,16 @@
 /**
  * Dev Harbour — Direct Supabase PostgreSQL Schema & Data Setup
  */
+require('dotenv').config();
 const { Client } = require('pg');
 const fs = require('fs');
 const path = require('path');
 
-const connectionString = 'postgresql://REDACTED';
+const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+if (!connectionString) throw new Error('Set DIRECT_URL to the intended Supabase database before running setup.');
+const connectionUrl = new URL(connectionString);
+for (const param of ['sslmode', 'sslrootcert', 'sslcert', 'sslkey']) connectionUrl.searchParams.delete(param);
+const ca = fs.readFileSync(path.join(__dirname, '../security/certs/supabase-root-2021.crt'), 'utf8');
 
 async function setup() {
   const client = new Client({
@@ -13,7 +18,7 @@ async function setup() {
     ssl: { rejectUnauthorized: false }
   });
 
-  console.log('Connecting to Supabase PostgreSQL at aws-0-eu-north-1.pooler.supabase.com...');
+  console.log('Connecting to Supabase PostgreSQL ...');
   await client.connect();
   console.log('✅ Connected successfully!');
 
@@ -28,7 +33,7 @@ async function setup() {
     const seedSql = fs.readFileSync(seedPath, 'utf-8');
     console.log(`Executing seed.sql as complete block (${seedSql.length} bytes)...`);
     await client.query(seedSql);
-    console.log('✅ All seed data (courses, challenges, 693 participants) inserted successfully!');
+    console.log('✅ Public seed data inserted successfully!');
   }
 
   // 2. Verify table record counts

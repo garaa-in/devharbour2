@@ -92,9 +92,13 @@ async function main() {
   }
 
   // 3. Update Supabase PostgreSQL
-  const connectionString = process.env.DATABASE_URL || 'postgresql://REDACTED';
+  const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+  if (!connectionString) throw new Error('Set DIRECT_URL to the intended Supabase database before importing participants.');
+  const connectionUrl = new URL(connectionString);
+  for (const param of ['sslmode', 'sslrootcert', 'sslcert', 'sslkey']) connectionUrl.searchParams.delete(param);
+  const ca = fs.readFileSync(path.join(__dirname, '../security/certs/supabase-root-2021.crt'), 'utf8');
   try {
-    const client = new Client({ connectionString, ssl: { rejectUnauthorized: false } });
+    const client = new Client({ connectionString: connectionUrl.href, ssl: { ca, rejectUnauthorized: true } });
     await client.connect();
     console.log('  [Supabase] Connected to PostgreSQL...');
 

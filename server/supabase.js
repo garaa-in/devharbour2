@@ -11,50 +11,12 @@ try {
 } catch {
   createClient = null;
 }
-const { Pool } = require('pg');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '';
 
-// Clean connection string: strip Windows-specific cert path and conflicting sslmode
-function cleanConnectionString(url) {
-  if (!url) return '';
-  return url.replace(/&?sslrootcert=[^&]+/g, '').replace(/&?sslmode=[^&]+/g, '');
-}
-
-const DATABASE_URL = cleanConnectionString(process.env.DATABASE_URL || process.env.DIRECT_URL || '');
-
 let supabaseClient = null;
-let pgPool = null;
-
-// Share canonical PostgreSQL direct pool from db-postgres to avoid duplicate pool contention
-try {
-  const dbPostgres = require('./db-postgres');
-  pgPool = dbPostgres.pool;
-} catch {
-  pgPool = null;
-}
-
-if (!pgPool && DATABASE_URL) {
-  try {
-    pgPool = new Pool({
-      connectionString: DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-      max: 10,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 10000
-    });
-    pgPool.on('error', (err) => {
-      if (err.code !== 'ECONNRESET' && err.code !== '57P01') {
-        console.warn('[Supabase PG Pool Warning]:', err.message);
-      }
-    });
-    const hostInfo = DATABASE_URL.split('@')[1] ? DATABASE_URL.split('@')[1].split('/')[0] : 'connected';
-    console.log('⚡ Connected to Supabase PostgreSQL pool:', hostInfo);
-  } catch (err) {
-    console.warn('⚠️ Could not initialize PostgreSQL pool:', err.message);
-  }
-}
+const { pool: pgPool } = require('./db-postgres');
 
 // Initialize Supabase JS Client if key is provided
 if (createClient && SUPABASE_URL && SUPABASE_KEY) {

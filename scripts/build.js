@@ -50,3 +50,21 @@ console.log(`   Canonical Source: public/index.html (${canonicalHtml.length} byt
 console.log(`   Root Deployment:  index.html (${rootHtml.length} bytes)`);
 console.log(`   Google Auth:      Enabled (FedCM + One Tap + Account Chooser)`);
 console.log(`   Certificate Gate: Direct Access (Zero Passcode / Zero Extra OTP)`);
+
+async function checkProductionDatabase() {
+  if (process.env.VERCEL_ENV !== 'production') return;
+  const { pool } = require('../server/db');
+  if (!pool) throw new Error('Configure a production DATABASE_URL in Vercel before deploying.');
+  try {
+    await pool.query('SELECT 1');
+  } catch {
+    throw new Error('The production database connection failed. Check DATABASE_URL and the database TLS configuration.');
+  } finally {
+    await pool.end();
+  }
+}
+
+checkProductionDatabase().catch(error => {
+  console.error('Deployment check failed:', error.message);
+  process.exitCode = 1;
+});

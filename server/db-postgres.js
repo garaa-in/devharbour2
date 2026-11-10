@@ -6,6 +6,7 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 const crypto = require('node:crypto');
+const { rootCertificates } = require('node:tls');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -34,36 +35,29 @@ CMTyZKG3XEu5Ghl1LEnI3QmEKsqaCLv12BnVjbkSeZsMnevJPs1Ye6TjjJwdik5P
 o/bKiIz+Fq8=
 -----END CERTIFICATE-----`;
 
-// Default Supabase transaction pooler fallback URI for serverless runtime
-const FALLBACK_DATABASE_URL = 'postgresql://REDACTED';
-
 // Read from all standard database environment variable names
-let rawDatabaseUrl = process.env.DATABASE_URL ||
+const rawDatabaseUrl = process.env.DATABASE_URL ||
                      process.env.POSTGRES_URL ||
                      process.env.POSTGRES_PRISMA_URL ||
                      process.env.DIRECT_URL ||
                      process.env.SUPABASE_DATABASE_URL ||
                      process.env.POSTGRES_URL_NON_POOLING ||
-                     FALLBACK_DATABASE_URL;
+                     '';
 
 // Strip any filesystem-dependent sslrootcert or sslmode query parameters that break in Linux / Vercel
-let cleanDatabaseUrl = rawDatabaseUrl
-  .replace(/([?&])sslrootcert=[^&]*(&|$)/g, '$1')
-  .replace(/([?&])sslmode=[^&]*(&|$)/g, '$1')
-  .replace(/[?&]+$/, '');
+const databaseUrl = rawDatabaseUrl ? new URL(rawDatabaseUrl) : null;
+const sslMode = databaseUrl?.searchParams.get('sslmode');
+for (const param of ['sslmode', 'sslrootcert', 'sslcert', 'sslkey']) {
+  databaseUrl?.searchParams.delete(param);
+}
 
 let pool = null;
-if (cleanDatabaseUrl) {
-  const isCloudHost = cleanDatabaseUrl.includes('supabase.com') ||
-                      cleanDatabaseUrl.includes('neon.tech') ||
-                      cleanDatabaseUrl.includes('pooler') ||
-                      cleanDatabaseUrl.includes('amazonaws.com') ||
-                      process.env.NODE_ENV === 'production' ||
-                      process.env.VERCEL;
-
+if (databaseUrl) {
+  const isLocal = ['localhost', '127.0.0.1', '[::1]'].includes(databaseUrl.hostname);
+  const useTls = !isLocal || Boolean(sslMode && sslMode !== 'disable');
   pool = new Pool({
-    connectionString: cleanDatabaseUrl,
-    ssl: isCloudHost ? { ca: SUPABASE_ROOT_CERT, rejectUnauthorized: false } : false,
+    connectionString: databaseUrl.href,
+    ssl: useTls ? { ca: [...rootCertificates, SUPABASE_ROOT_CERT], rejectUnauthorized: true } : false,
     max: 10,
     idleTimeoutMillis: 15000,
     connectionTimeoutMillis: 20000,

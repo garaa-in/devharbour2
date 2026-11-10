@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
     let existingCert = await db.getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
 
     if (existingCert) {
-      const safeEmail = cleanEmail ? existingCert.recipient_email : maskEmail(existingCert.recipient_email);
+      const safeEmail = maskEmail(existingCert.recipient_email);
       return res.json({
         success: true,
         alreadyIssued: true,
@@ -97,7 +97,7 @@ module.exports = async (req, res) => {
       issueDate: 'October 25, 2026'
     });
 
-    const safeNewEmail = cleanEmail ? (newCert.recipient_email || recipientEmail) : maskEmail(newCert.recipient_email || recipientEmail);
+    const safeNewEmail = maskEmail(newCert.recipient_email || recipientEmail);
 
     return res.status(201).json({
       success: true,
@@ -121,8 +121,7 @@ module.exports = async (req, res) => {
   } catch (err) {
     console.error('[CERTIFICATE CLAIM ERROR]:', err);
     return res.status(500).json({
-      error: err.message || 'Failed to process certificate claim.',
-      hasDbUrl: true
+      error: 'Failed to process certificate claim.'
     });
   }
 };

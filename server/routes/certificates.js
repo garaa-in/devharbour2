@@ -144,8 +144,8 @@ router.post('/claim', rateLimit({ windowMs: 60000, max: 30 }), async (req, res) 
     let existingCert = await db.getIssuedCertificateByEmailOrName(cleanEmail, cleanName, eventSlug);
 
     if (existingCert) {
-      const isOwner = req.user ? req.user.email.toLowerCase() === (existingCert.recipient_email || '').toLowerCase() : false;
-      const safeEmail = (cleanEmail || isOwner) ? existingCert.recipient_email : maskEmail(existingCert.recipient_email);
+      const isOwner = req.user?.emailVerified && req.user.email.toLowerCase() === (existingCert.recipient_email || '').toLowerCase();
+      const safeEmail = isOwner ? existingCert.recipient_email : maskEmail(existingCert.recipient_email);
       return res.json({
         success: true,
         alreadyIssued: true,
@@ -199,8 +199,8 @@ router.post('/claim', rateLimit({ windowMs: 60000, max: 30 }), async (req, res) 
       issueDate: 'October 25, 2026'
     });
 
-    const isOwner = req.user ? req.user.email.toLowerCase() === (newCert.recipient_email || recipientEmail).toLowerCase() : false;
-    const safeNewEmail = (cleanEmail || isOwner) ? (newCert.recipient_email || recipientEmail) : maskEmail(newCert.recipient_email || recipientEmail);
+    const isOwner = req.user?.emailVerified && req.user.email.toLowerCase() === (newCert.recipient_email || recipientEmail).toLowerCase();
+    const safeNewEmail = isOwner ? (newCert.recipient_email || recipientEmail) : maskEmail(newCert.recipient_email || recipientEmail);
 
     return res.status(201).json({
       success: true,
