@@ -55,8 +55,7 @@ module.exports = async (req, res) => {
   } catch (err) {
     console.error('[VERIFY ERROR]:', err);
     return res.status(500).json({
-      error: 'Verification service error: ' + (err.message || 'database error'),
-      hasDbUrl: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DIRECT_URL)
+      error: 'Verification service unavailable.'
     });
   }
 };

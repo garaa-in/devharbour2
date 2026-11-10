@@ -6730,7 +6730,7 @@ if(addTBtn){
     const taskContainer=document.getElementById('tk');
     const newBtn=document.createElement('button');
     newBtn.className='t';
-    newBtn.innerHTML=`<small>Active task</small><b>${t.trim()}</b><span class="go">✓</span>`;
+    newBtn.innerHTML=`<small>Active task</small><b>${esc(t.trim())}</b><span class="go">✓</span>`;
     newBtn.onclick=()=>{newBtn.remove();toast('Task completed! +25 XP');};
     taskContainer.insertBefore(newBtn,addTBtn);
     toast('Task added to your dashboard!');
@@ -6764,6 +6764,16 @@ function esc(s) {
 }
 window.esc = esc;
 
+function safeHttpLink(value) {
+  if (!value || typeof value !== 'string') return '';
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
 /* ===== REAL DYNAMIC LEADERBOARD ===== */
 let currentLeaderboardTimeframe = 'Weekly';
 const SEED_LB_DEVELOPERS = [
@@ -6792,7 +6802,7 @@ async function rl(k) {
       const solvedText = `${solvedCount} solved`;
       return `<div class="lr${isMe ? ' is-me' : ''}">
         <b>${u.rank || (i + 1)}</b>
-        <span class="a" title="${esc(name)}">${initial}</span>
+        <span class="a" title="${esc(name)}">${esc(initial)}</span>
         <span><b>${esc(name)}</b> ${uName ? `<small class="mut">${esc(uName)}</small>` : ''}<br><em>${solvedText}</em></span>
         <span>${(u.xp || u.totalXp || 0).toLocaleString()} XP</span>
       </div>`;
@@ -7458,7 +7468,10 @@ const orcathonThumbnailThemes = {
 };
 
 function renderOrcathonCard(project) {
-  const [base, accent, icon] = orcathonThumbnailThemes[project.category] || orcathonThumbnailThemes.Other;
+  const [base, accent, icon] = Object.hasOwn(orcathonThumbnailThemes, project.category)
+    ? orcathonThumbnailThemes[project.category] : orcathonThumbnailThemes.Other;
+  const demo = safeHttpLink(project.demo);
+  const repository = safeHttpLink(project.repository);
   const offset = 38 + [...project.name].reduce((sum, char) => sum + char.codePointAt(0), 0) % 54;
   return `<article class="c pc s4 orcathon-project">
     <div class="orcathon-thumb" aria-hidden="true" style="--thumb-base:${base};--thumb-accent:${accent};--thumb-shift:${offset}%">
@@ -7470,8 +7483,8 @@ function renderOrcathonCard(project) {
       <h3>${esc(project.name)}</h3>
       ${project.summary ? `<p>${esc(project.summary)}</p>` : ''}
       <div class="orcathon-project-links">
-        ${project.demo ? `<a class="bt d" href="${esc(project.demo)}" target="_blank" rel="noopener noreferrer">Live demo ↗</a>` : ''}
-        ${project.repository ? `<a class="bt" href="${esc(project.repository)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : ''}
+        ${demo ? `<a class="bt d" href="${esc(demo)}" target="_blank" rel="noopener noreferrer">Live demo ↗</a>` : ''}
+        ${repository ? `<a class="bt" href="${esc(repository)}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : ''}
       </div>
     </div>
   </article>`;
@@ -8366,6 +8379,7 @@ const WorkspaceManager = {
     }
 
     listEl.innerHTML = notes.map(note => {
+      const link = safeHttpLink(note.link_url);
       const tags = (note.tags || '').split(',').map(t => t.trim()).filter(Boolean);
 
       return `
@@ -8393,7 +8407,7 @@ const WorkspaceManager = {
           ${note.content ? `<div class="ws-note-body-text">${this.escapeHtml(note.content)}</div>` : ''}
           <div class="ws-item-meta" style="margin-top:10px">
             ${tags.map(t => `<span class="ws-badge">#${this.escapeHtml(t)}</span>`).join('')}
-            ${note.link_url ? `<a href="${this.escapeHtml(note.link_url)}" target="_blank" rel="noopener noreferrer" class="ws-badge" style="color:var(--blk)">Resource Link ↗</a>` : ''}
+            ${link ? `<a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="ws-badge" style="color:var(--blk)">Resource Link ↗</a>` : ''}
           </div>
         </div>
       `;
@@ -8463,6 +8477,7 @@ const WorkspaceManager = {
     }
 
     listEl.innerHTML = asgs.map(asg => {
+      const link = safeHttpLink(asg.link_url);
       const isDone = asg.status === 'completed';
       const statusClass = isDone ? 'st-done' : (asg.status === 'in_progress' ? 'st-prog' : 'st-pend');
       const statusLabel = isDone ? 'Completed' : (asg.status === 'in_progress' ? 'In Progress' : 'Pending');
@@ -8479,7 +8494,7 @@ const WorkspaceManager = {
               ${asg.subject ? `<span class="ws-badge">${this.escapeHtml(asg.subject)}</span>` : ''}
               ${asg.priority ? `<span class="ws-badge p-${asg.priority}">${asg.priority.toUpperCase()}</span>` : ''}
               ${asg.deadline ? `<span style="font-size:11.5px;color:var(--mut)">Deadline: ${asg.deadline}</span>` : ''}
-              ${asg.link_url ? `<a href="${this.escapeHtml(asg.link_url)}" target="_blank" rel="noopener noreferrer" class="ws-badge" style="color:var(--blk)">Deliverable URL ↗</a>` : ''}
+              ${link ? `<a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="ws-badge" style="color:var(--blk)">Deliverable URL ↗</a>` : ''}
             </div>
           </div>
           <div class="ws-item-tools">
@@ -8564,9 +8579,9 @@ const WorkspaceManager = {
     }
 
     listEl.innerHTML = bmks.map(bmk => {
-      const isInternal = bmk.target_url && bmk.target_url.startsWith('#');
-      const clickHandler = isInternal ? `onclick="WorkspaceManager.navigateBookmark('${bmk.target_url}')"` : '';
-      const href = isInternal ? '#' : (bmk.target_url || '#');
+      const isInternal = typeof bmk.target_url === 'string' && bmk.target_url.startsWith('#');
+      const clickHandler = isInternal ? 'onclick="event.preventDefault(); WorkspaceManager.navigateBookmark(this.getAttribute(&quot;href&quot;))"' : '';
+      const href = isInternal ? bmk.target_url : safeHttpLink(bmk.target_url);
       const targetAttr = isInternal ? '' : 'target="_blank" rel="noopener noreferrer"';
 
       return `
@@ -8579,7 +8594,7 @@ const WorkspaceManager = {
             ${bmk.description ? `<p class="mut" style="font-size:12px;margin:4px 0 0">${this.escapeHtml(bmk.description)}</p>` : ''}
           </div>
           <div class="ws-item-tools">
-            ${bmk.target_url ? `<a href="${this.escapeHtml(href)}" ${targetAttr} ${clickHandler} class="ws-badge" style="color:var(--blk);cursor:pointer">Open ↗</a>` : ''}
+            ${href ? `<a href="${esc(href)}" ${targetAttr} ${clickHandler} class="ws-badge" style="color:var(--blk);cursor:pointer">Open ↗</a>` : ''}
             <button class="ws-icon-btn" onclick="WorkspaceManager.deleteBookmark('${bmk.id}')" title="Remove">
               <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
@@ -8623,7 +8638,7 @@ const WorkspaceManager = {
     if (!sel) return;
     const snippets = LocalDB.workspace.getSnippets();
     sel.innerHTML = '<option value="">Load Saved Draft...</option>' + 
-      snippets.map(s => `<option value="${s.id}">${this.escapeHtml(s.title)} (${s.language || 'JS'})</option>`).join('');
+      snippets.map(s => `<option value="${esc(s.id)}">${esc(s.title)} (${esc(s.language || 'JS')})</option>`).join('');
   }
 };
 
@@ -10978,7 +10993,7 @@ function submitContactForm() {
       statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
       statusBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
       statusBox.style.color = '#10b981';
-      statusBox.innerHTML = '<strong>Message Received!</strong> Thank you, ' + name + '. Our support team has logged your inquiry under <em>' + cat + '</em> and will follow up with you at <strong>' + email + '</strong> within 12 business hours.<br><br><span style="font-size:13px;color:var(--mut);">Need immediate help? Message us directly on WhatsApp or call +91 63777 96464.</span>';
+      statusBox.innerHTML = '<strong>Message Received!</strong> Thank you, ' + esc(name) + '. Our support team has logged your inquiry under <em>' + esc(cat) + '</em> and will follow up with you at <strong>' + esc(email) + '</strong> within 12 business hours.<br><br><span style="font-size:13px;color:var(--mut);">Need immediate help? Message us directly on WhatsApp or call +91 63777 96464.</span>';
     }
 
     if (typeof toast === 'function') {

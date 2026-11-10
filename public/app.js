@@ -13,6 +13,12 @@
   'use strict';
 
   const API_BASE = '/api';
+
+  function escapeHtml(value) {
+    const element = document.createElement('span');
+    element.textContent = value;
+    return element.innerHTML;
+  }
   let currentUser = null;
   let token = localStorage.getItem('dh_token') || null;
   let notifications = JSON.parse(localStorage.getItem('dh_notifications') || '[]');
@@ -239,7 +245,7 @@
             <div class="dh-notif-item">
               <div class="dh-notif-icon">${icon}</div>
               <div style="flex:1">
-                <div>${n.message || n.title || 'Platform activity recorded'}</div>
+                <div>${escapeHtml(n.message || n.title || 'Platform activity recorded')}</div>
                 <div class="dh-notif-time">${timeAgo(n.timestamp)}</div>
               </div>
             </div>
@@ -899,7 +905,7 @@
           const zlb = document.getElementById('zlb');
           if (zlb && window.L['All-time']) {
             zlb.innerHTML = window.L['All-time'].map((u, i) =>
-              `<div class="zlb"><b>${i+1}</b><span>${u[0]}</span><span>${u[1]}</span><span>${u[2].toLocaleString()} XP</span></div>`
+              `<div class="zlb"><b>${i+1}</b><span>${escapeHtml(u[0])}</span><span>${escapeHtml(u[1])}</span><span>${escapeHtml(u[2].toLocaleString())} XP</span></div>`
             ).join('');
           }
         }

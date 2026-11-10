@@ -95,7 +95,7 @@ router.post('/signup', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
       }
     });
   } catch (err) {
-    res.status(500).json({ error: 'Registration failed: ' + err.message });
+    res.status(500).json({ error: 'Registration failed.' });
   }
 });
 
@@ -155,7 +155,7 @@ router.post('/login', rateLimit({ windowMs: 60000, max: 15 }), async (req, res) 
       }
     });
   } catch (err) {
-    res.status(500).json({ error: 'Sign in failed: ' + err.message });
+    res.status(500).json({ error: 'Sign in failed.' });
   }
 });
 
@@ -273,7 +273,7 @@ router.post('/google', rateLimit({ windowMs: 60000, max: 10 }), async (req, res)
       }
     });
   } catch (err) {
-    res.status(500).json({ error: 'Google authentication failed: ' + err.message });
+    res.status(500).json({ error: 'Google authentication failed.' });
   }
 });
 
@@ -518,7 +518,7 @@ router.post('/password-reset/confirm', rateLimit({ windowMs: 60000, max: 10 }), 
       message: 'Password successfully updated! Please sign in with your new credentials.'
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to reset password: ' + err.message });
+    res.status(500).json({ error: 'Failed to reset password.' });
   }
 });
 

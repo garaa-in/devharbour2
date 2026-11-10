@@ -109,7 +109,7 @@ router.post('/', requireAuth, async (req, res) => {
       project
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to publish project: ' + err.message });
+    res.status(500).json({ error: 'Failed to publish project.' });
   }
 });
 
@@ -137,7 +137,7 @@ router.put('/:id', requireAuth, async (req, res) => {
     if (err.message === 'Unauthorized') {
       return res.status(403).json({ error: 'You are not authorized to edit this project.' });
     }
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to update project.' });
   }
 });
 
@@ -154,7 +154,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
     if (err.message === 'Unauthorized') {
       return res.status(403).json({ error: 'You are not authorized to delete this project.' });
     }
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to delete project.' });
   }
 });
 

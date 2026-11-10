@@ -30,8 +30,7 @@ module.exports = async (req, res) => {
   } catch (err) {
     console.error('[STATS ERROR]:', err);
     return res.status(500).json({
-      error: 'Failed to retrieve certificate registry stats: ' + (err.message || 'database error'),
-      hasDbUrl: true
+      error: 'Failed to retrieve certificate registry stats.'
     });
   }
 };
